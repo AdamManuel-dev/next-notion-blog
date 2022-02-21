@@ -180,8 +180,9 @@
 }
 
 .notion-page-cover {
-  max-width: 1200px;
-  border-radius: 24px;
+  margin-top: 1rem;
+  max-width: 1250px;
+  border-radius: 28px;
   box-shadow: 2px 2px 8px 4px rgba(15, 15, 15, 0.1);
 }
 

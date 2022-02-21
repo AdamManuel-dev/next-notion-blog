@@ -89,6 +89,14 @@
   color: #2795e9;
 }
 
+.wordle:hover {
+  color: #fff3b0;
+}
+
+.resume:hover {
+  color: #19bf64;
+}
+
 .twitter:hover {
   color: #2795e9;
 }

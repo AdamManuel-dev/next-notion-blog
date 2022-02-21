@@ -1,7 +1,13 @@
 {
   "name": "Adam's Blog",
   "short_name": "Blog",
-  "icons": [],
+  "icons": [
+    {
+      "src": "/avatar.jpeg",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
   "theme_color": "#F898B9",
   "background_color": "#ffffff",
   "display": "standalone"

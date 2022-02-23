@@ -14,7 +14,7 @@ module.exports = {
   // open graph metadata (optional)
   description: 'My personal blog to post whatever to',
   socialImageTitle: 'Adam\s Blog',
-  socialImageSubtitle: 'Hello World! 👋',
+  socialImageSubtitle: 'My personal blog, where I upload notes and blog posts',
 
   // social usernames (optional)
   // twitter: 'transitive_bs',
@@ -23,7 +23,7 @@ module.exports = {
 
   // default notion icon and cover images for site-wide consistency (optional)
   // page-specific values will override these site-wide defaults
-  defaultPageIcon: null,
+  defaultPageIcon: '⚡️',
   defaultPageCover: null,
   defaultPageCoverPosition: 0.5,
 

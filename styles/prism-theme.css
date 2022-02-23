@@ -29,7 +29,7 @@
 }
 
 .light-mode .notion .notion-inline-code {
-  color: #d7fdc4;
+  color: #000000;
   background: rgba(55,53,47, .1) !important;
   padding: .2em .4em !important;
 }

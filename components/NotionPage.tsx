@@ -36,7 +36,7 @@ import { Footer } from './Footer'
 import { ReactUtterances } from './ReactUtterances'
 
 import styles from './styles.module.css'
-import EyeDrawing from './eye-drawings'
+// import EyeDrawing from './eye-drawings'
 
 // const Code = dynamic(() =>
 //   import('react-notion-x').then((notion) => notion.Code)

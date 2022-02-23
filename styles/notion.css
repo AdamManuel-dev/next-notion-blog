@@ -242,7 +242,7 @@
 
 .notion-link {
   border-width: 3px;
-  border-image: linear-gradient(90deg, #b439df 0%, rgba(255, 255, 255, 0) 25%);
+  border-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, #a7805b 33%, #a7805b 66%, rgba(255, 255, 255, 0) 100%);
   border-image-slice: 2;
   position: relative;
   transition: unset;
@@ -252,12 +252,12 @@
 }
 
 .notion-link .dark-mode {
-  border-image: linear-gradient(90deg, #b439df 0%, #2f343700 25%);
+  border-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, #a7805b 33%, #a7805b 66%, rgba(255, 255, 255, 0) 100%);
 }
 
 .notion-link:hover {
   border-width: 3px;
-  border-image: linear-gradient(90.68deg, #b439df 0.26%, #e5337e 102.37%);
+  border-image: linear-gradient(90deg, #a7805b 0%, #a7805b 100%);
   border-image-slice: 1;
 }
 

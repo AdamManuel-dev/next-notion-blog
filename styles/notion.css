@@ -113,6 +113,10 @@
   }
 }
 
+.notion-toggle {
+  padding: 5px 0.8rem;
+}
+
 .notion-header .breadcrumbs ::-webkit-scrollbar {
   width: 0; /* Remove scrollbar space */
   background: transparent; /* Optional: just make scrollbar invisible */
@@ -242,7 +246,7 @@
 
 .notion-link {
   border-width: 3px;
-  border-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, #a7805b 33%, #a7805b 66%, rgba(255, 255, 255, 0) 100%);
+  border-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, #a7805b 10%, #a7805b 90%, rgba(255, 255, 255, 0) 100%);
   border-image-slice: 2;
   position: relative;
   transition: unset;
@@ -252,7 +256,7 @@
 }
 
 .notion-link .dark-mode {
-  border-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, #a7805b 33%, #a7805b 66%, rgba(255, 255, 255, 0) 100%);
+  border-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, #a7805b 10%, #a7805b 90%, rgba(255, 255, 255, 0) 100%);
 }
 
 .notion-link:hover {

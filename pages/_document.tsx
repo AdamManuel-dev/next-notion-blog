@@ -15,16 +15,6 @@ export default class MyDocument extends Document {
           <body>
             <script src='noflash.js' />
             <Main />
-            {/* Set this up to expand into a comment section later
-            <script
-              src='https://utteranc.es/client.js'
-              repo='AdamManuel-dev/next-notion-blog'
-              issue-term='title'
-              label='Comment'
-              theme='preferred-color-scheme'
-              crossOrigin='anonymous'
-              async
-            ></script> */}
             <NextScript />
           </body>
         </Html>

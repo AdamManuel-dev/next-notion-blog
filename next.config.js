@@ -5,6 +5,7 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 })
 
 module.exports = withBundleAnalyzer({
+  transpilePackages: ['react-tweet'],
   images: {
     domains: ['pbs.twimg.com']
   }

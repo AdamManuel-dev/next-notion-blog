@@ -1,30 +1,53 @@
-import pMemoize from 'p-memoize'
+import { memoizeAsync } from './memoize-async'
 import { getAllPagesInSpace } from 'notion-utils'
 
 import * as types from './types'
 import { includeNotionIdInUrls } from './config'
-import { notion } from './notion'
+import { getNotionPage } from './notion'
 import { getCanonicalPageId } from './get-canonical-page-id'
 
 const uuid = !!includeNotionIdInUrls
 
-export const getAllPages = pMemoize(getAllPagesImpl, { maxAge: 60000 * 5 })
+export const getAllPages = memoizeAsync(getAllPagesImpl, 60000 * 5)
 
 export async function getAllPagesImpl(
   rootNotionPageId: string,
   rootNotionSpaceId: string
 ): Promise<Partial<types.SiteMap>> {
+  let transientError: unknown
   const pageMap = await getAllPagesInSpace(
     rootNotionPageId,
     rootNotionSpaceId,
-    notion.getPage.bind(notion)
+    async (pageId) => {
+      if (transientError) throw transientError
+      // Pace discovery so a large site does not burst requests at Notion.
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      try {
+        return await getNotionPage(pageId)
+      } catch (error) {
+        const status = error.response?.status || error.statusCode
+        if (
+          status !== 400 &&
+          status !== 404 &&
+          !error.message?.startsWith('Notion page not found')
+        ) {
+          transientError = error
+        }
+        throw error
+      }
+    },
+    { concurrency: 1 }
   )
+  if (transientError) throw transientError
+  if (!Object.values(pageMap).some(Boolean)) {
+    throw new Error('Unable to load the blog page index')
+  }
 
   const canonicalPageMap = Object.keys(pageMap).reduce(
     (map, pageId: string) => {
       const recordMap = pageMap[pageId]
       if (!recordMap) {
-        throw new Error(`Error loading page "${pageId}"`)
+        return map
       }
 
       const canonicalPageId = getCanonicalPageId(pageId, recordMap, {

@@ -17,9 +17,6 @@ import 'prismjs/themes/prism-coy.css'
 // used for rendering equations (optional)
 import 'katex/dist/katex.min.css'
 
-// core styles for static tweet renderer (optional)
-import 'react-static-tweets/styles.css'
-
 // global style overrides for notion
 import 'styles/notion.css'
 
@@ -44,17 +41,6 @@ if (typeof window !== 'undefined') {
   bootstrap()
 }
 
-export async function getServerSideProps({ req, res }) {
-  res.setHeader(
-    'Cache-Control',
-    'public, s-maxage=10, stale-while-revalidate=59'
-  )
-
-  return {
-    props: {}
-  }
-}
-
 export default function App({ Component, pageProps }) {
   const router = useRouter()
 
@@ -72,7 +58,7 @@ export default function App({ Component, pageProps }) {
         router.events.off('routeChangeComplete', onRouteChangeComplete)
       }
     }
-  }, [])
+  }, [router.events])
 
   return <Component {...pageProps} />
 }

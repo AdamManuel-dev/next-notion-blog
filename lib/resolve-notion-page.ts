@@ -1,10 +1,11 @@
-import { parsePageId } from 'notion-utils'
+import { parsePageId, getBlockValue } from 'notion-utils'
 import { ExtendedRecordMap } from 'notion-types'
 
 import * as acl from './acl'
 import * as types from './types'
 import { pageUrlOverrides, pageUrlAdditions } from './config'
-import { getPage } from './notion'
+import { getPage, getNotionPage } from './notion'
+import { getCanonicalPageId } from './get-canonical-page-id'
 import { getSiteMaps } from './get-site-maps'
 import { getSiteForDomain } from './get-site-for-domain'
 
@@ -38,9 +39,21 @@ export async function resolveNotionPage(domain: string, rawPageId?: string) {
     } else {
       // handle mapping of user-friendly canonical page paths to Notion page IDs
       // e.g., /developer-x-entrepreneur versus /71201624b204481f862630ea25ce62fe
-      const siteMaps = await getSiteMaps()
-      const siteMap = siteMaps[0]
-      pageId = siteMap?.canonicalPageMap[rawPageId]
+      // Most articles are linked from the homepage. Resolve these without
+      // crawling every article, which can trigger Notion's rate limit.
+      site = await getSiteForDomain(domain)
+      const rootMap = await getNotionPage(site.rootNotionPageId)
+      pageId = Object.keys(rootMap.block).find((id) => {
+        const block = getBlockValue(rootMap.block[id])
+        return (
+          block?.type === 'page' &&
+          getCanonicalPageId(id, rootMap, { uuid: false }) === rawPageId
+        )
+      })
+      if (!pageId) {
+        const siteMaps = await getSiteMaps()
+        pageId = siteMaps[0]?.canonicalPageMap[rawPageId]
+      }
 
       if (pageId) {
         // TODO: we're not re-using the site from siteMaps because it is
@@ -68,7 +81,6 @@ export async function resolveNotionPage(domain: string, rawPageId?: string) {
     site = await getSiteForDomain(domain)
     pageId = site.rootNotionPageId
 
-    console.log(site)
     recordMap = await getPage(pageId)
   }
 

@@ -5,17 +5,16 @@ import dynamic from 'next/dynamic'
 import cs from 'classnames'
 import { useRouter } from 'next/router'
 import { useSearchParam } from 'react-use'
-import BodyClassName from 'react-body-classname'
-import useDarkMode from 'use-dark-mode'
+import { useDarkMode } from 'lib/use-dark-mode'
 import { PageBlock } from 'notion-types'
 
-import { Tweet, TwitterContextProvider } from 'react-static-tweets'
+import { Tweet } from 'react-tweet'
 
 // core notion renderer
-import { NotionRenderer, Code, Collection, CollectionRow } from 'react-notion-x'
+import { NotionRenderer } from 'react-notion-x'
 
 // utils
-import { getBlockTitle } from 'notion-utils'
+import { getBlockTitle, getBlockValue } from 'notion-utils'
 import { mapPageUrl, getCanonicalPageUrl } from 'lib/map-page-url'
 import { mapNotionImageUrl } from 'lib/map-image-url'
 import { getPageDescription } from 'lib/get-page-description'
@@ -36,40 +35,22 @@ import { Footer } from './Footer'
 import { ReactUtterances } from './ReactUtterances'
 
 import styles from './styles.module.css'
-// import EyeDrawing from './eye-drawings'
 
-// const Code = dynamic(() =>
-//   import('react-notion-x').then((notion) => notion.Code)
-// )
-//
-// const Collection = dynamic(() =>
-//   import('react-notion-x').then((notion) => notion.Collection)
-// )
-//
-// const CollectionRow = dynamic(
-//   () => import('react-notion-x').then((notion) => notion.CollectionRow),
-//   {
-//     ssr: false
-//   }
-// )
-
-// TODO: PDF support via "react-pdf" package has numerous troubles building
-// with next.js
-// const Pdf = dynamic(
-//   () => import('react-notion-x').then((notion) => notion.Pdf),
-//   { ssr: false }
-// )
-
+const Code = dynamic(() =>
+  import('react-notion-x/third-party/code').then((m) => m.Code)
+)
+const Collection = dynamic(() =>
+  import('react-notion-x/third-party/collection').then((m) => m.Collection)
+)
 const Equation = dynamic(() =>
-  import('react-notion-x').then((notion) => notion.Equation)
+  import('react-notion-x/third-party/equation').then(
+    (notion) => notion.Equation
+  )
 )
 
-// we're now using a much lighter-weight tweet renderer react-static-tweets
-// instead of the official iframe-based embed widget from twitter
-// const Tweet = dynamic(() => import('react-tweet-embed'))
-
 const Modal = dynamic(
-  () => import('react-notion-x').then((notion) => notion.Modal),
+  () =>
+    import('react-notion-x/third-party/modal').then((notion) => notion.Modal),
   { ssr: false }
 )
 
@@ -89,36 +70,25 @@ export const NotionPage: React.FC<types.PageProps> = ({
   const isLiteMode = lite === 'true'
   const searchParams = new URLSearchParams(params)
 
-  const darkMode = useDarkMode(true, { classNameDark: 'dark-mode' })
+  const darkMode = useDarkMode()
+
+  React.useEffect(() => {
+    document.body.classList.toggle('notion-lite', isLiteMode)
+    return () => document.body.classList.remove('notion-lite')
+  }, [isLiteMode])
 
   if (router.isFallback) {
     return <Loading />
   }
 
   const keys = Object.keys(recordMap?.block || {})
-  const block = recordMap?.block?.[keys[0]]?.value
+  const block = getBlockValue(recordMap?.block?.[keys[0]])
 
   if (error || !site || !keys.length || !block) {
     return <Page404 site={site} pageId={pageId} error={error} />
   }
 
   const title = getBlockTitle(block, recordMap) || site.name
-
-  console.log('notion page', {
-    isDev: config.isDev,
-    title,
-    pageId,
-    rootNotionPageId: site.rootNotionPageId,
-    recordMap
-  })
-
-  if (!config.isServer) {
-    // add important objects to the window global for easy debugging
-    const g = window as any
-    g.pageId = pageId
-    g.recordMap = recordMap
-    g.block = block
-  }
 
   const siteMapPageUrl = mapPageUrl(site, recordMap, searchParams)
 
@@ -148,6 +118,7 @@ export const NotionPage: React.FC<types.PageProps> = ({
     if (config.utterancesGitHubRepo) {
       comments = (
         <ReactUtterances
+          key={pageId}
           repo={config.utterancesGitHubRepo}
           issueMap='issue-term'
           issueTerm='title'
@@ -163,15 +134,7 @@ export const NotionPage: React.FC<types.PageProps> = ({
   }
 
   return (
-    <TwitterContextProvider
-      value={{
-        tweetAstMap: (recordMap as any).tweetAstMap || {},
-        swrOptions: {
-          fetcher: (id) =>
-            fetch(`/api/get-tweet-ast/${id}`).then((r) => r.json())
-        }
-      }}
-    >
+    <>
       <PageHead site={site} />
 
       <Head>
@@ -216,19 +179,17 @@ export const NotionPage: React.FC<types.PageProps> = ({
 
       <CustomFont site={site} />
 
-      {isLiteMode && <BodyClassName className='notion-lite' />}
-
       <NotionRenderer
         bodyClassName={cs(
           styles.notion,
           pageId === site.rootNotionPageId && 'index-page'
         )}
         components={{
-          pageLink: ({
+          PageLink: ({
             href,
             as,
             passHref,
-            prefetch,
+            prefetch = false,
             replace,
             scroll,
             shallow,
@@ -236,6 +197,7 @@ export const NotionPage: React.FC<types.PageProps> = ({
             ...props
           }) => (
             <Link
+              legacyBehavior
               href={href}
               as={as}
               passHref={passHref}
@@ -248,12 +210,11 @@ export const NotionPage: React.FC<types.PageProps> = ({
               <a {...props} />
             </Link>
           ),
-          code: Code,
-          collection: Collection,
-          collectionRow: CollectionRow,
-          tweet: Tweet,
-          modal: Modal,
-          equation: Equation
+          Code,
+          Collection,
+          Tweet,
+          Modal,
+          Equation
         }}
         recordMap={recordMap}
         rootPageId={site.rootNotionPageId}
@@ -280,6 +241,6 @@ export const NotionPage: React.FC<types.PageProps> = ({
       />
 
       {/* <GitHubShareButton /> */}
-    </TwitterContextProvider>
+    </>
   )
 }

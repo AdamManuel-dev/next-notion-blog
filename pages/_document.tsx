@@ -13,7 +13,7 @@ export default class MyDocument extends Document {
             <script type='text/javascript' src='/scripts/hotjar.js'></script>
           </Head>
           <body>
-            <script src='noflash.js' />
+            <script src='/noflash.js' />
             <Main />
             {/* Set this up to expand into a comment section later
             <script

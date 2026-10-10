@@ -7,13 +7,13 @@ module.exports = {
   rootNotionSpaceId: null,
 
   // basic site info (required)
-  name: 'Adam Manuel\'s Blog',
+  name: "Adam Manuel's Blog",
   domain: 'blog.manuel.dev',
   author: 'Adam Manuel',
 
   // open graph metadata (optional)
   description: 'My personal blog to post whatever to',
-  socialImageTitle: 'Adam\s Blog',
+  socialImageTitle: 'Adams Blog',
   socialImageSubtitle: 'My personal blog, where I upload notes and blog posts',
 
   // social usernames (optional)

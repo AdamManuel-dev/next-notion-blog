@@ -40,7 +40,7 @@ The site is then deployed to [Vercel](http://vercel.com).
 
 1. Fork / clone this repo
 2. Change a few values in [site.config.js](./site.config.js)
-3. `npm install`
+3. Use Node.js 22 or newer (`nvm use`), then run `npm ci`.
 4. `npm run dev` to test locally
 5. `npm run deploy` to deploy to vercel 💪
 
@@ -53,6 +53,19 @@ You'll want to make your root Notion page **public** and then copy the link to y
 In order to find your Notion workspace ID (optional), just load any of your site's pages into your browser and open up the developer console. There will be a global variable that you can access called `block` which is the Notion data for the current page, and you just have to type `block.space_id` which will print out your page's workspace ID.
 
 I recommend setting up a collection on your home page (optional; I use an inline gallery [here](https://notion.so/78fc5a4b88d74b0e824e29407e9f1ec1)) that contains all of your articles / projects / content. There are no structural constraints on your Notion workspace, however, so feel free to add content as you would normally in Notion. There are a few parts of the code with logic to only show comments on blog post pages (collection item detail pages).
+
+## Development and validation
+
+This project uses npm and `package-lock.json` for reproducible installs.
+The Notion client, renderer, types, and utilities must be upgraded together.
+Notion pages must be published publicly. No Notion token is required.
+
+- `npm run dev`: start the local blog.
+- `npm test`: lint, formatting, type checking, and a production build.
+- `npm run build && npm start`: preview the production app locally.
+
+Builds fetch live Notion content, so network access to Notion is required.
+Set the deployment Node.js version to 22 or newer.
 
 ## URL Paths
 
@@ -133,7 +146,7 @@ GCLOUD_PROJECT=
 FIREBASE_COLLECTION_IMAGES=
 ```
 
-The actual work happens in the [create-preview-image](./api/create-preview-image) serverless function.
+The actual work happens in the [create-preview-image](./pages/api/create-preview-image.ts) API route.
 
 ### Automatic Social Images
 

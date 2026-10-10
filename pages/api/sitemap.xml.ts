@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 
-import { SiteMap } from '../lib/types'
-import { host } from '../lib/config'
-import { getSiteMaps } from '../lib/get-site-maps'
+import { SiteMap } from '../../lib/types'
+import { host } from '../../lib/config'
+import { getSiteMaps } from '../../lib/get-site-maps'
 
 export default async (
   req: NextApiRequest,
@@ -12,7 +12,13 @@ export default async (
     return res.status(405).send({ error: 'method not allowed' })
   }
 
-  const siteMaps = await getSiteMaps()
+  let siteMaps: SiteMap[]
+  try {
+    siteMaps = await getSiteMaps()
+  } catch {
+    res.setHeader('Retry-After', '60')
+    return res.status(503).send({ error: 'Sitemap temporarily unavailable' })
+  }
 
   // cache sitemap for up to one hour
   res.setHeader(

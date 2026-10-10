@@ -12,7 +12,7 @@
       "version": "detect"
     }
   },
-  "ignorePatterns": ["**/*.js", "**/*.jsx"],
+  "ignorePatterns": ["**/*.js", "**/*.jsx", "next-env.d.ts", ".next/"],
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint"],
   "extends": [

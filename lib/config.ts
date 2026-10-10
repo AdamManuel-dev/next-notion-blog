@@ -19,10 +19,8 @@ if (!rootNotionPageId) {
 }
 
 // if you want to restrict pages to a single notion workspace (optional)
-export const rootNotionSpaceId: string | null = parsePageId(
-  getSiteConfig('rootNotionSpaceId', null),
-  { uuid: true }
-)
+export const rootNotionSpaceId: string | null =
+  parsePageId(getSiteConfig('rootNotionSpaceId', null), { uuid: true }) || null
 
 export const pageUrlOverrides = cleanPageUrlMap(
   getSiteConfig('pageUrlOverrides', {}) || {},
@@ -106,7 +104,7 @@ export const apiBaseUrl = `${host}/api`
 
 export const api = {
   createPreviewImage: `${apiBaseUrl}/create-preview-image`,
-  searchNotion: `${apiBaseUrl}/search-notion`
+  searchNotion: '/api/search-notion'
 }
 
 // ----------------------------------------------------------------------------

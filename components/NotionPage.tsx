@@ -27,8 +27,15 @@ import * as config from 'lib/config'
 import { CustomFont } from './CustomFont'
 import { Loading } from './Loading'
 import { Page404 } from './Page404'
+import { PageUnavailable } from './PageUnavailable'
 import { PageHead } from './PageHead'
 import { PageActions } from './PageActions'
+import { BlogHeader } from './BlogHeader'
+import { ImageReveal } from './ImageReveal'
+import { ReadingResume } from './ReadingResume'
+import { RelatedArticles } from './RelatedArticles'
+import { FootnotePreview } from './FootnotePreview'
+import { ReaderDelight } from './ReaderDelight'
 import { Footer } from './Footer'
 // import { PageSocial } from './PageSocial'
 // import { GitHubShareButton } from './GitHubShareButton'
@@ -36,9 +43,7 @@ import { ReactUtterances } from './ReactUtterances'
 
 import styles from './styles.module.css'
 
-const Code = dynamic(() =>
-  import('react-notion-x/third-party/code').then((m) => m.Code)
-)
+const Code = dynamic(() => import('./Code').then((m) => m.Code))
 const Collection = dynamic(() =>
   import('react-notion-x/third-party/collection').then((m) => m.Collection)
 )
@@ -58,7 +63,8 @@ export const NotionPage: React.FC<types.PageProps> = ({
   site,
   recordMap,
   error,
-  pageId
+  pageId,
+  relatedPages = []
 }) => {
   const router = useRouter()
   const lite = useSearchParam('lite')
@@ -80,6 +86,8 @@ export const NotionPage: React.FC<types.PageProps> = ({
   if (router.isFallback) {
     return <Loading />
   }
+
+  if (error?.statusCode === 503) return <PageUnavailable />
 
   const keys = Object.keys(recordMap?.block || {})
   const block = getBlockValue(recordMap?.block?.[keys[0]])
@@ -179,66 +187,94 @@ export const NotionPage: React.FC<types.PageProps> = ({
 
       <CustomFont site={site} />
 
-      <NotionRenderer
-        bodyClassName={cs(
-          styles.notion,
-          pageId === site.rootNotionPageId && 'index-page'
-        )}
-        components={{
-          PageLink: ({
-            href,
-            as,
-            passHref,
-            prefetch = false,
-            replace,
-            scroll,
-            shallow,
-            locale,
-            ...props
-          }) => (
-            <Link
-              legacyBehavior
-              href={href}
-              as={as}
-              passHref={passHref}
-              prefetch={prefetch}
-              replace={replace}
-              scroll={scroll}
-              shallow={shallow}
-              locale={locale}
-            >
-              <a {...props} />
-            </Link>
-          ),
-          Code,
-          Collection,
-          Tweet,
-          Modal,
-          Equation
-        }}
-        recordMap={recordMap}
-        rootPageId={site.rootNotionPageId}
-        fullPage={!isLiteMode}
-        darkMode={darkMode.value}
-        previewImages={site.previewImages !== false}
-        showCollectionViewDropdown={false}
-        showTableOfContents={showTableOfContents}
-        minTableOfContentsItems={minTableOfContentsItems}
-        defaultPageIcon={config.defaultPageIcon}
-        defaultPageCover={config.defaultPageCover}
-        defaultPageCoverPosition={config.defaultPageCoverPosition}
-        mapPageUrl={siteMapPageUrl}
-        mapImageUrl={mapNotionImageUrl}
-        searchNotion={searchNotion}
-        pageFooter={comments}
-        pageAside={pageAside}
-        footer={
-          <Footer
-            isDarkMode={darkMode.value}
-            toggleDarkMode={darkMode.toggle}
-          />
-        }
-      />
+      <ImageReveal key={pageId}>
+        <NotionRenderer
+          key={pageId}
+          bodyClassName={cs(
+            styles.notion,
+            pageId === site.rootNotionPageId && 'index-page'
+          )}
+          components={{
+            PageLink: ({
+              href,
+              as,
+              passHref,
+              prefetch = false,
+              replace,
+              scroll,
+              shallow,
+              locale,
+              ...props
+            }) => (
+              <Link
+                legacyBehavior
+                href={href}
+                as={as}
+                passHref={passHref}
+                prefetch={prefetch}
+                replace={replace}
+                scroll={scroll}
+                shallow={shallow}
+                locale={locale}
+              >
+                <a {...props} />
+              </Link>
+            ),
+            Header: BlogHeader,
+            Code,
+            Collection,
+            Tweet,
+            Modal,
+            Equation
+          }}
+          recordMap={recordMap}
+          rootPageId={site.rootNotionPageId}
+          fullPage={!isLiteMode}
+          darkMode={darkMode.value}
+          previewImages={site.previewImages !== false}
+          showCollectionViewDropdown={false}
+          showTableOfContents={showTableOfContents}
+          minTableOfContentsItems={minTableOfContentsItems}
+          defaultPageIcon={config.defaultPageIcon}
+          defaultPageCover={config.defaultPageCover}
+          defaultPageCoverPosition={config.defaultPageCoverPosition}
+          mapPageUrl={siteMapPageUrl}
+          mapImageUrl={mapNotionImageUrl}
+          searchNotion={searchNotion}
+          pageHeader={
+            !isLiteMode &&
+            pageId.replace(/-/g, '') !==
+              site.rootNotionPageId.replace(/-/g, '') ? (
+              <ReadingResume key={pageId} pageId={pageId} />
+            ) : null
+          }
+          pageFooter={
+            <>
+              {!isLiteMode &&
+                pageId.replace(/-/g, '') !==
+                  site.rootNotionPageId.replace(/-/g, '') &&
+                block.type === 'page' && (
+                  <>
+                    <ReaderDelight
+                      title={title}
+                      url={getCanonicalPageUrl(site, recordMap)(pageId)}
+                    />
+                    <RelatedArticles pages={relatedPages} />
+                    <FootnotePreview />
+                  </>
+                )}
+              {comments}
+            </>
+          }
+          pageAside={pageAside}
+          footer={
+            <Footer
+              isDarkMode={darkMode.value}
+              toggleDarkMode={darkMode.toggle}
+            />
+          }
+        />
+      </ImageReveal>
 
       {/* <GitHubShareButton /> */}
     </>

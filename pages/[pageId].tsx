@@ -17,7 +17,15 @@ export const getStaticProps = async (context) => {
     return { notFound: true, revalidate: 60 }
   }
 
-  return { props, revalidate: 60 }
+  if (
+    props.error?.statusCode === 503 &&
+    process.env.NODE_ENV === 'production' &&
+    context.revalidateReason === 'stale'
+  ) {
+    // Keep the previously generated page when background refresh fails.
+    throw new Error(props.error.message)
+  }
+  return { props, revalidate: props.error?.statusCode === 503 ? 15 : 60 }
 }
 
 export async function getStaticPaths() {

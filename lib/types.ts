@@ -11,6 +11,7 @@ export interface PageProps {
   site?: Site
   recordMap?: ExtendedRecordMap
   pageId?: string
+  relatedPages?: import('./related-pages').RelatedPage[]
   error?: PageError
 }
 

@@ -34,13 +34,22 @@ export const Footer: React.FC<{
 
       {hasMounted ? (
         <div className={styles.settings}>
-          <a
+          <button
+            type='button'
             className={styles.toggleDarkMode}
             onClick={toggleDarkModeCb}
             title='Toggle dark mode'
+            aria-label='Dark mode'
+            aria-pressed={isDarkMode}
           >
-            {isDarkMode ? <IoMoonSharp /> : <IoSunnyOutline />}
-          </a>
+            <span
+              key={isDarkMode ? 'moon' : 'sun'}
+              className={styles.themeIcon}
+              aria-hidden='true'
+            >
+              {isDarkMode ? <IoMoonSharp /> : <IoSunnyOutline />}
+            </span>
+          </button>
         </div>
       ) : null}
 

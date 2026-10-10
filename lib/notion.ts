@@ -2,18 +2,34 @@ import { NotionAPI } from 'notion-client'
 import { ExtendedRecordMap, SearchParams, SearchResults } from 'notion-types'
 import { getPreviewImages } from './get-preview-images'
 import { mapNotionImageUrl } from './map-image-url'
-import { getBlockValue } from 'notion-utils'
-import { memoizeAsync } from './memoize-async'
+import { getBlockValue, parsePageId } from 'notion-utils'
+import { NotionRequestCache } from './notion-request-cache'
 
-export const notion = new NotionAPI({
-  apiBaseUrl: process.env.NOTION_API_BASE_URL,
+// Share the request budget across API routes and development hot reloads.
+const globalCache = globalThis as typeof globalThis & {
+  blogNotionCache?: Map<string, NotionRequestCache<ExtendedRecordMap>>
+}
+const caches = (globalCache.blogNotionCache ||= new Map())
+const baseUrl =
+  process.env.NOTION_API_BASE_URL || 'https://app.notion.com/api/v3'
+if (!caches.has(baseUrl)) caches.set(baseUrl, new NotionRequestCache())
+const cache = caches.get(baseUrl)
+
+class BlogNotionAPI extends NotionAPI {
+  fetch<T>(options: Parameters<NotionAPI['fetch']>[0]): Promise<T> {
+    return cache.request(() => super.fetch<T>(options))
+  }
+}
+
+export const notion = new BlogNotionAPI({
+  apiBaseUrl: baseUrl,
   ofetchOptions: { timeout: 15000, retry: 0 }
 })
 
-export const getNotionPage = memoizeAsync(
-  (pageId: string) => notion.getPage(pageId),
-  60000
-)
+export const getNotionPage = (rawPageId: string) => {
+  const pageId = parsePageId(rawPageId)
+  return cache.get(pageId, () => notion.getPage(pageId))
+}
 
 export async function getPage(pageId: string): Promise<ExtendedRecordMap> {
   const recordMap = await getNotionPage(pageId)

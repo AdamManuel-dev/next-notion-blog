@@ -1,4 +1,7 @@
-import { parsePageId, getBlockValue } from 'notion-utils'
+import { selectRelatedPages, RelatedPage } from './related-pages'
+import { mapPageUrl } from './map-page-url'
+import { isTemporaryNotionError } from './notion-request-cache'
+import { parsePageId, getBlockValue, getBlockTitle } from 'notion-utils'
 import { ExtendedRecordMap } from 'notion-types'
 
 import * as acl from './acl'
@@ -9,7 +12,7 @@ import { getCanonicalPageId } from './get-canonical-page-id'
 import { getSiteMaps } from './get-site-maps'
 import { getSiteForDomain } from './get-site-for-domain'
 
-export async function resolveNotionPage(domain: string, rawPageId?: string) {
+async function resolveNotionPageImpl(domain: string, rawPageId?: string) {
   let site: types.Site
   let pageId: string
   let recordMap: ExtendedRecordMap
@@ -85,5 +88,46 @@ export async function resolveNotionPage(domain: string, rawPageId?: string) {
   }
 
   const props = { site, recordMap, pageId }
-  return { ...props, ...(await acl.pageAcl(props)) }
+  const access = await acl.pageAcl(props)
+  if (access?.error) return { ...props, ...access }
+  let relatedPages: RelatedPage[] = []
+  if (parsePageId(pageId) !== parsePageId(site.rootNotionPageId)) {
+    try {
+      const index = await getNotionPage(site.rootNotionPageId)
+      const link = mapPageUrl(site, index, new URLSearchParams())
+      const current =
+        getBlockValue(recordMap.block[parsePageId(pageId)]) ||
+        getBlockValue(recordMap.block[Object.keys(recordMap.block)[0]])
+      const candidates = Object.keys(index.block).flatMap((id) => {
+        const entry = getBlockValue(index.block[id])
+        return entry?.type === 'page' &&
+          entry.alive !== false &&
+          parsePageId(id) !== parsePageId(site.rootNotionPageId)
+          ? [{ id, title: getBlockTitle(entry, index), href: link(id) }]
+          : []
+      })
+      relatedPages = selectRelatedPages(
+        { id: pageId, title: getBlockTitle(current, recordMap) },
+        candidates
+      )
+    } catch {
+      // Recommendations are optional; an unavailable index must not hide an article.
+    }
+  }
+  return { ...props, relatedPages }
+}
+
+export async function resolveNotionPage(domain: string, rawPageId?: string) {
+  try {
+    return await resolveNotionPageImpl(domain, rawPageId)
+  } catch (error) {
+    if (!isTemporaryNotionError(error)) throw error
+    return {
+      error: {
+        statusCode: 503,
+        message:
+          'Notion is temporarily unavailable. Please try again in a minute.'
+      }
+    }
+  }
 }

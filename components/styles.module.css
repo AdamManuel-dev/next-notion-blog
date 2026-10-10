@@ -31,6 +31,33 @@
   color: rgba(55, 53, 47, 0.4);
 }
 
+.unavailable {
+  background: #fff;
+  text-align: center;
+  padding: 24px;
+}
+
+.unavailable button {
+  min-height: 44px;
+  padding: 10px 20px;
+  border: 1px solid currentColor;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.unavailable button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+:global(.dark-mode) .unavailable {
+  background: #191919;
+  color: #ebebeb;
+}
+
 .main {
   display: flex;
   flex-direction: column;
@@ -66,6 +93,7 @@
 }
 
 .settings a,
+.settings button,
 .social a {
   cursor: pointer;
   font-size: 2em;
@@ -76,17 +104,71 @@
 }
 
 .settings a:last-of-type,
+.settings button:last-of-type,
 .social a:last-of-type {
   margin-right: 0;
 }
 
 .settings a:hover,
+.settings button:hover,
 .social a:hover {
   transition: color 50ms ease-out;
 }
 
 .toggleDarkMode:hover {
   color: #2795e9;
+}
+
+.toggleDarkMode {
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+.toggleDarkMode:focus-visible {
+  outline: 2px solid #a7805b;
+  outline-offset: 3px;
+}
+
+.themeIcon {
+  display: inline-flex;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .settings .toggleDarkMode {
+    transition: transform 160ms ease, color 160ms ease;
+  }
+
+  .toggleDarkMode:active {
+    transform: scale(0.92);
+  }
+
+  .themeIcon {
+    animation: theme-arrive 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .settings .toggleDarkMode {
+    transition: none;
+  }
+}
+
+@keyframes theme-arrive {
+  from {
+    opacity: 0;
+    transform: rotate(-35deg) scale(0.75);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(0) scale(1);
+  }
 }
 
 .wordle:hover {
@@ -217,4 +299,147 @@
   .githubCorner .octoArm {
     animation: octocat-wave 560ms ease-in-out;
   }
+}
+
+.loadingPage {
+  background: #fafbf9;
+  padding: 24px;
+}
+
+.loadingSheet {
+  width: min(560px, 100%);
+  padding: clamp(24px, 6vw, 48px);
+  border: 1px solid #e2e8df;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 12px 40px #19352108;
+}
+
+.loadingLabel,
+.navigationPill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.loadingSpark {
+  display: inline-block;
+  color: #468451;
+  font-size: 24px;
+}
+
+.loadingDots {
+  display: inline-flex;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.loadingDots i {
+  width: 4px;
+  height: 4px;
+  background: currentColor;
+  border-radius: 50%;
+}
+
+.loadingSkeleton span {
+  display: block;
+  height: 10px;
+  margin-top: 16px;
+  border-radius: 6px;
+  background: #e9eee6;
+}
+
+.loadingSkeleton span:first-child {
+  width: 65%;
+  height: 24px;
+  margin-block: 32px 24px;
+}
+
+.loadingSkeleton span:last-child { width: 75%; }
+
+.navigationLoading {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+  color: #334632;
+}
+
+.navigationTrack {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  overflow: hidden;
+  background: #88ad7a30;
+}
+
+.navigationTrack span {
+  display: block;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, #68a36b, #b3d59b, #68a36b);
+}
+
+.navigationPill {
+  position: absolute;
+  bottom: max(24px, env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: calc(100% - 32px);
+  padding: 12px 18px;
+  border: 1px solid #d9e4d5;
+  border-radius: 999px;
+  background: #f8fcf5;
+  box-shadow: 0 8px 30px #19352118;
+}
+
+:global(.dark-mode) .loadingPage { background: #191919; color: #ebebeb; }
+:global(.dark-mode) .loadingSheet,
+:global(.dark-mode) .navigationPill {
+  background: #242b24;
+  border-color: #43503f;
+  color: #e0ebd9;
+}
+:global(.dark-mode) .loadingSkeleton span { background: #3b4638; }
+:global(.dark-mode) .loadingSpark { color: #b3d59b; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .loadingSheet { animation: loading-arrive 300ms ease-out both; }
+  .navigationPill { animation: loading-fade 180ms ease-out both; }
+  .loadingSpark { animation: loading-twinkle 1800ms ease-in-out 3; }
+  .loadingDots i { animation: loading-bob 1200ms ease-in-out 5; }
+  .loadingDots i:nth-child(2) { animation-delay: 120ms; }
+  .loadingDots i:nth-child(3) { animation-delay: 240ms; }
+  .loadingSkeleton span { animation: loading-breathe 1400ms ease-in-out 4; }
+  .loadingSkeleton span:nth-child(2) { animation-delay: 100ms; }
+  .loadingSkeleton span:nth-child(3) { animation-delay: 200ms; }
+  .navigationTrack span { animation: loading-sweep 1500ms ease-in-out infinite alternate; }
+}
+
+@keyframes loading-arrive {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes loading-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes loading-twinkle { 50% { transform: rotate(35deg) scale(0.85); } }
+@keyframes loading-bob { 50% { transform: translateY(-3px); opacity: 0.5; } }
+@keyframes loading-breathe { 50% { opacity: 0.4; } }
+@keyframes loading-sweep { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
+
+/* Theme-aware interaction colors remain visible on light and dark surfaces. */
+.social a:hover,
+.settings a:hover,
+.settings button:hover {
+  color: var(--blog-focus);
+}
+.pageActions a:hover {
+  color: var(--blog-focus);
+  background: var(--blog-panel);
+}
+.toggleDarkMode:focus-visible {
+  outline-color: var(--blog-focus);
 }

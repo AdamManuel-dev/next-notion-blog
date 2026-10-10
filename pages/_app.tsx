@@ -22,6 +22,8 @@ import 'styles/notion.css'
 
 // global style overrides for prism theme (optional)
 import 'styles/prism-theme.css'
+import 'styles/whimsy.css'
+import 'styles/theme.css'
 
 // here we're bringing in any languages we want to support for
 // syntax highlighting via Notion's Code block
@@ -36,6 +38,7 @@ import { useRouter } from 'next/router'
 import { bootstrap } from 'lib/bootstrap-client'
 import { fathomId, fathomConfig } from 'lib/config'
 import * as Fathom from 'fathom-client'
+import { NavigationLoading } from 'components/NavigationLoading'
 
 if (typeof window !== 'undefined') {
   bootstrap()
@@ -60,5 +63,10 @@ export default function App({ Component, pageProps }) {
     }
   }, [router.events])
 
-  return <Component {...pageProps} />
+  return (
+    <>
+      <NavigationLoading />
+      <Component {...pageProps} />
+    </>
+  )
 }

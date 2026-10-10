@@ -1,5 +1,12 @@
 /* prism theme adjustments */
 
+/* Coy's curled-paper shadows overlap our flat code panels on desktop. */
+pre.notion-code[class*='language-']::before,
+pre.notion-code[class*='language-']::after {
+  content: none;
+  display: none;
+}
+
 .notion-code {
   background-color: rgba(249, 250, 251, 1);
   border: 1px solid rgba(229, 231, 235, 1);

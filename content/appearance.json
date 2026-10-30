@@ -1,0 +1,82 @@
+{
+  "source": "https://blog.manuel.dev/",
+  "description": "Original published page appearance, recovered after the HTML migration. Covers are stored locally; no runtime requests are needed.",
+  "pages": {
+    "a044322d56d1482da8b521736d56284c": {
+      "icon": "⚡",
+      "cover": "/content-assets/original-cover-a044322d56d1482da8b521736d56284c.jpg",
+      "coverPosition": 0.5
+    },
+    "23910a0af920815e9d20f04397d7b13c": {
+      "icon": "💽",
+      "cover": "/content-assets/original-cover-23910a0af920815e9d20f04397d7b13c.jpg",
+      "coverPosition": 0.5
+    },
+    "22310a0af92080d5bcc2c1c966d12fdc": {
+      "icon": "🤖",
+      "cover": "/content-assets/original-cover-22310a0af92080d5bcc2c1c966d12fdc.jpg",
+      "coverPosition": 0.5141
+    },
+    "19710a0af920805eb11cfe48e3d2a143": { "icon": "🤖" },
+    "19710a0af920808390b4ef01c8051a8b": { "icon": "❄️" },
+    "19710a0af9208034a6ebf301891c4b61": { "icon": "📄" },
+    "19510a0af920809da8ecefcdc5c505cd": {
+      "icon": "📝",
+      "cover": "/content-assets/original-cover-19510a0af920809da8ecefcdc5c505cd.jpg",
+      "coverPosition": 0.5
+    },
+    "cb38d3b3b1a34e4693deefb06f0b78f5": {
+      "cover": "/content-assets/original-cover-cb38d3b3b1a34e4693deefb06f0b78f5.jpg",
+      "coverPosition": 0.5
+    },
+    "b47979352a204bf3b8c70925ec5082f9": { "icon": "🗣️" },
+    "2194b1be9ae14fd1b378cdbb8a9e1af4": { "icon": "📑" },
+    "8ffc7a8d4248416a96d24e779d8a2dc3": { "icon": "🖼️" },
+    "9489cdd63f794fcda076c3f80d6e8be9": { "icon": "🖥️" },
+    "5411ae772ed1491d854991b4b464d33b": { "icon": "💾" },
+    "aa2f3a375ce644e3893a51e608f459cb": { "icon": "💼" },
+    "d1087b507c7c40ae90ab51c7a65fa7b3": { "icon": "🕸️" },
+    "534a3259a8f14094af182384ce380f15": { "icon": "📚" },
+    "4edd62c571fb4b939946d7725fb25217": { "icon": "🤖" },
+    "66d3b74cedcb4c5482fdf41cf4bd6211": { "icon": "🕸️" },
+    "404f999ea16842dda21b08373b017ed3": { "icon": "🔥" },
+    "56ce1e358bf243b584ecba6282720f95": { "icon": "🏎️" },
+    "ab73f12eae0e41d09a2f7e13a79d53a6": { "icon": "🏢" },
+    "619ef6dfea0249a7abc78630584b9c64": { "icon": "💽" },
+    "3e95c7631ba944c8a666e08abe735766": { "icon": "🤖" },
+    "807b3b4e46dd4ad7b345e3a01e39f4c0": { "icon": "🔒" },
+    "b755e59712db40f8ae13cde78781a6ff": { "icon": "🧊" },
+    "853e4abcce7944bcb99748fd9d0368ea": { "icon": "🗂️" },
+    "ccfd837bc3fe4ecbb9c02fcc58fdaa5e": { "icon": "📦" },
+    "f7cea03cb6314c4ea7e303999b2c3489": {
+      "icon": "💽",
+      "cover": "/content-assets/original-cover-f7cea03cb6314c4ea7e303999b2c3489.jpg",
+      "coverPosition": 0.4255
+    },
+    "23910a0af92081dcb9a2f6480f55a33d": {
+      "icon": "🛠️",
+      "cover": "/content-assets/original-cover-23910a0af92081dcb9a2f6480f55a33d.jpg",
+      "coverPosition": 0.5
+    },
+    "7318293666354008954c9b23bad0d183": { "icon": "📚" },
+    "5cefc17e42e747ad974602a8a978610e": { "icon": "🏎️" },
+    "e6fe1e00d35a44d08b2c971308d55a4f": { "icon": "♻️" },
+    "ac388905d9cb480c99b7b0e1e588bc07": { "icon": "⚠️" },
+    "97a7cff0613b4651a53a2c126850b755": { "icon": "🔎" },
+    "e32353ed82444a5cbffc0cb0aea02985": { "icon": "🕸️" },
+    "30510a0af920803fae11de2407e638ad": { "icon": "ℹ️" },
+    "6930ed20a802492fad69f03b7fe5f345": { "icon": "🌏" },
+    "30510a0af9208012abdef6009c47d0c0": { "icon": "ℹ️" },
+    "30510a0af920801386dadde63194c65f": { "icon": "ℹ️" },
+    "30510a0af9208054a245fc6f75d58bb8": { "icon": "ℹ️" },
+    "30510a0af9208040b29adfd07221374e": { "icon": "ℹ️" },
+    "30510a0af920803c9a7cf54a74197f69": { "icon": "ℹ️" },
+    "12ee32a0976b44ad873a96476e2bc680": { "icon": "🥇" },
+    "e088dfc08186405ca0c24762b84c46f5": { "icon": "🧑‍🏫" },
+    "c6401efd6c1846c1b48e7dd247463a6e": { "icon": "📄" },
+    "12d5596acde94df5856646290b526e24": { "icon": "💰" },
+    "27860b34d548476d9319a215fd67177d": { "icon": "📺" },
+    "8e70680dd79a46aab88ec925d311fcca": { "icon": "🧑‍🔧" },
+    "27e8e689fbe8401cbd9569bca772fbdc": { "icon": "📖" }
+  }
+}

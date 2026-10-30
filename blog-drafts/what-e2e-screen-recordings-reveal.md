@@ -1,0 +1,301 @@
+---
+title: "What a Screen Recording Reveals That a Passing E2E Test Doesn't"
+description: "How watching a user flow can reveal questions your automated checks never asked."
+status: draft
+tags: [testing, user-experience, automation]
+---
+
+# What a Screen Recording Reveals That a Passing E2E Test Doesn't
+
+**Reading paths:** Start below for the plain-language explanation, or jump to the
+[technical deep dive](#technical-deep-dive) for implementation details and verification.
+
+An end-to-end test, often shortened to E2E, checks a user journey through an application.
+It might open a page, fill out a form, click Save, and confirm that the result appears.
+
+A passing test tells you its checks passed. It does not tell you that every part of
+the experience was clear or comfortable to use.
+
+My work with recorded E2E runs and interface improvements has made me interested in
+using both automated checks and a short visual review.
+
+## A test asks specific questions
+
+Imagine a test that books an appointment:
+
+1. Open the scheduler.
+2. Choose a date and time.
+3. Click Book.
+4. Check that the appointment appears.
+
+The test might correctly pass even if the button gives no feedback for several seconds.
+It may also pass if the confirmation is difficult to notice.
+
+Those are possible examples, not findings from a particular recorded run.
+
+The test checked whether the booking appeared. It did not check whether a person would
+understand what was happening while they waited.
+
+## Watch the moments between actions
+
+A recording can help you notice questions such as:
+
+- Does the page jump when content loads?
+- Is it clear that a request is still running?
+- Can someone tell that their action succeeded?
+- Does an error explain how to recover?
+- Does an important message disappear too quickly?
+
+These moments can be easy to overlook when reading a test report.
+
+## Turn an observation into a checkable problem
+
+Suppose a recording appears to show a Save button staying active during a slow request.
+
+First, reproduce the behavior manually. The video is a clue, and the automated test's
+speed or environment may affect what you see.
+
+Then describe the expected behavior clearly:
+
+> After Save is clicked, show that saving is in progress and prevent a second submission
+> until the request finishes.
+
+Now the team can discuss and test a specific rule. You can also check what happens if
+the request fails: the user needs a clear error and a way to try again.
+
+## Keep the review focused
+
+Watching every minute of every test run would be expensive. I would begin with a small
+set of important flows, especially after changes to forms, navigation, or loading states.
+
+A practical loop is:
+
+1. Run the automated checks.
+2. Review the recording of the changed flow.
+3. Reproduce anything suspicious.
+4. Fix the confirmed problem.
+5. Add an automated check when the behavior can be tested reliably.
+
+Some observations are better handled through design review or testing with real users.
+They do not all need a new assertion.
+
+## Understand what the test actually promised
+
+A test is a set of questions encoded as checks. If it asks whether a confirmation
+element appears, a pass answers that question under the conditions of the run.
+
+It may not ask whether the confirmation text is understandable, whether it covers another
+control, or whether a person has time to read it. Those gaps are not evidence that
+the test is useless. They show why its scope needs to be understood.
+
+Read the important assertions before watching the recording. Then use the recording
+to investigate the parts of the experience the assertions do not cover. This makes
+visual review purposeful instead of an unfocused search for anything that looks imperfect.
+
+## Pick a viewing task
+
+Choose a question for each pass through the recording. One pass might focus on feedback:
+can a person tell when the application is loading, saving, or finished? Another might
+focus on recovery after an error.
+
+Trying to judge layout, copy, timing, keyboard behavior, and data correctness all at
+once can make small but important details easy to miss.
+
+Keep notes tied to a moment and an action. "After clicking Save, the page gives no
+visible feedback until the result appears" is more useful than "The form feels slow."
+The first observation can be reproduced and discussed. The second needs more investigation
+before it can guide a change.
+
+## Distinguish application behavior from test behavior
+
+Automated scripts may click faster than a person, wait for conditions a person cannot
+see, or use direct setup steps that bypass part of the journey. A recording reflects
+those choices.
+
+If a message disappears quickly, check whether the script immediately navigated away.
+If a form seems easy to complete, check whether test setup already supplied data that
+a real user would need to enter.
+
+The recording is evidence of one run, not a neutral film of every user's experience.
+Understanding the script's actions helps avoid attributing its shortcuts or unusual
+timing to the application itself. Reproduce a suspicious moment manually when that
+will clarify the cause.
+
+## Test waiting as a real state
+
+Many interfaces are designed around before and after, while the waiting state receives
+little attention. Yet slow connections make waiting a substantial part of the experience.
+
+Use a controlled slow response to inspect that state. Does the action show that it
+is in progress? Can the user accidentally submit twice? Can they navigate away, and
+what happens to the pending operation if they do?
+
+Avoid adding arbitrary sleeps merely to make the test look realistic. Control the
+relevant response or condition so the scenario is repeatable. The point is to inspect
+the product's behavior under delay, not to slow down every test without learning anything new.
+
+## Make error review task-specific
+
+An error message should explain enough for the user to take the next step. "Something
+went wrong" may be unavoidable for an unexpected failure, but a known validation problem
+can usually be more specific.
+
+Review whether entered data survives, whether the relevant field is easy to find, and
+whether trying again is appropriate. A retry action is confusing when the user first
+needs to correct a date or obtain access.
+
+A recording can reveal whether the error appears in a place the user is likely to notice.
+Other checks should confirm that the error corresponds to the actual cause and does
+not expose internal or sensitive details. Presentation and correctness belong together.
+
+## Turn confirmed observations into acceptance rules
+
+Once a problem is reproduced, write the expected behavior in a short sentence. For
+example: "While a save request is pending, the form shows a saving state and cannot
+send another equivalent request."
+
+Then decide which parts can be checked reliably. The visible state, disabled submission,
+and number of requests may each be appropriate assertions. The clarity of the wording
+may still benefit from design review or user feedback.
+
+Do not add a screenshot snapshot for every observation by default. Choose a check that
+protects the intended behavior and fails for a useful reason when that behavior regresses.
+The test should explain the rule rather than merely preserve today's pixels.
+
+## Understand the limits of visual snapshots
+
+A screenshot comparison can catch unexpected layout changes. It can also fail because
+of dynamic content, font rendering, animation, or environment differences that do not
+represent a meaningful product problem.
+
+Control the relevant conditions and choose stable capture points. Hide or normalize
+truly irrelevant variation only when doing so does not conceal the behavior under test.
+
+When a snapshot changes, inspect the reason before accepting a new baseline. Blindly
+updating the expected image turns the check into a record of whatever happened most
+recently. A baseline should represent a reviewed expectation, not simply a way to make
+the test report green again.
+
+## Add keyboard and assistive-technology checks separately
+
+A pointer-driven video cannot establish that a person can complete the same task using
+a keyboard. Check focus order, visible focus, activation, and where focus moves after
+a dialog opens or closes.
+
+Likewise, a visually prominent success message may not be communicated appropriately
+to a screen-reader user. That needs inspection of the relevant structure and behavior
+in a suitable testing setup.
+
+These checks do not all belong in the same automated test. They belong in the overall
+verification plan for the important journey. Keeping their scope distinct makes it
+harder to mistake one attractive recording for proof that the whole experience is accessible.
+
+## Keep recordings useful and proportionate
+
+Capture the flows and failures that help diagnose real questions. An enormous archive
+of unlabeled recordings can be difficult to use and expensive to maintain.
+
+Connect each useful recording to its test, version, and outcome. Preserve enough context
+to reproduce the issue, and follow the project's handling rules for any sensitive content.
+Prefer controlled test data when it can exercise the same behavior.
+
+A short clip of a known failure with a clear description is often more useful than
+hours of footage with no explanation. The artifact should help another person understand
+the evidence without requiring them to rediscover the entire investigation.
+
+## Verify the fix at the same moment
+
+After changing the interface, rerun the scenario that exposed the problem and inspect
+the same transition. Then check the adjacent state: a disabled Save button should become
+usable again after a recoverable error, for example.
+
+Record what improved and which automated rule now protects it. If the observation
+remains subjective, explain the design decision and any user validation still needed.
+This closes the loop between seeing a problem, understanding its cause, and confirming
+that the user now receives clearer behavior at the point where confusion originally occurred.
+
+## Know what a recording cannot show
+
+A video alone cannot establish keyboard accessibility, screen-reader behavior, or
+whether the correct data was saved behind the scenes.
+
+It also shows an automated sequence of actions. Real people hesitate, make mistakes,
+and interpret words in ways the test script does not.
+
+Recordings add a useful view of the experience. Combined with explicit checks and
+hands-on use, they help explain whether a working feature is also understandable.
+
+## Technical deep dive
+
+**Plain-language bridge:** A recording shows the journey over time. Assertions check
+specific promises. A trace helps connect a visible problem to the event that caused it.
+
+### Diagram: Combine the visible symptom with execution evidence
+
+~~~text
+[recording] ------------------> what the person saw
+[assertions] -----------------> which promises were checked
+[trace + requests + state] ----> what happened underneath
+                 \              |              /
+                  v             v             v
+                    [one reproducible observation]
+                                  |
+                                  v
+                    [acceptance rule + focused test]
+~~~
+
+The three sources support different questions. Correlating them helps explain a
+visible failure without treating a screenshot or a passing assertion as the whole story.
+
+
+### Distinguish actionability from business readiness
+
+A button may be clickable before the application has loaded the data required for the
+next decision. Browser automation can wait for actionability without knowing the business
+meaning of the page.
+
+Playwright's click checks include visibility, stability, event reception, and enabled
+state. Those checks do not assert that the correct account or final search results
+are loaded. See [Playwright actionability](https://playwright.dev/docs/actionability).
+
+Wait on a meaningful application condition, such as the correct record identity and
+a completed loading state. Avoid replacing this with an arbitrary delay: a fixed sleep
+can be both unnecessarily slow and too short under a different environment.
+
+### Correlate visual time with execution evidence
+
+For a recorded issue, capture the scenario, build, viewport, fixture or live mode, and
+the time interval where the problem appears. Pair it with relevant requests, application
+events, and DOM state.
+
+A Playwright trace can expose actions, snapshots, logs, and network information for
+inspection. This makes it useful for distinguishing a slow request from a layout change
+or a test action performed on an unexpected page.
+See [Playwright Trace Viewer](https://playwright.dev/docs/trace-viewer).
+
+The trace remains a diagnostic record, not automatic proof of root cause. Its contents
+also require appropriate handling because captured state can include private data.
+
+### Turn the observation into an invariant
+
+Suppose a recording shows entered filters disappearing during a retry. A useful invariant
+is "retry preserves the user's current filter values until a successful intentional
+replacement." That is more precise than "the retry screen looks wrong."
+
+Test the transition by controlling the request boundary: hold the response, verify
+pending behavior, reject it, verify preserved values, then complete a retry. This
+isolates the state changes that a fast happy-path run may never make visible.
+
+Pair visual assertions with semantic checks. A screenshot may show text but cannot
+prove the accessible name, keyboard path, or persisted value is correct.
+
+### Choose evidence retention deliberately
+
+Keep enough successful examples to compare representative behavior and enough failed
+examples to diagnose regressions. Retaining only final retry passes can hide instability;
+retaining every full recording indefinitely can create cost and privacy burdens.
+
+Record retries and first-attempt failures separately. A journey that passes after three
+retries is different evidence from a consistently successful first attempt. The purpose
+of the recording is to reveal the user's experience, including the moments an automatic
+retry might otherwise conceal.

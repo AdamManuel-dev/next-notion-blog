@@ -25,6 +25,12 @@ import 'styles/prism-theme.css'
 import 'styles/whimsy.css'
 import 'styles/theme.css'
 
+// isolated Details.so-inspired interactions (must win over theme.css)
+import 'styles/details.css'
+
+// scoped chrome for the static local reader (must win over details.css)
+import 'styles/local-reader.css'
+
 // here we're bringing in any languages we want to support for
 // syntax highlighting via Notion's Code block
 import 'prismjs'

@@ -1,0 +1,454 @@
+{
+  "rootId": "a044322d56d1482da8b521736d56284c",
+  "extractedAt": "2026-10-30T19:51:26.522Z",
+  "pages": [
+    {
+      "id": "a044322d56d1482da8b521736d56284c",
+      "slug": "adam-manuel-s-dev-blog",
+      "title": "Adam Manuel’s “Dev Blog”"
+    },
+    {
+      "id": "23910a0af920815e9d20f04397d7b13c",
+      "slug": "my-favorite-express-architecture",
+      "title": "My Favorite Express Architecture"
+    },
+    {
+      "id": "22310a0af92080d5bcc2c1c966d12fdc",
+      "slug": "guide-to-building-autonomous-ai-agents",
+      "title": "Guide to Building Autonomous AI Agents"
+    },
+    {
+      "id": "19710a0af920805eb11cfe48e3d2a143",
+      "slug": "let-chatgpt-be-your-research-asst",
+      "title": "Let ChatGPT Be Your Research Asst."
+    },
+    {
+      "id": "19710a0af920808390b4ef01c8051a8b",
+      "slug": "addressing-data-sparsity-and-cold-start-in-deep-learning-recommenders",
+      "title": "Addressing Data Sparsity and Cold Start in Deep Learning Recommenders"
+    },
+    {
+      "id": "19710a0af9208034a6ebf301891c4b61",
+      "slug": "recommendation-engines-academic-paper-sources",
+      "title": "Recommendation Engines Academic  Paper Sources"
+    },
+    {
+      "id": "19510a0af920809da8ecefcdc5c505cd",
+      "slug": "refining-testing-strategies-and-pr-workflows-for-scalable-development",
+      "title": "Refining Testing Strategies and PR Workflows for Scalable Development"
+    },
+    {
+      "id": "cb38d3b3b1a34e4693deefb06f0b78f5",
+      "slug": "speed-up-your-job-hunt-with-this-linkedin-scraper-and-your-system-notifications",
+      "title": "Speed Up Your Job Hunt With This LinkedIn Scraper and Your System Notifications"
+    },
+    {
+      "id": "28b565ae7ac34e3e892607ee3bb94818",
+      "slug": "commonjs-typescript-migration-tips",
+      "title": "CommonJS →  Typescript Migration Tips"
+    },
+    {
+      "id": "b47979352a204bf3b8c70925ec5082f9",
+      "slug": "project-manag-research-topics",
+      "title": "Project Manag. Research Topics"
+    },
+    {
+      "id": "2194b1be9ae14fd1b378cdbb8a9e1af4",
+      "slug": "laws-of-ux",
+      "title": "Laws of UX"
+    },
+    {
+      "id": "8ffc7a8d4248416a96d24e779d8a2dc3",
+      "slug": "creating-svg-react-component-with-a-single-terminal-command",
+      "title": "Creating SVG React Component with a single terminal command"
+    },
+    {
+      "id": "9489cdd63f794fcda076c3f80d6e8be9",
+      "slug": "package-json-help-cli",
+      "title": "package.json “—help” CLI"
+    },
+    {
+      "id": "1bb23a48888945f5befed3ebbc173e0b",
+      "slug": "mongodb-optimization",
+      "title": "MongoDB Optimization"
+    },
+    {
+      "id": "5411ae772ed1491d854991b4b464d33b",
+      "slug": "12-factor-application",
+      "title": "12 Factor Application"
+    },
+    {
+      "id": "aa2f3a375ce644e3893a51e608f459cb",
+      "slug": "domain-oriented-microservice-architecture",
+      "title": "Domain-Oriented Microservice Architecture "
+    },
+    {
+      "id": "d1087b507c7c40ae90ab51c7a65fa7b3",
+      "slug": "foundational-distributed-systems-papers",
+      "title": "Foundational Distributed Systems Papers"
+    },
+    {
+      "id": "534a3259a8f14094af182384ce380f15",
+      "slug": "additional-distributed-systems-papers",
+      "title": "Additional Distributed Systems Papers"
+    },
+    {
+      "id": "4edd62c571fb4b939946d7725fb25217",
+      "slug": "open-information-extraction-and-open-relation-extraction-papers",
+      "title": "Open Information Extraction and Open Relation Extraction Papers"
+    },
+    {
+      "id": "66d3b74cedcb4c5482fdf41cf4bd6211",
+      "slug": "knowledge-graph-tools",
+      "title": "Knowledge Graph Tools"
+    },
+    {
+      "id": "404f999ea16842dda21b08373b017ed3",
+      "slug": "optimal-fund-raising-burning-rates",
+      "title": "Optimal Fund Raising & Burning Rates"
+    },
+    {
+      "id": "56ce1e358bf243b584ecba6282720f95",
+      "slug": "optimizing-performance",
+      "title": "Optimizing Performance"
+    },
+    {
+      "id": "ab73f12eae0e41d09a2f7e13a79d53a6",
+      "slug": "building-engineering-organizations",
+      "title": "Building Engineering Organizations"
+    },
+    {
+      "id": "619ef6dfea0249a7abc78630584b9c64",
+      "slug": "big-data",
+      "title": "Big Data"
+    },
+    {
+      "id": "3e95c7631ba944c8a666e08abe735766",
+      "slug": "distributed-machine-learning",
+      "title": "Distributed Machine Learning"
+    },
+    {
+      "id": "807b3b4e46dd4ad7b345e3a01e39f4c0",
+      "slug": "distributed-locking",
+      "title": "Distributed Locking"
+    },
+    {
+      "id": "b755e59712db40f8ae13cde78781a6ff",
+      "slug": "stabilizing-systems",
+      "title": "Stabilizing Systems"
+    },
+    {
+      "id": "30510a0af92080c8acb0cd5968a8cc2f",
+      "slug": "help-center",
+      "title": "Help Center"
+    },
+    {
+      "id": "23910a0af92081dcb9a2f6480f55a33d",
+      "slug": "my-favorite-express-architecture-setup-guide",
+      "title": "My Favorite Express Architecture Setup Guide"
+    },
+    {
+      "id": "f7cea03cb6314c4ea7e303999b2c3489",
+      "slug": "mongodb-official-documentation",
+      "title": "MongoDB Official Documentation"
+    },
+    {
+      "id": "ccfd837bc3fe4ecbb9c02fcc58fdaa5e",
+      "slug": "schema-design",
+      "title": "Schema Design"
+    },
+    {
+      "id": "853e4abcce7944bcb99748fd9d0368ea",
+      "slug": "mongodb-indexes",
+      "title": "MongoDB Indexes"
+    },
+    {
+      "id": "7318293666354008954c9b23bad0d183",
+      "slug": "choosing-a-shard-key-for-mongodb",
+      "title": "Choosing a shard key for MongoDB"
+    },
+    {
+      "id": "5cefc17e42e747ad974602a8a978610e",
+      "slug": "optimize-for-write-performance-with-cosmos-db-using-the-mongodb-api",
+      "title": "Optimize for write performance with Cosmos DB using the MongoDB API"
+    },
+    {
+      "id": "e6fe1e00d35a44d08b2c971308d55a4f",
+      "slug": "read-concern-write-concern-read-preference-what-does-it-mean",
+      "title": "Read Concern - Write Concern - Read Preference - What does it mean?"
+    },
+    {
+      "id": "ac388905d9cb480c99b7b0e1e588bc07",
+      "slug": "challenges-and-solutions-for-distributed-data-management",
+      "title": "Challenges and solutions for distributed data management"
+    },
+    {
+      "id": "e32353ed82444a5cbffc0cb0aea02985",
+      "slug": "domain-driven-design-models",
+      "title": "Domain Driven Design Models"
+    },
+    {
+      "id": "97a7cff0613b4651a53a2c126850b755",
+      "slug": "identifying-domain-model-boundaries-for-each-microservice",
+      "title": "Identifying domain-model boundaries for each microservice"
+    },
+    {
+      "id": "6930ed20a802492fad69f03b7fe5f345",
+      "slug": "making-crdts-byzantine-fault-tolerant",
+      "title": "Making CRDTs Byzantine Fault Tolerant"
+    },
+    {
+      "id": "30510a0af920803fae11de2407e638ad",
+      "slug": "more-details-sage-agent",
+      "title": "More Details Sage Agent"
+    },
+    {
+      "id": "30510a0af9208012abdef6009c47d0c0",
+      "slug": "more-details-atlas-agent",
+      "title": "More Details ATLAS Agent"
+    },
+    {
+      "id": "30510a0af920801386dadde63194c65f",
+      "slug": "more-details-aria-agent",
+      "title": "More Details Aria Agent"
+    },
+    {
+      "id": "30510a0af9208054a245fc6f75d58bb8",
+      "slug": "more-details-zephyr-agent",
+      "title": "More Details Zephyr Agent"
+    },
+    {
+      "id": "30510a0af9208040b29adfd07221374e",
+      "slug": "more-details-pace-agent",
+      "title": "More Details Pace Agent"
+    },
+    {
+      "id": "30510a0af920803c9a7cf54a74197f69",
+      "slug": "more-details-kulshan-agent",
+      "title": "More Details Kulshan Agent"
+    },
+    {
+      "id": "12ee32a0976b44ad873a96476e2bc680",
+      "slug": "best-practices",
+      "title": "Best Practices"
+    },
+    {
+      "id": "e088dfc08186405ca0c24762b84c46f5",
+      "slug": "full-courses-from-atlas",
+      "title": "Full Courses from Atlas"
+    },
+    {
+      "id": "c6401efd6c1846c1b48e7dd247463a6e",
+      "slug": "schema-patterns",
+      "title": "Schema Patterns"
+    },
+    {
+      "id": "12d5596acde94df5856646290b526e24",
+      "slug": "transactions-background",
+      "title": "Transactions Background"
+    },
+    {
+      "id": "27860b34d548476d9319a215fd67177d",
+      "slug": "videos-tutorials",
+      "title": "Videos Tutorials"
+    },
+    {
+      "id": "8e70680dd79a46aab88ec925d311fcca",
+      "slug": "big-data-pipeline",
+      "title": "Big Data Pipeline"
+    },
+    {
+      "id": "27e8e689fbe8401cbd9569bca772fbdc",
+      "slug": "sharding-details",
+      "title": "Sharding Details"
+    },
+    {
+      "id": "167c4358fced92e2c103a97acc7b8e1c",
+      "slug": "separate-jobs-shared-lock",
+      "title": "I Split the Background Jobs. They Still Waited on Each Other.",
+      "source": "blog-draft"
+    },
+    {
+      "id": "a5f65835e1ce777c0e1e86182e6b94bb",
+      "slug": "refactor-passed-checks-changed-the-product",
+      "title": "The Refactor Passed Its Checks. The Product Still Changed.",
+      "source": "blog-draft"
+    },
+    {
+      "id": "f94dc2f0b0f649960a696a25ef129eed",
+      "slug": "reproduce-the-bug-before-proving-the-fix",
+      "title": "If You Cannot Reproduce the Bug, You Cannot Prove the Fix",
+      "source": "blog-draft"
+    },
+    {
+      "id": "1c144a5b94e5a1a20a55b08d6b4bf92f",
+      "slug": "permissions-belong-at-data-boundary",
+      "title": "Hiding a Button Does Not Protect the Data",
+      "source": "blog-draft"
+    },
+    {
+      "id": "d49d07b9db74d3ed06bd222788fc2581",
+      "slug": "success-rate-needs-a-definition",
+      "title": "What Does Your Success Rate Actually Count?",
+      "source": "blog-draft"
+    },
+    {
+      "id": "f455a4bfde82bf59e03050199d1c9347",
+      "slug": "business-rules-outside-react",
+      "title": "Business Rules Should Survive a UI Rewrite",
+      "source": "blog-draft"
+    },
+    {
+      "id": "5c47c2e17e8fdf4536dd6ca26f8caed1",
+      "slug": "scope-a-complete-small-product",
+      "title": "Build a Complete Small Product Before an Incomplete Big One",
+      "source": "blog-draft"
+    },
+    {
+      "id": "c9a9cf898d5d17d93eca5fab63a7c95b",
+      "slug": "unknown-is-not-false",
+      "title": "Unknown Is Not False: Designing Honest AI Results",
+      "source": "blog-draft"
+    },
+    {
+      "id": "a00cd624975bceed4b4aec9f5cd80774",
+      "slug": "database-backup-is-not-a-restore-plan",
+      "title": "A Database Backup Is Not Yet a Recovery Plan",
+      "source": "blog-draft"
+    },
+    {
+      "id": "920cd2a739c152c8d51d736970e32529",
+      "slug": "adding-availability-can-remove-a-time-slot",
+      "title": "Adding More Availability Can Make a Time Slot Disappear",
+      "source": "blog-draft"
+    },
+    {
+      "id": "698d98b33862168673076ced7c1c5b93",
+      "slug": "when-ai-code-and-tests-share-a-mistake",
+      "title": "The Same AI Can Write the Code, the Tests, and the Same Mistake Three Times",
+      "source": "blog-draft"
+    },
+    {
+      "id": "2d09fb3baba068fb7140963a5f1e177c",
+      "slug": "hourly-notifications-need-a-time-identity",
+      "title": "An Hourly Digest Needs More Than an Hourly Timer",
+      "source": "blog-draft"
+    },
+    {
+      "id": "09a1fe75ae79e66098930133ca53dd29",
+      "slug": "uploaded-file-was-missing",
+      "title": "The File Said Uploaded. The File Was Missing.",
+      "source": "blog-draft"
+    },
+    {
+      "id": "af34b4d69d4fe6bc348ead9e63a779b4",
+      "slug": "cache-remembers-an-old-question",
+      "title": "Your Cache May Be Answering Yesterday's Question",
+      "source": "blog-draft"
+    },
+    {
+      "id": "a820a7ae1e66f7c2830ffcd05b56a1a8",
+      "slug": "incident-cause-can-change",
+      "title": "Stop Fixing Yesterday's Incident",
+      "source": "blog-draft"
+    },
+    {
+      "id": "48b07d4ac3eb7e062f94530a34ad84fb",
+      "slug": "measure-engineering-improvement",
+      "title": "Measure the Friction You Want to Remove",
+      "source": "blog-draft"
+    },
+    {
+      "id": "41833f02393955a792dc5064582c8849",
+      "slug": "product-state-records-what-user-did",
+      "title": "A Status Label Is a Claim About What Happened",
+      "source": "blog-draft"
+    },
+    {
+      "id": "eb4fdfc4cfed6e61a19a5dc441091098",
+      "slug": "parallel-work-needs-ownership",
+      "title": "Parallel Engineering Depends on Clear Ownership",
+      "source": "blog-draft"
+    },
+    {
+      "id": "76f8aece1b7d4731445a9d9132d14b1e",
+      "slug": "reduce-cloud-cost-without-guessing",
+      "title": "How I Would Cut a Cloud Bill Without Guessing",
+      "source": "blog-draft"
+    },
+    {
+      "id": "c2811c62c4eb1020dd010f3e6577b63c",
+      "slug": "demo-proves-less-than-you-think",
+      "title": "A Great Demo Still Needs an Evidence Label",
+      "source": "blog-draft"
+    },
+    {
+      "id": "a981f90e15f42a268e826ceccfb7e085",
+      "slug": "refactoring-react-around-features",
+      "title": "Refactoring React Around Features: Where Should Shared Code Live?",
+      "source": "blog-draft"
+    },
+    {
+      "id": "66f74da058d4c20ac939df92226b5e98",
+      "slug": "one-queue-one-source-of-truth",
+      "title": "When Two Queues Disagree About the Same Job",
+      "source": "blog-draft"
+    },
+    {
+      "id": "d6046f2a9ddd92a6e35fc39888d968c3",
+      "slug": "testing-an-llm-integration-on-a-small-budget",
+      "title": "Testing an LLM Integration on a $10 Budget",
+      "source": "blog-draft"
+    },
+    {
+      "id": "d5c9791098e3a224bd605a58c43ccb1d",
+      "slug": "what-e2e-screen-recordings-reveal",
+      "title": "What a Screen Recording Reveals That a Passing E2E Test Doesn't",
+      "source": "blog-draft"
+    },
+    {
+      "id": "a60f1b4ef89bd34e0cced94a48c1af35",
+      "slug": "billions-of-percent-complete",
+      "title": "How Can a Job Be Billions of Percent Complete?",
+      "source": "blog-draft"
+    },
+    {
+      "id": "53f8f6f830eca03d582b42b309776831",
+      "slug": "handoff-without-a-meeting",
+      "title": "Could Another Developer Take Over Without a Meeting?",
+      "source": "blog-draft"
+    },
+    {
+      "id": "58abfbfd79a014960198b37e75bde075",
+      "slug": "table-looks-right-reads-wrong",
+      "title": "A Table Can Look Right and Read Wrong",
+      "source": "blog-draft"
+    },
+    {
+      "id": "64a1f40ca347cbceb44c8e0d029fe4bd",
+      "slug": "using-an-llm-to-understand-a-codebase",
+      "title": "What I Want an LLM to Tell Me About an Unfamiliar Codebase",
+      "source": "blog-draft"
+    },
+    {
+      "id": "3135cd7fdb31d6ed926964b82147b144",
+      "slug": "cli-for-humans-and-agents",
+      "title": "Designing a Command-Line Tool an AI Can Actually Use",
+      "source": "blog-draft"
+    },
+    {
+      "id": "fdac43131ae8e2d492581bd3e0128485",
+      "slug": "choosing-a-first-problem-as-engineer-three",
+      "title": "Joining as Engineer Number Three: Choosing the First Problem to Own",
+      "source": "blog-draft"
+    }
+  ],
+  "failures": [
+    {
+      "id": "4801d99fd24e4a75b053c2eac9bbb4ce",
+      "url": "https://adams-blog.notion.site/4801d99fd24e4a75b053c2eac9bbb4ce",
+      "error": "locator.waitFor: Timeout 45000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.notion-page-content') to be visible\u001b[22m\n"
+    }
+  ],
+  "assetFailures": []
+}

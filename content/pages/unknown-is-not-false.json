@@ -1,0 +1,17 @@
+{
+  "id": "c9a9cf898d5d17d93eca5fab63a7c95b",
+  "slug": "unknown-is-not-false",
+  "title": "Unknown Is Not False: Designing Honest AI Results",
+  "source": "blog-draft",
+  "description": "Preserve missing evidence instead of turning it into a confident negative answer.",
+  "tags": [
+    "ai",
+    "product-design",
+    "evaluation"
+  ],
+  "status": "published",
+  "sourceFile": "blog-drafts/unknown-is-not-false.md",
+  "sourceUrl": null,
+  "cover": null,
+  "warnings": []
+}

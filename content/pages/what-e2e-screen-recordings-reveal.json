@@ -1,0 +1,17 @@
+{
+  "id": "d5c9791098e3a224bd605a58c43ccb1d",
+  "slug": "what-e2e-screen-recordings-reveal",
+  "title": "What a Screen Recording Reveals That a Passing E2E Test Doesn't",
+  "source": "blog-draft",
+  "description": "How watching a user flow can reveal questions your automated checks never asked.",
+  "tags": [
+    "testing",
+    "user-experience",
+    "automation"
+  ],
+  "status": "published",
+  "sourceFile": "blog-drafts/what-e2e-screen-recordings-reveal.md",
+  "sourceUrl": null,
+  "cover": null,
+  "warnings": []
+}

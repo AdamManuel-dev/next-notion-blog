@@ -1,6 +1,7 @@
 .snapshots/
 build/
 dist/
+out/
 node_modules/
 .next/
 .vercel/

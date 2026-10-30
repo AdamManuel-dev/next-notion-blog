@@ -1,0 +1,17 @@
+{
+  "id": "f94dc2f0b0f649960a696a25ef129eed",
+  "slug": "reproduce-the-bug-before-proving-the-fix",
+  "title": "If You Cannot Reproduce the Bug, You Cannot Prove the Fix",
+  "source": "blog-draft",
+  "description": "Why an AI behaving correctly during a test can still leave the main question unanswered.",
+  "tags": [
+    "ai",
+    "evaluation",
+    "debugging"
+  ],
+  "status": "published",
+  "sourceFile": "blog-drafts/reproduce-the-bug-before-proving-the-fix.md",
+  "sourceUrl": null,
+  "cover": null,
+  "warnings": []
+}

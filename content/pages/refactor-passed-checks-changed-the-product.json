@@ -1,0 +1,17 @@
+{
+  "id": "a5f65835e1ce777c0e1e86182e6b94bb",
+  "slug": "refactor-passed-checks-changed-the-product",
+  "title": "The Refactor Passed Its Checks. The Product Still Changed.",
+  "source": "blog-draft",
+  "description": "Why preserving behavior includes the interface people already know.",
+  "tags": [
+    "leadership",
+    "refactoring",
+    "quality"
+  ],
+  "status": "published",
+  "sourceFile": "blog-drafts/refactor-passed-checks-changed-the-product.md",
+  "sourceUrl": null,
+  "cover": null,
+  "warnings": []
+}

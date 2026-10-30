@@ -1,0 +1,17 @@
+{
+  "id": "a981f90e15f42a268e826ceccfb7e085",
+  "slug": "refactoring-react-around-features",
+  "title": "Refactoring React Around Features: Where Should Shared Code Live?",
+  "source": "blog-draft",
+  "description": "A simple way to organize a growing app without creating a junk drawer.",
+  "tags": [
+    "react",
+    "architecture",
+    "refactoring"
+  ],
+  "status": "published",
+  "sourceFile": "blog-drafts/refactoring-react-around-features.md",
+  "sourceUrl": null,
+  "cover": null,
+  "warnings": []
+}

@@ -1,0 +1,17 @@
+{
+  "id": "920cd2a739c152c8d51d736970e32529",
+  "slug": "adding-availability-can-remove-a-time-slot",
+  "title": "Adding More Availability Can Make a Time Slot Disappear",
+  "source": "blog-draft",
+  "description": "How a scheduling rule can produce a surprising result.",
+  "tags": [
+    "scheduling",
+    "algorithms",
+    "software-design"
+  ],
+  "status": "published",
+  "sourceFile": "blog-drafts/adding-availability-can-remove-a-time-slot.md",
+  "sourceUrl": null,
+  "cover": null,
+  "warnings": []
+}

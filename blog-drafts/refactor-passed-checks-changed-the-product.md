@@ -1,0 +1,241 @@
+---
+title: "The Refactor Passed Its Checks. The Product Still Changed."
+description: "Why preserving behavior includes the interface people already know."
+status: draft
+tags: [leadership, refactoring, quality]
+---
+
+# The Refactor Passed Its Checks. The Product Still Changed.
+
+**Reading paths:** Start below for the plain-language explanation, or jump to the
+[technical deep dive](#technical-deep-dive) for implementation details and verification.
+
+A refactor is supposed to improve the structure of code while preserving the behavior
+people depend on. That promise includes more than whether the application compiles.
+
+In a long frontend migration conversation, the target was clear: reorganize the application
+around features, change parts of its state and component foundations, and preserve its
+existing design and behavior. During the migration, buttons lost styling, fields changed
+size, and modal presentation drifted from the baseline.
+
+The historical session ended with major regressions reported fixed, but smaller differences
+still visible. Full visual parity was not confirmed, and removing the old styles remained
+paused. That unfinished edge is the most useful part of the story.
+
+## The customer did not request a new interface
+
+An internal improvement can change the experience even when the engineer did not intend
+to redesign anything. A different component may supply different spacing, focus behavior,
+or default dimensions. Import order can change which style wins.
+
+To a customer, an unexpectedly larger form or unfamiliar dialog is a product change.
+They cannot see that the folder structure is cleaner, and that internal improvement
+does not compensate for a control that is now harder to use.
+
+This creates two simultaneous requirements: improve maintainability and preserve the
+agreed experience. Treating the second as optional visual polish quietly changes the scope
+of the work. The team should decide explicitly whether redesign is included.
+
+## Establish a baseline before moving components
+
+A baseline is an inspectable example of the behavior you intend to preserve. For an
+interface, it can include representative screenshots, a short recording of an important
+journey, and notes about interactions that images cannot show.
+
+Choose meaningful states: an empty form, populated form, validation error, loading state,
+and open dialog. Include the screen sizes the product actually supports.
+
+Record the version that produced the baseline and use controlled example data. Otherwise,
+differences in content or environment can make a comparison confusing.
+
+The baseline is not a declaration that every existing detail is perfect. It is the
+reference for deciding which differences are intended and which are regressions introduced
+by the migration.
+
+## Separate the different meanings of passing
+
+A build check says the application can be assembled. A type check catches certain
+inconsistencies in how code uses data. A behavior test verifies its specified assertions.
+A visual comparison checks a different set of expectations.
+
+None of those checks is a substitute for all the others.
+
+| Check | Example question |
+| --- | --- |
+| Build | Can this version be packaged? |
+| Behavior | Does saving preserve the entered value? |
+| Visual comparison | Does the dialog retain its intended size and placement? |
+| Hands-on review | Can a person understand and complete the interaction? |
+
+Use the checks to support their actual claims. A large passing test count should not
+be presented as proof that every part of the product stayed the same.
+
+## Migrate one representative slice first
+
+A pilot slice should exercise the hard parts of the intended pattern. A static label
+may be too easy to teach much. A form with loading, validation, a dialog, and a save
+action is often a more informative example.
+
+Move that slice through the new structure and compare it with the baseline. Check
+the build path and the actual browser behavior. If the application uses a particular
+rendering or export mode, verify the new components in that mode too.
+
+Only after the pattern works should similar migrations spread. This turns the pilot
+into evidence that the approach fits the application, rather than a small demonstration
+whose unresolved problems will be copied into every feature.
+
+## Parallel work needs stable shared decisions
+
+Several people or agents can migrate separate features efficiently once the common
+rules are established. If they start while those rules are changing, they may each
+solve styling, state, and interaction behavior differently.
+
+Agree on the shared components, theme behavior, public interfaces, and comparison method.
+Identify files that several migrations would otherwise edit at once and give them
+clear ownership.
+
+Parallelism is useful when the work is independent. It becomes expensive when every
+branch needs to reinterpret the same unsettled foundation. The cost appears later as
+integration fixes and inconsistent behavior that none of the isolated changes reveals.
+
+The unit of progress should be a verified feature slice, not simply the number of files moved.
+
+## A small heading exposed a wider dependency
+
+In the reviewed session, a property heading became smaller than the reference. The
+investigation reported that a shared import changed the order of two equally specific
+style rules. The later rule won, producing the visible difference.
+
+That is a useful example because the local symptom was tiny while the cause crossed
+module boundaries. A feature could look correct in isolation and change when imported
+through the application's normal path.
+
+The lesson is to verify the integrated application, including its real import and rendering
+path. A component preview is valuable, but it may not reproduce the conditions that
+determine the final interface.
+
+## Retire old styles after proving their replacement
+
+Old styles can look redundant once new components exist. Some may still supply important
+behavior in a state nobody has checked yet.
+
+Remove them in bounded groups after verifying the related features. Compare again after
+removal so the check measures the final configuration rather than a hybrid in which
+old styles were silently keeping the new version correct.
+
+If parity is still uncertain, keeping retirement paused can be the right decision.
+That should come with a specific remaining checklist, not an indefinite promise to
+clean up later.
+
+The historical session did this explicitly: major fixes were reported, smaller differences
+remained, and full parity was not claimed. That is a more useful status than calling
+the migration complete because most of the code had moved.
+
+## Review differences by impact
+
+Not every pixel difference has the same consequence. A dialog covering the whole screen
+unexpectedly may block context or navigation. A slight spacing difference may be acceptable
+if the design owner agrees.
+
+Classify the differences rather than either ignoring all of them or treating all as blockers.
+Ask whether the change affects task completion, readability, interaction, accessibility,
+or an explicitly required design rule.
+
+Keep approved changes separate from accidental drift. If the team chooses a new spacing
+rule, update the baseline deliberately and explain why. Updating images simply to
+make comparisons pass destroys the baseline's value as evidence.
+
+## Report the migration as two outcomes
+
+A useful update can say which architectural changes are complete and which product
+checks remain. For example, the feature may now use the shared state pattern while
+the mobile error layout still needs correction.
+
+That separation helps leadership decide whether to expand the migration, pause it,
+or release a bounded slice. It also prevents internal progress from hiding user-facing risk.
+
+The important engineering judgment is deciding what evidence is enough for the next
+step. A refactor earns its value when it makes the system easier to change while preserving
+the behavior the team promised to keep. The clean code structure and the usable product
+must arrive together.
+
+## Technical deep dive
+
+**Plain-language bridge:** A structural rewrite can preserve function outputs while
+changing the visual system that gives those outputs meaning to a person.
+
+### Diagram: Check structure and product behavior separately
+
+~~~text
+[known baseline] ----> [same data + viewport + state]
+                                   |
+                                   v
+                              [new build]
+                                   |
+                +------------------+------------------+
+                v                  v                  v
+          [build checks]     [behavior checks]   [visual review]
+                |                  |                  |
+                +------------------+------------------+
+                                   |
+                                   v
+                       [explain every difference]
+                                   |
+                                   v
+                        [accept or correct change]
+~~~
+
+A successful build covers only one branch. Baseline updates follow an explained
+product decision; they should not automatically accept every new screenshot.
+
+
+### Define equivalence by observable behavior
+
+For each representative page state, specify the observable contract: visible controls,
+entered values, focus behavior, keyboard actions, responsive layout, and important
+dimensions. "No behavior change" needs a testable scope; exact equivalence for every
+possible interaction is rarely something a finite test suite can prove.
+
+Capture a baseline against a known revision with fixed fixture data and a recorded
+environment. Keep the viewport, device scale, fonts, and relevant browser version stable.
+Playwright documents that screenshot results depend on the execution environment;
+comparisons are most meaningful when that environment is controlled.
+See [Playwright visual comparisons](https://playwright.dev/docs/test-snapshots).
+
+### Inspect the cascade before adding an override
+
+A style regression can arise from a changed dependency order. If two declarations
+have otherwise equal cascade priority, the later applicable declaration can win.
+A re-export that changes stylesheet evaluation order may therefore change the UI
+without changing the component's markup.
+
+Inspect the computed value, the winning declaration, and the competing declarations.
+Specificity is only one part of the cascade: origin, importance, and layers can also
+matter. The [CSS cascade specification](https://www.w3.org/TR/css-cascade-5/)
+defines these ordering rules.
+
+An extra local override may hide the symptom while increasing coupling. Prefer locating
+the intended style owner and making the priority deliberate. Verify the shared component's
+other consumers before removing a legacy rule.
+
+### Build a risk-based comparison matrix
+
+An illustrative matrix includes a normal page, long content, empty results, a validation
+error, an open modal, and a narrow viewport. For each state, pair a visual comparison
+with semantic assertions such as preserved input, reachable close control, and correctly
+restored focus.
+
+A pixel threshold is a noise tolerance, not a permission to change product design.
+Mask truly variable content narrowly. Masking an entire panel can erase the exact
+regression the comparison was supposed to catch.
+
+### Classify and resolve differences
+
+Classify a difference as intended, environmental, or unintended before updating a
+baseline. Require a product reason for intended changes. Regenerating reference images
+because the new build differs simply teaches the test to accept the new behavior.
+
+After a shared correction, rerun the affected state matrix and the integrated journey.
+Report structural completion separately from observed parity. The historical migration
+had meaningful corrections and remaining details; the proposed matrix is a way to
+tighten that evidence, not a claim that complete parity was established.

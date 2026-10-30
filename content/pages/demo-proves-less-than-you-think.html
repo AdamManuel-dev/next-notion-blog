@@ -1,0 +1,194 @@
+<p><strong>Reading paths:</strong> Start below for the plain-language explanation, or jump to the
+<a href="#technical-deep-dive">technical deep dive</a> for implementation details and verification.</p>
+<p>A polished demonstration can make a product feel ready. The screens respond, the story
+makes sense, and each step leads naturally to the next. That is valuable evidence about
+the experience being shown. It is not automatically evidence about every system behind it.</p>
+<p>One of the largest conversations in my history concerned an apartment platform's
+end-to-end testing and recorded demonstrations. The work produced several chaptered
+walkthroughs and reported passing browser and unit checks. The final demonstrations
+also used demo data and guided fallback behavior.</p>
+<p>Those facts belong together. A useful account should preserve both the substantial
+interface work and the limits of what the recordings establish about live integrations.</p>
+<h2 id="start-by-naming-the-claim">Start by naming the claim</h2>
+<p>Before showing a demonstration, decide what you want someone to learn from it.
+"A renter can understand the search results" is a different claim from "the live model
+reliably interprets arbitrary housing requests."</p>
+<p>The first can be explored with representative sample results. The second requires
+testing real model behavior against a meaningful set of inputs and expectations.</p>
+<p>Likewise, a property-management screen can demonstrate a useful editing experience
+without proving that imports from every external source are correct. A responsive
+mobile layout can be demonstrated without proving performance under heavy traffic.</p>
+<p>The claim determines what evidence is needed. Without it, viewers may reasonably infer
+capabilities that the demonstration was never designed to test.</p>
+<h2 id="demo-data-can-be-a-useful-instrument">Demo data can be a useful instrument</h2>
+<p>Controlled data makes a demonstration repeatable. It lets a team show an empty state,
+a long property description, an unusual budget, or a full results list without waiting
+for the outside world to produce those conditions.</p>
+<p>That control is particularly useful for reviewing layout and interaction. A consistent
+example makes it easier to compare two versions and notice whether the experience
+actually improved.</p>
+<p>The limitation is equally clear: the demonstration does not prove that the real data
+source supplies the same shape, quality, or timing. Sample data can accidentally omit
+the missing fields and inconsistencies that make integration work difficult.</p>
+<p>Good demo data therefore includes awkward cases as well as attractive ones. Its purpose
+is to make important behavior inspectable, not to make every path look effortless.</p>
+<h2 id="a-fallback-changes-what-is-being-demonstrated">A fallback changes what is being demonstrated</h2>
+<p>A fallback supplies an alternate response when the main path is unavailable or unsuitable.
+It can be good product design. For example, a search interface might preserve useful
+manual filters when an AI interpretation fails.</p>
+<p>But a fallback can also hide which path produced the result. If a viewer believes a
+live model generated an answer that actually came from a prepared example, they may
+leave with the wrong understanding of the product's readiness.</p>
+<p>Labeling the path solves much of this problem. The explanation can be brief: "This
+recording uses a prepared result to review the interface; live interpretation is assessed
+separately." The label supports trust without burying the demonstration in caveats.</p>
+<p>The interface may need its own distinction too, especially if people would act
+differently depending on whether the data is current, simulated, or incomplete.</p>
+<h2 id="use-an-evidence-ladder">Use an evidence ladder</h2>
+<p>Different checks answer different questions. They become more useful when described
+as layers rather than collected into one impressive total.</p>
+<table>
+<thead>
+<tr>
+<th>Evidence</th>
+<th>What it can help establish</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Static sample screen</td>
+<td>Visual hierarchy and content presentation</td>
+</tr>
+<tr>
+<td>Interactive demo with prepared data</td>
+<td>Navigation and supported interaction behavior</td>
+</tr>
+<tr>
+<td>Automated browser test</td>
+<td>Specific assertions along a defined browser path</td>
+</tr>
+<tr>
+<td>Live integration check</td>
+<td>Behavior at a real external boundary for tested cases</td>
+</tr>
+<tr>
+<td>Representative evaluation</td>
+<td>Quality across a chosen range of realistic examples</td>
+</tr>
+<tr>
+<td>Production observation</td>
+<td>Behavior under actual use during the observed period</td>
+</tr>
+</tbody></table>
+<p>No row makes the earlier rows worthless. Each contributes something different. The
+mistake is using a lower layer as proof of a claim that requires a different kind of
+observation.</p>
+<p>A browser check can pass while displaying a poor recommendation. A convincing live
+example can succeed while many other realistic inputs remain untested.</p>
+<h2 id="count-assertions-but-explain-their-coverage">Count assertions, but explain their coverage</h2>
+<p>Large test counts can signal serious effort. They are difficult to interpret without
+knowing which behaviors those tests cover and which assumptions they share.</p>
+<p>Ten variations of one button test do not necessarily provide more confidence in a
+data import than one carefully chosen import test. A collection of unit tests may prove
+local calculations while leaving authentication or external service behavior untouched.</p>
+<p>For a demonstration review, group checks by product risk: navigation, data correctness,
+permissions, recovery, accessibility, and external dependencies. Then identify the
+important gaps instead of presenting the total as a universal quality score.</p>
+<p>This makes the evidence easier for a technical leader to use. They can decide whether
+the remaining uncertainty is acceptable for a prototype, a limited trial, or a broader launch.</p>
+<h2 id="include-an-imperfect-path-in-the-story">Include an imperfect path in the story</h2>
+<p>A demonstration that shows only success leaves the viewer guessing about the product's
+behavior when something ordinary goes wrong.</p>
+<p>Choose one meaningful imperfect path. A search might return no matching properties.
+An import might contain an invalid row. A request might fail while the user's filters
+remain available for retry.</p>
+<p>The goal is not to perform every possible failure in the presentation. It is to show
+that the product has an understandable response when it cannot fulfill the ideal path.</p>
+<p>Keep the failure representative. A deliberately dramatic edge case may distract from
+the common problem that users will actually face, such as missing information or a
+slow response with no explanation of what happens next.</p>
+<h2 id="preserve-the-setup-behind-the-recording">Preserve the setup behind the recording</h2>
+<p>A video is easier to interpret when its surrounding conditions are recorded. Useful
+details include the version shown, the data mode, the user role, the tested viewport,
+and whether external dependencies were real or substituted.</p>
+<p>These details do not all belong in the video itself. A short companion note can carry
+them without interrupting the product story.</p>
+<p>The note also makes later comparisons fairer. If one recording uses live data and the
+next uses prepared data, a faster response does not necessarily show a performance
+improvement. If the role changes, different controls may be expected rather than a bug.</p>
+<p>Evidence becomes more useful when another person can understand the conditions under
+which it was produced, even if they cannot reproduce the entire environment immediately.</p>
+<h2 id="turn-each-gap-into-the-next-useful-check">Turn each gap into the next useful check</h2>
+<p>An evidence label should lead somewhere. If the interface is demonstrated but live
+interpretation remains untested, define a small representative evaluation. If the
+import screen looks good but malformed files are untested, choose a few meaningful
+invalid examples and inspect both errors and recovery.</p>
+<p>Do not respond to every gap by building a huge test program. Prioritize the uncertainty
+most likely to change the next product decision. A prototype may need one integration
+check before another week of UI work. A launch may require broader operational evidence.</p>
+<p>This keeps validation connected to decisions rather than turning it into a collection
+of checks that nobody can explain.</p>
+<h2 id="let-the-demonstration-make-a-precise-promise">Let the demonstration make a precise promise</h2>
+<p>A strong demo can show thoughtful product design, careful interaction work, and a clear
+understanding of the user. Those achievements deserve to be visible on their own terms.</p>
+<p>Explaining what the demo simulates does not erase them. It helps the audience place the
+work accurately and understand what comes next. The most credible presentation is one
+whose claims remain true after someone asks how the demonstration was produced.</p>
+<h2 id="technical-deep-dive">Technical deep dive</h2>
+<p><strong>Plain-language bridge:</strong> A demonstration is evidence produced under specific conditions.
+Recording those conditions lets someone judge which claims the demonstration supports.</p>
+<h3 id="diagram-attach-each-claim-to-the-evidence-that-supports-it">Diagram: Attach each claim to the evidence that supports it</h3>
+<pre><code class="language-text">[prepared data] ----&gt; [interactive demo] ----&gt; interface behavior
+
+[live service] ----&gt; [integration check] ---&gt; tested compatibility
+
+[labeled cases] ---&gt; [quality evaluation] --&gt; quality on that set
+
+Each run ---------&gt; [version + mode + limitations]
+</code></pre>
+<p>These are separate evidence paths, not interchangeable proof levels. A polished
+fixture-based demo does not establish live recommendation quality.</p>
+<h3 id="attach-a-small-evidence-manifest">Attach a small evidence manifest</h3>
+<p>An illustrative manifest accompanies the recording:</p>
+<pre><code class="language-json">{
+  "buildRevision": "example-revision",
+  "scenario": "renter-search",
+  "dataMode": "fixture",
+  "modelMode": "guided-fallback",
+  "viewport": {"width": 1280, "height": 800},
+  "assertions": ["filters persist", "result details open"],
+  "unverified": ["live recommendation quality", "production load"]
+}
+</code></pre>
+<p>Keep these fields separate rather than using one vague "demo mode" flag. A recording
+can use a real backend with prepared model output, or a real model with synthetic listings.
+Those configurations support different conclusions.</p>
+<p>The manifest is evidence metadata, not a certification. It should describe the run
+that actually produced the artifact, ideally captured from configuration rather than
+filled in from memory afterward.</p>
+<h3 id="control-which-boundary-is-substituted">Control which boundary is substituted</h3>
+<p>A stub is a replacement that returns prepared behavior at a chosen boundary.
+Substituting an external model client can preserve the application's parsing and
+presentation path. Replacing the entire results screen bypasses much more behavior.</p>
+<p>Document the substitution boundary and validate fixture responses against the expected
+contract. Otherwise, the demo may rely on a shape that the real provider never returns.
+A contract-compatible fixture still does not establish that live outputs are accurate
+or that the provider's timing matches the demo.</p>
+<h3 id="separate-evidence-suites">Separate evidence suites</h3>
+<p>Maintain distinct labels for fixture-based interaction checks, live integration checks,
+and quality evaluations. They can share scenario intent without sharing identical
+execution conditions.</p>
+<p>A fixture suite can cover deterministic empty, long, malformed, and error responses.
+A live integration suite can inspect actual request/response compatibility and failure
+handling for tested cases. A quality evaluation needs expected decisions across a
+representative set. Combining their pass counts obscures what each suite establishes.</p>
+<h3 id="make-fallback-activation-observable">Make fallback activation observable</h3>
+<p>Record whether fallback occurred, why it activated, and which result path reached the
+screen. This diagnostic should not disclose sensitive prompts or user data by default.
+A test intended to exercise the live path should fail or be explicitly marked inconclusive
+if it silently receives fallback data.</p>
+<p>For the recording itself, include a concise visible explanation when substitution would
+change the viewer's interpretation. That makes the polished story and the technical
+evidence consistent.</p>
+<p>The historical walkthroughs used prepared data and guided fallback. The proposed manifest
+and suite separation make that limitation actionable; they do not retroactively prove
+live integration quality.</p>

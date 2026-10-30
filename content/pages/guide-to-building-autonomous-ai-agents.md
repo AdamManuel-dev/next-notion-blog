@@ -1,0 +1,1415 @@
+---
+title: "Guide to Building Autonomous AI Agents"
+id: "22310a0af92080d5bcc2c1c966d12fdc"
+slug: "guide-to-building-autonomous-ai-agents"
+source_url: "https://adams-blog.notion.site/Guide-to-Building-Autonomous-AI-Agents-22310a0af92080d5bcc2c1c966d12fdc"
+extracted_at: "2026-10-30T19:38:07.578Z"
+cover: null
+---
+
+# Guide to Building Autonomous AI Agents
+
+<a id="23910a0af92080d3b05cdbf24bb5592a"></a>
+
+## 1\. What is Mastra Framework
+
+<a id="23910a0af920806399a0fcc54ccab723"></a>
+
+### Overview and Purpose
+
+<a id="23910a0af92080a1a8bbf953ebe1f503"></a>
+
+Mastra is an open-source TypeScript framework designed to help developers build AI applications and features quickly. Created by the team behind Gatsby.js (Abhi Aiyer, Sam Bhagwat, and Shane Thomas), Mastra provides a comprehensive "batteries-included" solution that eliminates the need to glue together multiple third-party libraries for building GenAI and agentic workflows.
+
+<a id="23910a0af9208031b432ec6a93e285b7"></a>
+
+**Core Philosophy**: "One stack, one set of primitives, no glue code" - allowing developers to focus on product logic rather than infrastructure complexity.
+
+<a id="23910a0af920802ca298f21922ac0b16"></a>
+
+### Key Features
+
+<a id="23910a0af92080da8512d0fb3bc1c794"></a>
+
+- **LLM Model Routing**: Uses Vercel AI SDK for unified interface across providers (OpenAI, Anthropic, Google Gemini)
+
+<a id="23910a0af9208000af3be56eb99ff1a1"></a>
+
+- **Agents**: Autonomous AI entities that choose sequences of actions with persistent memory
+
+<a id="23910a0af9208010920cddcbd3210e31"></a>
+
+- **Workflows**: Durable graph-based state machines built on XState with branching, loops, and human-in-the-loop support
+
+<a id="23910a0af92080979f0ccaad22e04894"></a>
+
+- **Tools**: Typed functions with built-in integration access and parameter validation
+
+<a id="23910a0af9208068ac12f147ff837a52"></a>
+
+- **RAG**: Complete ETL pipeline for knowledge bases with vector search capabilities
+
+<a id="23910a0af920805aa463fc1c7d6c6502"></a>
+
+- **Integrations**: Auto-generated, type-safe API clients for third-party services
+
+<a id="23910a0af92080a98a8aea9ed3684ac5"></a>
+
+- **Evals**: Automated testing for LLM outputs using model-graded, rule-based, and statistical methods
+
+<a id="23910a0af920803392e3c08c6f8c87be"></a>
+
+### How Mastra Differs from Other Frameworks
+
+<a id="23910a0af92080a1aeeecef5dc6321ea"></a>
+
+**vs.** **LangChain**: Mastra offers a more integrated, opinionated approach with built-in workflow capabilities and unified memory systems, while LangChain focuses on modular flexibility.
+
+<a id="23910a0af92080789938f8dec666ab4c"></a>
+
+**vs.** **CrewAI**: Mastra provides broader AI primitives beyond multi-agent orchestration, with better TypeScript support and comprehensive tooling.
+
+<a id="23910a0af920806994f8c173729b4a19"></a>
+
+**vs.** **AutoGPT**: Mastra emphasizes developer experience with TypeScript-first approach and production-ready deployment options.
+
+<a id="23910a0af92080dab4e0f8934bed75d3"></a>
+
+**vs.** **LangGraph.js**: Mastra offers a broader feature set with local dev environment, built-in tracing, and better developer tooling.
+
+<a id="23910a0af920807ba5ecfa2f58e44fee"></a>
+
+## 2\. Prerequisites and Setup
+
+<a id="23910a0af92080e98e7fe86a8bf89adb"></a>
+
+### Prerequisites
+
+<a id="23910a0af920806ca0a2d952190edcfd"></a>
+
+**System Requirements:**
+
+<a id="23910a0af9208055b70ac47b34d68805"></a>
+
+- Node.js v20.0 or higher
+
+<a id="23910a0af92080b8bd6dcf25bc080501"></a>
+
+- TypeScript knowledge
+
+<a id="23910a0af920808ab5a0d0a4de17aa49"></a>
+
+- Command line access
+
+<a id="23910a0af9208048ad26eeb057eb4b5e"></a>
+
+**LLM Provider Access:**
+
+<a id="23910a0af9208036aae9f6338ed3c7e8"></a>
+
+- OpenAI (recommended for beginners - generous free tier)
+
+<a id="23910a0af92080508857d63e9554e3bd"></a>
+
+- Anthropic (requires credit card)
+
+<a id="23910a0af92080d48d8af1404dbf1c6c"></a>
+
+- Google Gemini (generous free tier)
+
+<a id="23910a0af920808997e5c0e927ffaef5"></a>
+
+- Groq, Cerebras, or local LLMs via Ollama
+
+<a id="23910a0af92080af979bc78bace006ef"></a>
+
+### Installation Process
+
+<a id="23910a0af92080ef88bcd54c93a3f3ef"></a>
+
+#### Quick Start (Recommended)
+
+<a id="23910a0af92080a3b13bff36671cea4d"></a>
+
+```
+npx create-mastra@latest
+```
+
+<a id="23910a0af92080f4ae59d11862ac4ef2"></a>
+
+Interactive prompts will guide you through:
+
+<a id="23910a0af92080d1b073db432ede4548"></a>
+
+- Project name
+
+<a id="23910a0af920800396c2c3dc6e72bc01"></a>
+
+- Components to install (agents, tools, workflows)
+
+<a id="23910a0af920806abf4ce47fde583c74"></a>
+
+- Default LLM provider
+
+<a id="23910a0af92080c6873ddc749a47d7a5"></a>
+
+- Example code inclusion
+
+<a id="23910a0af920804eb1f1eaaa1d5b8746"></a>
+
+- IDE integration (Cursor/Windsurf MCP server)
+
+<a id="23910a0af92080bfaddcdab6a2f4f6ec"></a>
+
+#### Non-Interactive Installation
+
+<a id="23910a0af92080c8b111d1fc07620de0"></a>
+
+```
+npx create-mastra@latest my-app \
+  --components agents,tools,workflows \
+  --llm openai \
+  --example
+```
+
+<a id="23910a0af92080eca705e700dcedfbae"></a>
+
+#### Manual Installation
+
+<a id="23910a0af92080afa7fac9fb78f30c92"></a>
+
+```
+# Create project
+mkdir my-mastra-app && cd my-mastra-app
+
+# Initialize and install dependencies
+npm init -y
+npm install @mastra/core@latest zod@^3 @ai-sdk/openai
+npm install -D typescript tsx @types/node mastra@latest
+
+```
+
+<a id="23910a0af920800c93d6c22bcc471656"></a>
+
+### Development Environment Setup
+
+<a id="23910a0af92080feb3edc4b2a4d410b0"></a>
+
+#### Project Structure
+
+<a id="23910a0af92080fda21dde38eaf75878"></a>
+
+```
+my-mastra-app/
+├── src/
+│   └── mastra/
+│       ├── agents/         # AI agent definitions
+│       ├── tools/          # Custom tools
+│       ├── workflows/      # Multi-step workflows
+│       └── index.ts        # Main Mastra config
+├── .env                    # Environment variables
+├── tsconfig.json
+└── package.json
+```
+
+<a id="23910a0af92080f49d39e77561d683db"></a>
+
+#### Environment Variables
+
+<a id="23910a0af92080788216da9d0687eadb"></a>
+
+```
+# .env file
+OPENAI_API_KEY=your_openai_api_key_here
+
+# Optional providers
+ANTHROPIC_API_KEY=your_anthropic_key_here
+GOOGLE_GENERATIVE_AI_API_KEY=your_gemini_key_here
+```
+
+<a id="23910a0af92080f3b1e6e553a96996e0"></a>
+
+#### TypeScript Configuration
+
+<a id="23910a0af92080ceb68ce7167cb80451"></a>
+
+```
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "outDir": "dist"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", ".mastra"]
+}
+```
+
+<a id="23910a0af92080fa84fbd2174b7c2787"></a>
+
+## 3\. Core Concepts of Mastra
+
+<a id="23910a0af920800fb725da419915e8f6"></a>
+
+### Agents
+
+<a id="23910a0af920805ba9acfe94a594278b"></a>
+
+Autonomous AI entities where language models choose sequences of actions:
+
+<a id="23910a0af9208018980efc2e45eb4f13"></a>
+
+```
+import { Agent } from '@mastra/core/agent';
+import { openai } from '@ai-sdk/openai';
+
+const agent = new Agent({
+  name: "Weather Assistant",
+  instructions: "You are a helpful weather assistant...",
+  model: openai('gpt-4o-mini'),
+  tools: { weatherTool },
+  memory: true // Enables persistent memory
+});
+```
+
+<a id="23910a0af92080abbcd7fbe0ed0c7829"></a>
+
+### Tools
+
+<a id="23910a0af92080a19bf1dafc099257f7"></a>
+
+Typed functions that agents can execute:
+
+<a id="23910a0af9208080a6ffcf726a0383e3"></a>
+
+```
+import { createTool } from '@mastra/core/tools';
+import { z } from 'zod';
+
+export const weatherTool = createTool({
+  id: 'get-weather',
+  description: 'Get current weather for a location',
+  inputSchema: z.object({
+    location: z.string().describe('City name'),
+  }),
+  outputSchema: z.object({
+    temperature: z.number(),
+    conditions: z.string(),
+    humidity: z.number()
+  }),
+  execute: async ({ context }) => {
+    // Implementation
+    return await fetchWeatherData(context.location);
+  }
+});
+```
+
+<a id="23910a0af920807ca80ddec1b29f1a5a"></a>
+
+### Workflows
+
+<a id="23910a0af9208096bd16df6b8f009633"></a>
+
+Graph-based state machines for complex operations:
+
+<a id="23910a0af92080dc8333c957d860d771"></a>
+
+```
+const researchWorkflow = workflow()
+  .step('research', async (context) => {
+    return await performResearch(context);
+  })
+  .then('analyze', async (context, researchResult) => {
+    return await analyzeData(researchResult);
+  })
+  .branch((context, analysisResult) => {
+    return analysisResult.confidence > 0.8 ? 'finalize' : 'review';
+  });
+```
+
+<a id="23910a0af920804fbc70f8cf324c68ee"></a>
+
+### Integrations
+
+<a id="23910a0af92080a9af58ddcde0355ab6"></a>
+
+Auto-generated, type-safe API clients that can be used as tools or workflow steps.
+
+<a id="23910a0af92080b4a5f2cf727202e728"></a>
+
+#### RAG (Retrieval-Augmented Generation)
+
+<a id="23910a0af9208020b599eb39b352b3ee"></a>
+
+Complete ETL pipeline for knowledge bases:
+
+<a id="23910a0af9208066a636ece3f0c3a810"></a>
+
+- Document processing (text, HTML, Markdown, JSON)
+
+<a id="23910a0af920808da91bf91f29b34226"></a>
+
+- Embedding generation
+
+<a id="23910a0af9208082bacad2bb5e321842"></a>
+
+- Vector storage (Pinecone, pgvector, Qdrant)
+
+<a id="23910a0af92080f58780eccb58445709"></a>
+
+- Semantic search and retrieval
+
+<a id="23910a0af92080fd86a6c025cc68ee73"></a>
+
+#### Evals
+
+<a id="23910a0af920802896e9e02f2979fed9"></a>
+
+Automated testing for LLM outputs:
+
+<a id="23910a0af9208067a88beb10c9c63dee"></a>
+
+- Model-graded evaluation
+
+<a id="23910a0af92080379ebee4b7b2f8ca04"></a>
+
+- Rule-based checks
+
+<a id="23910a0af920806bb629debd8f96ef4d"></a>
+
+- Statistical methods
+
+<a id="23910a0af92080deb544da5a9a3573c7"></a>
+
+- Built-in metrics for toxicity, bias, relevance, and accuracy
+
+<a id="23910a0af920808e895cdf7e6d2c171c"></a>
+
+## 4\. Step-by-Step Tutorial: Building Your First Agent
+
+<a id="23910a0af92080bfa121f01c406990bf"></a>
+
+### Step 1: Create a Weather Tool
+
+<a id="23910a0af920802c93ade8df6576c842"></a>
+
+```
+// src/mastra/tools/weather-tool.ts
+import { createTool } from "@mastra/core/tools";
+import { z } from "zod";
+
+export const weatherTool = createTool({
+  id: "get-weather",
+  description: "Get current weather for a location",
+  inputSchema: z.object({
+    location: z.string().describe("City name"),
+  }),
+  outputSchema: z.object({
+    temperature: z.number(),
+    conditions: z.string(),
+    humidity: z.number(),
+  }),
+  execute: async ({ context }) => {
+    // Using Open-Meteo API (no key required)
+    const geocodingUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(context.location)}`;
+    const geoResponse = await fetch(geocodingUrl);
+    const geoData = await geoResponse.json();
+
+    if (!geoData.results?.[0]) {
+      throw new Error(`Location '${context.location}' not found`);
+    }
+
+    const { latitude, longitude } = geoData.results[0];
+    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m`;
+    const weatherResponse = await fetch(weatherUrl);
+    const weatherData = await weatherResponse.json();
+
+    return {
+      temperature: weatherData.current.temperature_2m,
+      conditions: "Clear", // Simplified for example
+      humidity: weatherData.current.relative_humidity_2m,
+    };
+  },
+});
+```
+
+<a id="23910a0af92080678201d6e370469308"></a>
+
+### Step 2: Create Your Agent
+
+<a id="23910a0af92080a19402e9816d6d98ef"></a>
+
+```
+// src/mastra/agents/weather.ts
+import { Agent } from "@mastra/core/agent";
+import { openai } from "@ai-sdk/openai";
+import { weatherTool } from "../tools/weather-tool";
+
+export const weatherAgent = new Agent({
+  name: "Weather Assistant",
+  instructions: `You are a helpful weather assistant.
+  - Always ask for a location if none is provided
+  - Provide temperature in both Celsius and Fahrenheit
+  - Include relevant advice based on conditions`,
+  model: openai("gpt-4o-mini"),
+  tools: { weatherTool },
+});
+```
+
+<a id="23910a0af92080b79adff8769e913adf"></a>
+
+### Step 3: Register with Mastra
+
+<a id="23910a0af920804d8445e003b2106e9f"></a>
+
+```
+// src/mastra/index.ts
+import { Mastra } from "@mastra/core";
+import { weatherAgent } from "./agents/weather";
+
+export const mastra = new Mastra({
+  agents: { weatherAgent },
+});
+```
+
+<a id="23910a0af9208030b3dac82d77b1acad"></a>
+
+### Step 4: Start Development Server
+
+<a id="23910a0af920803cb26cf75ccf6e4650"></a>
+
+```
+npm run dev
+# or
+mastra dev
+```
+
+<a id="23910a0af92080c58b33e3cbc6f9b489"></a>
+
+Visit:
+
+<a id="23910a0af9208077a527debf22b72426"></a>
+
+- Playground: http://localhost:4111/
+
+<a id="23910a0af920804cac84eaf2a026c3e8"></a>
+
+- API: http://localhost:4111/api
+
+<a id="23910a0af9208096a32ec671a80f9b94"></a>
+
+- Swagger UI: http://localhost:4111/swagger-ui
+
+<a id="23910a0af92080aca719e9101d4cce27"></a>
+
+### Progressive Examples
+
+<a id="23910a0af92080d89e10c7f73c54b841"></a>
+
+#### Adding Memory
+
+<a id="23910a0af9208013a992fa19413ee006"></a>
+
+```
+import { Memory } from '@mastra/memory';
+
+export const weatherAgent = new Agent({
+  name: "Weather Assistant",
+  // ... other config
+  memory: new Memory({
+    options: {
+      lastMessages: 20,
+      semanticRecall: {
+        topK: 3,
+        messageRange: { before: 2, after: 1 },
+      },
+    },
+  }),
+});
+```
+
+<a id="23910a0af920807c8f7ff40d225db617"></a>
+
+#### Creating Workflows
+
+<a id="23910a0af92080cfb21ce5775d125966"></a>
+
+```
+import { createWorkflow, createStep } from "@mastra/core/workflows";
+
+const fetchWeatherStep = createStep({
+  id: "fetch-weather",
+  execute: async ({ inputData }) => {
+    return await getWeather(inputData.city);
+  },
+});
+
+const suggestActivitiesStep = createStep({
+  id: "suggest-activities",
+  execute: async ({ inputData }) => {
+    // Use AI to suggest activities based on weather
+    return await generateActivities(inputData);
+  },
+});
+
+export const weatherWorkflow = createWorkflow({
+  id: "weather-activity-workflow",
+})
+  .then(fetchWeatherStep)
+  .then(suggestActivitiesStep)
+  .commit();
+```
+
+<a id="23910a0af92080f3a570f81cbdfb9e33"></a>
+
+## 5\. Best Practices for Designing Autonomous Agents
+
+<a id="23910a0af920802d833dd539dd92f65a"></a>
+
+### Agent Design Patterns
+
+<a id="23910a0af920806eba44d2661a55f96e"></a>
+
+#### 1\. Declarative Agent Definition
+
+<a id="23910a0af920804cbe83ed4576f1b2f8"></a>
+
+```
+const agent = new Agent({
+  name: 'Assistant',
+  instructions: 'Clear, specific instructions...',
+  model: openai('gpt-4o-mini'),
+  tools: { /* tools */ }
+});
+```
+
+<a id="23910a0af920808ea04fc08dcc4b87bc"></a>
+
+#### 2\. Hybrid Agent-Workflow Pattern
+
+<a id="23910a0af92080ce8956fa1d5a09e652"></a>
+
+Combine deterministic workflows with autonomous decision-making for optimal reliability and flexibility.
+
+<a id="23910a0af92080d0a906c20e269ef39e"></a>
+
+#### 3\. Multi-Agent Orchestration
+
+<a id="23910a0af9208052981ce2075c7aca13"></a>
+
+- Hierarchical: Supervisor agents coordinating specialist agents
+
+<a id="23910a0af92080a8944fd347c9fdc472"></a>
+
+- Sequential: Workflow-based agent coordination
+
+<a id="23910a0af920809da134d4cb79841256"></a>
+
+- Parallel: Multiple agents working on independent tasks
+
+<a id="23910a0af9208084a225f57b1e8e0c59"></a>
+
+#### Instruction Writing Best Practices
+
+<a id="23910a0af92080699a61e8c882d342d8"></a>
+
+1. **Be Specific and Clear**: Use concrete language, avoid ambiguity
+
+<a id="23910a0af920808590fed5780530d97c"></a>
+
+1. **Define Role and Context**: Establish agent's identity and expertise
+
+<a id="23910a0af92080709547c6fdcba2f5a7"></a>
+
+1. **Set Behavioral Guidelines**: Include response style and constraints
+
+<a id="23910a0af920801694c5c59a3a5192c6"></a>
+
+1. **Include Tool Usage Instructions**: Explain when and how to use tools
+
+<a id="23910a0af920801da4fafd6b3c995ced"></a>
+
+1. **Add Safety Guardrails**: Include boundaries and fallback behaviors
+
+<a id="23910a0af9208058a825e0ec44941764"></a>
+
+Example:
+
+<a id="23910a0af920809ab59ff5d610c3c5a8"></a>
+
+```
+const instructions = `You are a customer support agent for our SaaS platform.
+
+ROLE: Provide helpful, accurate technical support
+GUIDELINES:
+- Always be polite and professional
+- Ask clarifying questions when needed
+- Use searchKnowledge for product information
+- Use createTicket for complex issues
+
+TOOLS:
+- searchKnowledge: For product documentation
+- createTicket: For escalation
+- escalateToHuman: For billing issues`;
+```
+
+<a id="23910a0af920801686fcfd38db56eb92"></a>
+
+#### Tool Design Principles
+
+<a id="23910a0af9208047921ac221e0619f24"></a>
+
+1. **Single Responsibility**: One clear purpose per tool
+
+<a id="23910a0af92080bcbde9febfa054f20f"></a>
+
+1. **Clear Descriptions**: Unambiguous tool descriptions
+
+<a id="23910a0af92080a69412dc1de8161717"></a>
+
+1. **Strong Typing**: Use Zod schemas for validation
+
+<a id="23910a0af92080598c53d57cd90d0465"></a>
+
+1. **Error Handling**: Comprehensive error messages
+
+<a id="23910a0af92080b6a679ed83603c1f9c"></a>
+
+#### Memory Management
+
+<a id="23910a0af92080849d74ecac8f9fd89a"></a>
+
+```
+const optimizedMemory = new Memory({
+  storage: new LibSQLStore({ url: 'file:agent-memory.db' }),
+  options: {
+    lastMessages: 100,
+    semanticRecall: {
+      topK: 5,
+      messageRange: { before: 2, after: 1 }
+    },
+    workingMemory: { enabled: true }
+  }
+});
+```
+
+<a id="23910a0af92080239ddae3142af7f49e"></a>
+
+## 6\. Testing and Debugging Mastra Agents
+
+<a id="23910a0af92080988908f316d5c049a7"></a>
+
+### Using Mastra's Eval System
+
+<a id="23910a0af9208011968ee4e49fe8861d"></a>
+
+```
+import { SummarizationMetric } from '@mastra/evals/llm';
+import { ContentSimilarityMetric } from '@mastra/evals/nlp';
+
+const agent = new Agent({
+  name: 'Content Writer',
+  // ... config
+  evals: {
+    summarization: new SummarizationMetric(model),
+    contentSimilarity: new ContentSimilarityMetric(),
+  }
+});
+```
+
+<a id="23910a0af920808b8feee20f86e198d1"></a>
+
+### Local Development with "mastra dev"
+
+<a id="23910a0af92080aca617e58aec1edf36"></a>
+
+Features available at http://localhost:4111/:
+
+<a id="23910a0af920801e87f9e840e7f8d4c9"></a>
+
+- Interactive playground for testing agents
+
+<a id="23910a0af92080e9aa65f445474ad88d"></a>
+
+- Agent execution traces
+
+<a id="23910a0af920802cbfebc0588ae9827b"></a>
+
+- Tool testing in isolation
+
+<a id="23910a0af9208059ab2beebf35d5dc3a"></a>
+
+- Workflow visualization
+
+<a id="23910a0af920802ca3a8eef7dff06dab"></a>
+
+- REST API testing
+
+<a id="23910a0af92080118089f764da28e27d"></a>
+
+### Writing Tests
+
+<a id="23910a0af92080cea674e93ec7f2cc5d"></a>
+
+```
+import { describe, it, expect } from 'vitest';
+
+describe('Weather Tool', () => {
+  it('should return weather data', async () => {
+    const result = await weatherTool.execute({
+      context: { city: 'London' }
+    });
+
+    expect(result).toHaveProperty('temperature');
+    expect(typeof result.temperature).toBe('number');
+  });
+});
+```
+
+<a id="23910a0af920805394deedf958d26c55"></a>
+
+### Debugging Strategies
+
+<a id="23910a0af920801c84e6db294baedc09"></a>
+
+1. **Use Playground Traces**: Step-by-step execution visualization
+
+<a id="23910a0af920805badacd05bb3df27fb"></a>
+
+1. **Enable Debug Mode**: Add logging to tools and agents
+
+<a id="23910a0af92080fda580f4c441d778e4"></a>
+
+1. **Memory Inspection**: Check agent memory state
+
+<a id="23910a0af92080ed9eb9f7cef5c792b5"></a>
+
+1. **Tool Isolation**: Test tools independently
+
+<a id="23910a0af920807693bbc00fa159d4e7"></a>
+
+1. **Structured Output**: Use schemas for predictable outputs
+
+<a id="23910a0af92080cba6bed13abfe0beea"></a>
+
+## 7\. Cloud Deployment with Serverless Functions
+
+<a id="23910a0af92080bb8b29ca9c64bb66a7"></a>
+
+### Vercel Deployment (Recommended)
+
+<a id="23910a0af920802e88fececcd6182296"></a>
+
+```
+import { VercelDeployer } from "@mastra/deployer-vercel";
+
+export const mastra = new Mastra({
+  agents: { /* agents */ },
+  deployer: new VercelDeployer({
+    teamSlug: "your-team",
+    projectName: "your-project",
+    token: process.env.VERCEL_TOKEN
+  })
+});
+```
+
+<a id="23910a0af920800ea6facef3f0b28cbd"></a>
+
+#### Deploy:
+
+<a id="23910a0af9208091acedc16a58a84150"></a>
+
+```
+npx mastra build
+vercel --prod .mastra/output
+```
+
+<a id="23910a0af92080449a9de0236ad61d9e"></a>
+
+### AWS Lambda Deployment
+
+<a id="23910a0af920805aaca8d1c5447b3998"></a>
+
+#### Docker-based approach:
+
+<a id="23910a0af92080338c14ee9c3420627a"></a>
+
+```
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+
+FROM public.ecr.aws/lambda/nodejs:18
+COPY --from=builder /app/node_modules ${LAMBDA_TASK_ROOT}/node_modules
+COPY . ${LAMBDA_TASK_ROOT}
+CMD ["index.handler"]
+```
+
+<a id="23910a0af920805dab4ddcea0a6d6606"></a>
+
+#### Netlify Functions
+
+<a id="23910a0af920807fa888e4435eeaf0bf"></a>
+
+```
+# netlify.toml
+[build]
+  functions = ".mastra/output/functions"
+
+[functions]
+  node_bundler = "nft"
+```
+
+<a id="23910a0af92080e282fde58ae59c1207"></a>
+
+#### Cloudflare Workers
+
+<a id="23910a0af92080828a92de9572f94b0d"></a>
+
+```
+npx mastra build
+wrangler deploy .mastra/output
+```
+
+<a id="23910a0af92080929482d36e42c60abe"></a>
+
+#### Cold Start Optimization
+
+<a id="23910a0af92080029b41e49919e33894"></a>
+
+1. Minimize bundle size
+
+<a id="23910a0af9208016a64cf0b5b2ed67ea"></a>
+
+1. Optimize memory allocation
+
+<a id="23910a0af920800eae54f433a6aa9a73"></a>
+
+1. Initialize SDK clients globally
+
+<a id="23910a0af92080eeb7e5c05d81911bbe"></a>
+
+1. Use provisioned concurrency for critical paths
+
+<a id="23910a0af920800aa265f3a31e9aaea6"></a>
+
+## 8\. Browserbase Integration for Web Automation
+
+<a id="23910a0af920804da6c0c38f3a0ab9dc"></a>
+
+### What is Browserbase?
+
+<a id="23910a0af920807480a8c5352c1fcbad"></a>
+
+Browserbase is a managed headless browser infrastructure platform designed for AI agents and web automation at scale. It provides:
+
+<a id="23910a0af9208084acaeec99d58db91b"></a>
+
+- Cloud-based browser instances
+
+<a id="23910a0af920800cac2df559b3c360de"></a>
+
+- Anti-detection features (captcha solving, residential proxies)
+
+<a id="23910a0af9208005b33eddc9e4a5b411"></a>
+
+- Enterprise-grade security (SOC-2, HIPAA compliant)
+
+<a id="23910a0af9208004bdb3dc830cdd9180"></a>
+
+- Instant scaling to thousands of browsers
+
+<a id="23910a0af9208068bbf8cf298edf8bf7"></a>
+
+#### Setup and Configuration
+
+<a id="23910a0af92080d8a0d1f1a17cddccad"></a>
+
+```
+npm install @browserbasehq/stagehand
+```
+
+<a id="23910a0af9208015b010df8165a79713"></a>
+
+#### Environment variables:
+
+<a id="23910a0af92080359b7bc0a9858c56c6"></a>
+
+```
+BROWSERBASE_API_KEY=your_api_key
+BROWSERBASE_PROJECT_ID=your_project_id
+```
+
+<a id="23910a0af92080ddaa7dd8d7ab2cc943"></a>
+
+### Creating Web Automation Tools
+
+<a id="23910a0af9208057899fee454f94d89b"></a>
+
+```
+import { createTool } from '@mastra/core/tools';
+import { Stagehand } from '@browserbasehq/stagehand';
+
+export const webActTool = createTool({
+  id: 'web-act',
+  description: 'Take actions on webpages',
+  inputSchema: z.object({
+    url: z.string().optional(),
+    action: z.string().describe('Action to perform'),
+  }),
+  execute: async ({ context }) => {
+    const stagehand = new Stagehand({
+      env: "BROWSERBASE",
+      apiKey: process.env.BROWSERBASE_API_KEY,
+      projectId: process.env.BROWSERBASE_PROJECT_ID,
+    });
+
+    await stagehand.init();
+    const page = stagehand.page;
+
+    if (context.url) {
+      await page.goto(context.url);
+    }
+
+    await page.act(context.action);
+    return { success: true };
+  },
+});
+```
+
+<a id="23910a0af92080dcbcb0d603dc3a3c66"></a>
+
+### Web Agent Example
+
+<a id="23910a0af92080e09ed7ce567769ef2b"></a>
+
+```
+export const webAgent = new Agent({
+  name: 'Web Assistant',
+  instructions: `You can navigate websites and extract information.
+  Use webActTool for actions, webObserveTool for finding elements,
+  and webExtractTool for data extraction.`,
+  model: openai('gpt-4o'),
+  tools: { webActTool, webObserveTool, webExtractTool },
+});
+```
+
+<a id="23910a0af920803c9265e07744f0edba"></a>
+
+## 9\. Production Deployment Considerations
+
+<a id="23910a0af92080f39963e38d51b8b520"></a>
+
+### Security Best Practices
+
+<a id="23910a0af920801b88bbfd18cc944795"></a>
+
+#### Authentication & Authorization
+
+<a id="23910a0af920809ba723faa97f094d9d"></a>
+
+```
+export const mastra = new Mastra({
+  server: {
+    middleware: [{
+      handler: async (c, next) => {
+        const authHeader = c.req.header("Authorization");
+        if (!authHeader?.startsWith("Bearer ")) {
+          return new Response("Unauthorized", { status: 401 });
+        }
+
+        const token = authHeader.substring(7);
+        const isValid = await validateJWT(token);
+        if (!isValid) {
+          return new Response("Forbidden", { status: 403 });
+        }
+
+        await next();
+      },
+      path: "/api/*"
+    }]
+  }
+});
+```
+
+<a id="23910a0af92080999501e948ce6ffd3d"></a>
+
+#### Rate Limiting
+
+<a id="23910a0af920807a9d0ce39535f2a5fe"></a>
+
+Implement request throttling to prevent abuse and control costs.
+
+<a id="23910a0af92080ffb11dd1273bc682c8"></a>
+
+#### Monitoring and Observability
+
+<a id="23910a0af920809791d2ca25ecc008aa"></a>
+
+```
+export const mastra = new Mastra({
+  telemetry: {
+    serviceName: "mastra-production",
+    enabled: true,
+    sampling: { type: "always_on" },
+    export: {
+      type: "otlp",
+      endpoint: "https://api.honeycomb.io",
+      headers: {
+        "x-honeycomb-team": process.env.HONEYCOMB_API_KEY
+      }
+    }
+  }
+});
+```
+
+<a id="23910a0af920801cadb3e54d34893cf2"></a>
+
+Supported providers:
+
+<a id="23910a0af92080559e4eff5223ec667a"></a>
+
+- SigNoz (open-source APM)
+
+<a id="23910a0af9208029a83ef79bad059b1e"></a>
+
+- Langfuse (LLM-specific)
+
+<a id="23910a0af92080a9b138f7781dc47aee"></a>
+
+- New Relic, Datadog, Honeycomb
+
+<a id="23910a0af92080e09848de750618c407"></a>
+
+#### Scaling Strategies
+
+<a id="23910a0af9208035809afc4cd4662a7b"></a>
+
+1. **Auto-scaling**: Leverage platform-specific auto-scaling
+
+<a id="23910a0af92080c9a803fa4789e8c43b"></a>
+
+1. **Database optimization**: Use connection pooling
+
+<a id="23910a0af92080c29b4bffa1d0a28b81"></a>
+
+1. **Caching**: Implement multi-layer caching
+
+<a id="23910a0af92080d78ed7f9a5eb09c0f9"></a>
+
+1. **Session management**: Use Redis for distributed state
+
+<a id="23910a0af92080e8a0dcc45bd9646041"></a>
+
+#### Cost Optimization
+
+<a id="23910a0af920808faaf6e4d862c860bc"></a>
+
+1. Set appropriate function timeouts
+
+<a id="23910a0af92080828ce3fb42b1cc98c5"></a>
+
+1. Balance memory allocation vs performance
+
+<a id="23910a0af920800ea087ee832f993a69"></a>
+
+1. Implement connection pooling
+
+<a id="23910a0af92080f69db0c2777f72e2da"></a>
+
+1. Use caching strategies
+
+<a id="23910a0af92080aebb52d0ec86fbe2f7"></a>
+
+1. Monitor and optimize LLM token usage
+
+<a id="23910a0af9208056adc3d1dc709bf629"></a>
+
+## 10\. Real-World Examples and Use Cases
+
+<a id="23910a0af92080a0af6ad95e383af77d"></a>
+
+### Production Deployments
+
+<a id="23910a0af920803b920acb62bca2d99f"></a>
+
+**WorkOS Integration**
+
+<a id="23910a0af92080cd9494d1e0c889154d"></a>
+
+- Building AI agents for workplace automation
+
+<a id="23910a0af9208018a6c0ecc34fc92400"></a>
+
+- Meme generator workshop demonstrating agent orchestration
+
+<a id="23910a0af920807fa0eeee22587c45ea"></a>
+
+- [Tutorial](https://workos.com/blog/mastra-ai-quick-start)
+
+<a id="23910a0af92080bebab7e41ff6d02bd6"></a>
+
+**Artifact - "Cursor for Hardware"**
+
+<a id="23910a0af92080ea99f0eead431e3ec0"></a>
+
+- Y Combinator S25 company
+
+<a id="23910a0af92080ffa2f6cfd69877ffcb"></a>
+
+- AI-native IDE for hardware engineers
+
+<a id="23910a0af9208095900ee969d683b1ae"></a>
+
+- Automating electrical system design
+
+<a id="23910a0af920809fb966f15914f4582f"></a>
+
+**NotebookLLM Clone**
+
+<a id="23910a0af92080579b36d3e846bdf369"></a>
+
+- [Live Demo](https://notebooklm-mastra.vercel.app/)
+
+<a id="23910a0af920801ba74dfe1b10a8b3f4"></a>
+
+- Multi-agent orchestration for content creation
+
+<a id="23910a0af920801a8837e804ab0266b4"></a>
+
+- RAG implementation with PgVector
+
+<a id="23910a0af92080d1a52fef097953e51a"></a>
+
+- Audio generation with Play.ai
+
+<a id="23910a0af920801ea1fec016f848627f"></a>
+
+**Deep Research Assistant**
+
+<a id="23910a0af920804f8a7bc541c8c22ecf"></a>
+
+- Nested workflows with suspend/resume
+
+<a id="23910a0af92080518f98d425996d59dc"></a>
+
+- Integration with Exa API
+
+<a id="23910a0af92080e4a56ed064e0340191"></a>
+
+- Human-in-the-loop refinement
+
+<a id="23910a0af92080f0aba6c26cccbd65cf"></a>
+
+#### Example Repositories
+
+<a id="23910a0af9208000bbdbf2eb7eebb38f"></a>
+
+- [weather-agent](https://github.com/mastra-ai/weather-agent) - Simple weather assistant
+
+<a id="23910a0af9208092bffdec65c0e0ebeb"></a>
+
+- [mastra-auth-examples](https://github.com/mastra-ai/mastra-auth-examples) - Authentication patterns
+
+<a id="23910a0af920800faa32c8a8e87050b0"></a>
+
+- [template-deep-research](https://github.com/mastra-ai/template-deep-research) - Research assistant
+
+<a id="23910a0af92080d5a492e687343df148"></a>
+
+## 11\. Common Pitfalls and Troubleshooting
+
+<a id="23910a0af92080f5b413f39b00690ae7"></a>
+
+### Common Issues
+
+<a id="23910a0af9208040aed3c323e741df24"></a>
+
+**SQLite Telemetry Error**
+
+<a id="23910a0af920802dbe3fff88425911c4"></a>
+
+- Problem: `SQLITE_ERROR: no such table: mastra_traces`
+
+<a id="23910a0af92080fe99f7c29aed478342"></a>
+
+- Solution: Disable telemetry temporarily or ensure proper table creation
+
+<a id="23910a0af920808da721f9923f9ff39d"></a>
+
+**Memory Type Compatibility**
+
+<a id="23910a0af92080e78bc2e4003150d8b6"></a>
+
+- Problem: Type mismatches between packages
+
+<a id="23910a0af92080c99271c3309375207b"></a>
+
+- Solution: Ensure all Mastra packages are on compatible versions
+
+<a id="23910a0af92080c1b3f2eb9dcdd45a84"></a>
+
+**Workflow Errors**
+
+<a id="23910a0af920809bbd9df700947cd74f"></a>
+
+- Use built-in retry mechanisms
+
+<a id="23910a0af92080d9ae3ff8ffdaff89f7"></a>
+
+- Implement proper error boundaries
+
+<a id="23910a0af920800b9f28e6ad6756241f"></a>
+
+- Monitor with `.watch()` method
+
+<a id="23910a0af920809bb5b8edc5de99ccb2"></a>
+
+#### Performance Issues
+
+<a id="23910a0af920803b93f8fa977451f346"></a>
+
+1. **Agent response time**: Optimize model selection and prompts
+
+<a id="23910a0af920801c95fdce617b6efd5f"></a>
+
+1. **Memory retrieval**: Adjust topK and message limits
+
+<a id="23910a0af92080ce99cde45e78f1c75a"></a>
+
+1. **Tool execution**: Implement caching for expensive operations
+
+<a id="23910a0af92080b48ebddf2f0247cebb"></a>
+
+#### Debugging Tips
+
+<a id="23910a0af920803097ebcdbd934f13cc"></a>
+
+1. Use playground traces for execution flow
+
+<a id="23910a0af92080bd9289e4e141494c89"></a>
+
+1. Enable verbose logging during development
+
+<a id="23910a0af9208073be33fd264116809f"></a>
+
+1. Test tools in isolation before integration
+
+<a id="23910a0af9208033a3bfc61539f12a3b"></a>
+
+1. Use structured outputs for predictability
+
+<a id="23910a0af9208027a759e04596241aa4"></a>
+
+## 12\. Resources for Further Learning
+
+<a id="23910a0af920809f9d59ce43dcbbb153"></a>
+
+#### Official Documentation
+
+<a id="23910a0af920805ea554ea39e8d60f82"></a>
+
+- Main docs: [mastra.ai/docs](https://mastra.ai/docs)
+
+<a id="23910a0af92080a2952bed1a2154df13"></a>
+
+- API reference: [mastra.ai/reference](https://mastra.ai/reference)
+
+<a id="23910a0af92080ffacfec654f4911cc5"></a>
+
+- Examples: [mastra.ai/examples](https://mastra.ai/examples)
+
+<a id="23910a0af92080b1bbfacb0be0a5c1c9"></a>
+
+#### Community
+
+<a id="23910a0af920806796b5f03378dc6280"></a>
+
+- **Discord**: 1000+ members, active support
+
+<a id="23910a0af9208019b45de4630981d10a"></a>
+
+- **GitHub**: [github.com/mastra-ai/mastra](https://github.com/mastra-ai/mastra) (13k+ stars)
+
+<a id="23910a0af920803f9e27cb84e9ef557a"></a>
+
+- **Contributing**: Open issues for discussion before PRs
+
+<a id="23910a0af920801ab46ad8f6dc9512ae"></a>
+
+#### Learning Materials
+
+<a id="23910a0af92080b78dacdc7bd4fd6c12"></a>
+
+- [5-Minute Agent Tutorial](https://dev.to/mastra_ai/build-your-first-agent-in-5-minutes-with-mastra-2ah3)
+
+<a id="23910a0af92080d8ae3be8da70d89428"></a>
+
+- [WorkOS Quickstart](https://workos.com/blog/mastra-ai-quick-start)
+
+<a id="23910a0af92080b0a658ec4f5296ef2a"></a>
+
+- Workshop repositories for workflows and RAG
+
+<a id="23910a0af92080a5bc73f8d5ef97c9ab"></a>
+
+#### IDE Integration
+
+<a id="23910a0af92080e2bff5e7d4546de75b"></a>
+
+Install MCP server for enhanced development:
+
+<a id="23910a0af9208010acb9e6de092dfe93"></a>
+
+```
+npm install -g @mastra/mcp-docs-server
+```
+
+<a id="23910a0af92080408685d75159c1b3f0"></a>
+
+Configure for your IDE:
+
+<a id="23910a0af9208012978cdd3f043fd5fe"></a>
+
+- Cursor: `.cursor/mcp.json`
+
+<a id="23910a0af92080c3bbb2c3894425c9e8"></a>
+
+- Windsurf: `~/.codeium/windsurf/mcp_config.json`
+
+<a id="23910a0af92080978d8ceb89cb44cd9e"></a>
+
+- VSCode: `~/.vscode/mcp.json`
+
+<a id="23910a0af9208032907ae0bc1edc3d73"></a>
+
+#### Additional Resources
+
+<a id="23910a0af92080129baec14b787649a7"></a>
+
+- **Video tutorials**: Check Discord and YouTube
+
+<a id="23910a0af920805fbe1dc0ddcde6e023"></a>
+
+- **Template repositories**: Multiple starter projects on GitHub
+
+<a id="23910a0af92080078669d42cb8a21f7a"></a>
+
+- **Blog posts**: Case studies and deep dives on mastra.ai/blog
+
+<a id="23910a0af920804e9e2adca7e1a8b7f5"></a>
+
+- **Y Combinator network**: Connect with other YC companies using Mastra
+
+<a id="23910a0af9208061bb0bc2fde4e93808"></a>
+
+## Conclusion
+
+<a id="23910a0af920805f832de4ef64f1bcc7"></a>
+
+Mastra provides a comprehensive, production-ready framework for building AI agents with TypeScript. Its batteries-included approach, strong typing, and cloud-first design make it an excellent choice for developers building modern AI applications. Start with the quick tutorials, leverage the active community, and progressively build more complex agents and workflows as you gain expertise.

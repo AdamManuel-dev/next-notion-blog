@@ -1,0 +1,17 @@
+{
+  "id": "167c4358fced92e2c103a97acc7b8e1c",
+  "slug": "separate-jobs-shared-lock",
+  "title": "I Split the Background Jobs. They Still Waited on Each Other.",
+  "source": "blog-draft",
+  "description": "Why splitting a slow task did not remove the bottleneck.",
+  "tags": [
+    "queues",
+    "performance",
+    "debugging"
+  ],
+  "status": "published",
+  "sourceFile": "blog-drafts/separate-jobs-shared-lock.md",
+  "sourceUrl": null,
+  "cover": null,
+  "warnings": []
+}

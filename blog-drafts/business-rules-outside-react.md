@@ -1,0 +1,258 @@
+---
+title: "Business Rules Should Survive a UI Rewrite"
+description: "Separate product decisions from rendering so a frontend migration does not rewrite the business."
+status: draft
+tags: [architecture, leadership, react]
+---
+
+# Business Rules Should Survive a UI Rewrite
+
+**Reading paths:** Start below for the plain-language explanation, or jump to the
+[technical deep dive](#technical-deep-dive) for implementation details and verification.
+
+Changing a button library should not change who can approve an offer or how a budget
+is calculated. Yet those rules can become tangled with screen code as an application grows.
+
+In my apartment-platform architecture discussions, one recurring requirement was to
+keep business calculations and validation independent of React while reorganizing the
+frontend. The plan separated rendering, state coordination, external requests, and
+product decisions. That is the part of the architecture worth explaining beyond the
+specific libraries involved.
+
+The historical discussions establish an intended design, not proof that every boundary
+was implemented perfectly. The lesson is how to decide where a rule belongs and how
+to migrate it without changing its meaning.
+
+## Start with the question the code answers
+
+Consider an offer editor. Some code answers, "What should the button look like?" Other
+code answers, "Can this offer be submitted?" A third part answers, "How do we send the request?"
+
+Those questions have different reasons to change. Branding changes the button. Product
+policy changes submission rules. An API migration changes request handling.
+
+Keeping them distinguishable helps prevent one change from spreading through unrelated
+decisions. It also makes review easier: a designer can assess presentation, while a
+domain expert can inspect the policy without reading browser lifecycle code.
+
+The boundaries should follow those responsibilities, not the desire to use a particular
+architecture label.
+
+## Distinguish input shape from business permission
+
+An input check can establish that an amount is a valid number and an identifier has
+the expected format. It cannot alone establish that the current user may approve the offer.
+
+That second question may depend on ownership, role, and the offer's current state.
+A correctly formed request can still ask for an invalid transition.
+
+| Question | Kind of decision |
+| --- | --- |
+| Is the amount expressed in supported units? | Input validation. |
+| Is the offer still open for review? | Business rule. |
+| May this person review this offer? | Access decision. |
+| Which message should appear beside the field? | Presentation. |
+
+Naming these separately keeps a single vague validation function from accumulating
+responsibilities that are difficult to test and maintain.
+
+## Make the rule understandable without a browser
+
+A pure calculation receives inputs and returns a result without changing outside state.
+For example, calculating the difference between a budget and a price should not require
+a mounted React component or an active network connection.
+
+That makes small examples easy to test. You can provide an amount, define the expected
+result, and inspect the rule directly. It also makes the same rule easier to use in
+another interface later.
+
+Not every business operation is pure. Some need current database state or an external
+answer. Keep those dependencies explicit rather than pretending the operation has none.
+The useful separation is between making the decision and obtaining or changing the
+outside information the decision depends on.
+
+## Keep the server authoritative
+
+Sharing a rule with the frontend can give users fast feedback, but the server still
+needs to enforce the relevant checks. Requests can arrive without passing through
+the expected screen, and the data may have changed since the screen loaded.
+
+The interface can say an offer appears reviewable. The server must decide whether the
+specific review action is valid when it is requested.
+
+This is especially important for actions depending on current state. Two people may
+open the same record, and one may change it before the other submits. A local calculation
+based on the earlier snapshot does not resolve that conflict.
+
+## Give external effects narrow interfaces
+
+The product operation needs to save an offer, not know every detail of an HTTP client.
+A narrow interface can express the required capability in the language of the feature.
+
+For example, a save operation can accept the intended update and expected revision,
+then return a defined success or conflict result. The adapter handles the actual transport.
+
+This makes a later transport change less disruptive. It also allows tests to provide
+controlled responses without constructing the entire application environment.
+
+Keep the interface small and based on real use. A generic repository framework with
+dozens of unused methods can obscure the operation more than a direct, explicit dependency.
+The goal is clarity, not maximum abstraction.
+
+## Separate saved state from editing state
+
+A user may change a field and then cancel. The application therefore needs to distinguish
+the saved value from the local draft.
+
+If both share the same mutable object, an apparently harmless edit can leak into other
+parts of the interface before it is accepted. A background refresh can also overwrite
+the user's unfinished changes if the ownership of each state is unclear.
+
+Define which state the user is editing, which state represents the server, and what
+happens when they disagree. The rule belongs in the feature's state coordination, not
+in a collection of unrelated component effects that each try to repair the latest symptom.
+
+## Keep React responsible for React concerns
+
+Subscriptions, focus, rendering, and component lifecycle are legitimate frontend responsibilities.
+Extracting business rules should not mean forcing those concerns into a browser-independent
+module where they become harder to understand.
+
+For example, moving focus to an invalid field belongs close to the interaction. Deciding
+which field is invalid can come from a separate rule. The component connects the two.
+
+This division lets a reader follow the operation without a large inheritance tree.
+Plain functions and explicit results are often enough. Introduce more machinery only
+when a demonstrated need makes the additional structure worthwhile.
+
+## Migrate through one representative feature
+
+Choose a feature containing the important cases: a calculation, a request, an error,
+and a state transition. Record its current agreed behavior before moving the code.
+
+Extract one rule and test it with small examples. Connect the interface through the
+new boundary, then verify the complete interaction. Repeat only when the boundary
+has shown that it makes the code easier to understand.
+
+Avoid changing the product policy and the architecture in the same unexplained patch.
+If an existing rule is wrong, give that correction its own clear requirement. Otherwise,
+reviewers cannot tell whether a difference is an intentional product change or a migration bug.
+
+## Use tests to protect meaning
+
+A test that merely verifies a new helper was called does not establish that the offer
+decision stayed correct. Test the important outcomes: valid input is accepted, invalid
+input is rejected, and conflicting state is handled according to the product rule.
+
+Keep a few integration checks for the boundary between the interface and the operation.
+They can reveal a missing parameter or a result that the screen interprets incorrectly.
+
+The mix matters. Pure tests make the rule easy to inspect, while integrated checks
+show that the application actually uses it. Neither should be presented as complete
+proof of the other.
+
+## Judge the design by the next change
+
+The strongest evidence for the refactor appears when a real requirement changes. Can
+the team locate the policy, update its examples, and adapt the interface without hunting
+through unrelated effects and request handlers?
+
+Record concrete improvements rather than claiming that a new folder structure automatically
+made development faster. A clearer owner for a rule and fewer conflicting implementations
+are useful, observable results.
+
+The leadership value is preserving the product while making future changes more predictable.
+A UI rewrite should change how the interface is built. It should not silently rewrite
+the business decisions that people rely on.
+
+## Technical deep dive
+
+**Plain-language bridge:** The screen collects a request. A separate rule decides
+whether it is allowed. Keeping those jobs apart makes the decision testable on its own.
+
+### Diagram: Keep product decisions behind a clear boundary
+
+~~~text
+[screen: collect input]
+           |
+           v
+[server: authenticate + validate]
+           |
+           v
+[application service] <----> [persistence adapter]
+           |
+           v
+[domain rule: facts in, decision out]
+           |
+           v
+[conditional commit] ----> [result] ----> [screen feedback]
+~~~
+
+The arrows show a simplified execution path, not imports. The domain rule evaluates
+facts; the server and commit boundary enforce authoritative access and concurrency.
+
+
+### Give the domain an explicit input and result
+
+A domain function should receive the facts it needs instead of reading browser state,
+the current clock, or a global session implicitly. An illustrative contract is:
+
+~~~text
+evaluateOffer(
+  offerSnapshot,
+  actorPermissions,
+  proposedAmountInMinorUnits,
+  evaluatedAt
+) -> Allowed(decision) | Rejected(reasonCode)
+~~~
+
+Using integer minor units avoids introducing binary floating-point rounding into
+ordinary currency comparisons; currencies and rounding policy still need explicit rules.
+Passing evaluatedAt makes time-sensitive boundaries reproducible in tests.
+
+Reason codes belong to the domain contract. Human-facing wording and field placement
+belong to presentation. That lets a web form and a background service interpret the
+same decision without sharing UI components.
+
+### Separate evaluation from commitment
+
+A pure function cannot prevent another request from changing the offer after evaluation.
+The application service must load authoritative state, evaluate the rule, and commit
+with a concurrency condition.
+
+~~~text
+read offer at revision 8
+evaluate proposal against revision 8
+update offer only if revision is still 8
+if no row changed: reload and re-evaluate, or report a conflict
+~~~
+
+Permission changes may also race with evaluation. Choose a consistency policy appropriate
+to the action, rather than assuming that a client-side permission snapshot is authoritative.
+For high-impact changes, the transaction boundary should cover the relevant authoritative
+checks and write.
+
+### Make dependency direction enforceable
+
+A useful dependency rule is that the domain imports neither UI code nor network clients.
+Application services depend on narrow interfaces for persistence and external effects.
+Adapters implement those interfaces, and the composition root connects them.
+
+A test double can supply a repository, clock, or sender without starting a browser.
+Dependency restrictions can be checked through import rules, but runtime validation is
+still needed where data enters the system. A type annotation does not validate JSON.
+
+React's own purity guidance concerns predictable rendering and avoiding mutation of
+preexisting objects during render. Keeping business decisions outside rendering builds
+on that separation; it does not make a client the authoritative decision-maker.
+See [React's purity explanation](https://react.dev/learn/keeping-components-pure).
+
+### Test meaning at two levels
+
+Use table-driven domain tests for allowed, expired, unauthorized, and boundary-value
+cases. Then add service-level tests for stale revisions and persistence failures.
+A pure-function test cannot establish that the transaction is correct, while an
+integration test alone may make simple rule failures difficult to diagnose.
+
+This is a proposed architectural contract, not code recovered from the historical
+planning session. Its value is in making ownership, inputs, and failure modes explicit.

@@ -1,0 +1,17 @@
+{
+  "id": "3135cd7fdb31d6ed926964b82147b144",
+  "slug": "cli-for-humans-and-agents",
+  "title": "Designing a Command-Line Tool an AI Can Actually Use",
+  "source": "blog-draft",
+  "description": "Make automation predictable with clear inputs, structured output, and visible outcomes.",
+  "tags": [
+    "cli",
+    "agents",
+    "developer-tools"
+  ],
+  "status": "published",
+  "sourceFile": "blog-drafts/cli-for-humans-and-agents.md",
+  "sourceUrl": null,
+  "cover": null,
+  "warnings": []
+}

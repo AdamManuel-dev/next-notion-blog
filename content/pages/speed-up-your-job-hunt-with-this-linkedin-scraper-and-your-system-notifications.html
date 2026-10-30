@@ -1,0 +1,105 @@
+<section id="38d2d0fa34c64e5dbdedfe835e43e81d"><blockquote><a href="https://github.com/AdamManuel-dev/LinkedInNotifications">https://github.com/AdamManuel-dev/LinkedInNotifications</a></blockquote></section>
+
+<section id="253d45a193bb49519417429e292f59fe"><p>In the fast-paced world of job hunting, staying ahead of the competition means being the first to know about new opportunities. With the power of automation, you can have a system that scrapes LinkedIn for job postings and notifies you in real-time. This blog post dives into a JavaScript script using Puppeteer, Node-Notifier, and Node-Cron to make your job search more efficient.</p></section>
+<section id="edc0ffc0b0264d9c8677b05e0c7b1052"><h4><strong>Setting the Stage: The Components</strong></h4></section>
+<section id="d60e338b54174b658217adba012dfa4f"><p>The script integrates several key components:</p></section>
+<section id="dc6d092b90534c4d88adfcf0538491d6"><ol><li><strong>Puppeteer</strong>: A Node library that provides a high-level API to control Chrome or Chromium over the DevTools Protocol. It allows us to navigate the web programmatically.</li></ol></section>
+<section id="9c9c403592b0493fa129eedc84978fad"><ol><li><strong>Node-Notifier</strong>: A Node.js module for sending notifications on native systems (Windows, Mac, Linux).</li></ol></section>
+<section id="c19db69acd4b4cacbd13fce22de93075"><ol><li><strong>Node-Cron</strong>: A task scheduler in pure JavaScript for running scheduled jobs.</li></ol></section>
+<section id="d4fa8da9cc854c74a4df8872e850f5f0"><ol><li><strong>CSV File</strong>: Stores the job search configurations.</li></ol></section>
+<section id="fbc382fa493a46caa58f481c07b5427f"><ol><li><strong>Cache File</strong>: Maintains a log of previously seen job postings to avoid duplicate notifications.</li></ol></section>
+<section id="2dcce5c934b142d68c2c15900e472206"><h4><strong>Step-by-Step Breakdown</strong></h4></section>
+<section id="1b5ee83dd1204cf687266838c7ba59bc"><h4><strong>1. Reading Configurations</strong></h4></section>
+<section id="0877202398024383b3124fdf2c1dd114"><p>The script begins by reading configurations from a CSV file, <code>searches.csv</code>, which contains search terms, intervals, and LinkedIn URLs:</p></section>
+<section id="c3709b8d498d4171950a3b42124266f1"><pre><code>javascriptCopy code
+const configCSV = fs.readFileSync('./searches.csv', {
+  encoding: 'utf-8',
+})
+
+const configArr = configCSV.split('\n').map((line) =&gt; line.split(','));
+
+configArr.shift()
+
+const input = configArr.filter((x) =&gt; x.length === 3).map(([title, minuteLapse, url]) =&gt; ({
+  url,
+  title,
+  minuteLapse: Number.parseInt(minuteLapse)
+}))
+</code></pre></section>
+<section id="84a57fe20f2649ce875546058b6992c7"><p>This code reads the CSV file, splits it into lines, and maps each line to an object containing the job title, time interval, and LinkedIn search URL.</p></section>
+<section id="5b51f72675284184800dc67a7847dd49"><h4><strong>2. Caching Previous Job Postings</strong></h4></section>
+<section id="c4f2294d04b341e4a790a36726024477"><p>To avoid notifying about the same job postings multiple times, the script reads a cache file that stores previously seen URLs:</p></section>
+<section id="486e6cc51ec649e6970a99dec370a678"><pre><code>javascriptCopy code
+const _cachedUrls = fs.readFileSync('./cache', {
+  encoding: 'utf-8',
+})
+
+const cachedUrls = ((_cachedUrls.includes('\n')) ? _cachedUrls.split('\n') : []).filter((x) =&gt; x.length !== 0)
+</code></pre></section>
+<section id="409600a7a1684ab0bcfd0cca861abdde"><h4><strong>3. Scraping LinkedIn</strong></h4></section>
+<section id="c1d119a1932143689e362cade5e8f67f"><p>The main function <code>grabLinks</code> uses Puppeteer to navigate to LinkedIn search pages, scrape job posting links, and filter out those already seen:</p></section>
+<section id="a0034ac47be34cb4aa91b3990d7ac79f"><pre><code>javascriptCopy code
+const grabLinks = async ({title, url, minuteLapse}) =&gt; {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+
+    const properUrl = url.replace(/f_TPR\=r\d+/, minuteLapse &lt;= 60 ? `f_TPR=r3600` : `f_TPR=r3600`).replace(/\n/g, '').trim()
+
+    await page.goto(properUrl);
+
+    const topLinks = await page.evaluate(() =&gt; {
+      const results = [];
+      document.querySelectorAll('#main-content &gt; section.two-pane-serp-page__results-list &gt; ul &gt; li &gt; div &gt; a').forEach((node) =&gt; {
+        results.push([node.innerText, node.getAttribute('href')]);
+      })
+      return results;
+    });
+    const links = topLinks.filter(([_title, link]) =&gt; {
+      if(cachedUrls.length === 0) return true;
+      return !cachedUrls.find((x) =&gt; encodeURI(link.split('?')[0]).includes(encodeURI(x)))
+    })
+    if(links.length &gt; 0) {
+      notifier.notify({
+        title,
+        message: `Found ${links.length} Job Postings`,
+        sound: 'Basso',
+        actions: 'Open in Chrome',
+        timeout: 120,
+        contentImage: `${process.cwd()}/LinkedIn.svg`,
+      }, async function (_error, response) {
+        if(response === 'activate') {
+          const command = links.slice(0, limit).map(([_, _url]) =&gt; `open -a &quot;Google Chrome&quot; &quot;${_url}&quot;`).join(' &amp;&amp; sleep 0.1 &amp;&amp; ')
+          await exec(command)
+          fs.writeFileSync('./cache', _cachedUrls + links.map(([_, _url]) =&gt; `${_url.split('?')[0]}\n`).join(''), {
+            encoding: 'utf-8'
+          });
+          if(links.length &gt;= 10)
+            grabLinks({title, url, minuteLapse})
+        }
+      });
+    }
+}
+</code></pre></section>
+<section id="5b4e62a0b1834f71b78244a09d52c33b"><p>This function:</p></section>
+<section id="8f38cb38f0374ae095ddeb9a9520538c"><ol><li>Launches a headless browser and navigates to the LinkedIn search URL.</li></ol></section>
+<section id="f32c89dd8a9f45aa95a4b4dbbb97a2c0"><ol><li>Scrapes job links from the page.</li></ol></section>
+<section id="e693748d331747dab58c0429815f31cb"><ol><li>Filters out links already seen and stored in the cache.</li></ol></section>
+<section id="02466be78d7e450dae8fe5c89fc5399b"><ol><li>Sends a system notification if new job postings are found.</li></ol></section>
+<section id="35c63496fc4f43c990cd6c162fabd1f9"><ol><li>Opens the links in Chrome if the user interacts with the notification.</li></ol></section>
+<section id="4acd73b0293a41a09c676cbed438907c"><ol><li>Updates the cache with new job links.</li></ol></section>
+<section id="a89ebd001cbd43659681827910da3fec"><h4><strong>4. Scheduling the Job Scraper</strong></h4></section>
+<section id="173c3695d7c0457faf83a7a0c7ad8751"><p>To continuously check for new job postings, the script uses Node-Cron to schedule the <code>grabLinks</code> function at specified intervals:</p></section>
+<section id="8a5e82070e584f358d6b8861332bd05f"><pre><code>javascriptCopy code
+(function run() {
+  input.forEach(({minuteLapse, title, url}, i) =&gt; {
+    grabLinks({title, url, minuteLapse})
+    cron.schedule(`*/${minuteLapse} * * * *`, () =&gt; {
+      grabLinks({title, url, minuteLapse})
+    });
+  })
+})()
+</code></pre></section>
+<section id="f6b1641d607f44bdaad6c84ecfb68d62"><p>This self-executing function loops through each job search configuration and sets up the scraper to run at the defined intervals.</p></section>
+<section id="229d022fc67c425490f39b83575d4499"><h4><strong>Conclusion</strong></h4></section>
+<section id="b40eb987ea2b469ea2179933031ed322"><p>This script automates the process of finding and notifying about new job opportunities on LinkedIn. By leveraging Puppeteer for web scraping, Node-Notifier for system notifications, and Node-Cron for scheduling tasks, it ensures you stay on top of new job postings with minimal effort. Whether you're an active job seeker or just keeping an eye out for the next big opportunity, this automated solution can give you the edge in your job search.</p></section>
+

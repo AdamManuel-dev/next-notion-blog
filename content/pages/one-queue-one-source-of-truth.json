@@ -1,0 +1,17 @@
+{
+  "id": "66f74da058d4c20ac939df92226b5e98",
+  "slug": "one-queue-one-source-of-truth",
+  "title": "When Two Queues Disagree About the Same Job",
+  "source": "blog-draft",
+  "description": "Why simplifying a queue system requires understanding ownership and recovery.",
+  "tags": [
+    "queues",
+    "architecture",
+    "reliability"
+  ],
+  "status": "published",
+  "sourceFile": "blog-drafts/one-queue-one-source-of-truth.md",
+  "sourceUrl": null,
+  "cover": null,
+  "warnings": []
+}

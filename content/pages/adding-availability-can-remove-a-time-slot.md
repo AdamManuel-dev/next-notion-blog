@@ -1,0 +1,237 @@
+---
+title: "Adding More Availability Can Make a Time Slot Disappear"
+id: "920cd2a739c152c8d51d736970e32529"
+slug: "adding-availability-can-remove-a-time-slot"
+source_url: null
+description: "How a scheduling rule can produce a surprising result."
+tags: ["scheduling","algorithms","software-design"]
+status: "published"
+source_file: "blog-drafts/adding-availability-can-remove-a-time-slot.md"
+cover: null
+---
+
+# Adding More Availability Can Make a Time Slot Disappear
+
+**Reading paths:** Start below for the plain-language explanation, or jump to the [technical deep dive](#technical-deep-dive) for implementation details and verification.
+
+Adding working hours sounds simple: more time should mean more appointment choices. But a scheduling system can offer more working time while removing a specific start time.
+
+That behavior came up in my scheduling project. The explanation is about the order in which the system does its work.
+
+## Start with a small example
+
+Imagine a tutor who works from 9:00 to 10:00. Each appointment lasts 30 minutes.
+
+The system offers:
+
+| Start | End |
+| --- | --- |
+| 9:00 | 9:30 |
+| 9:30 | 10:00 |
+
+Now the tutor adds availability from 8:45 to 9:15.
+
+Those hours overlap the original hours. The system combines them into one continuous window: **8:45 to 10:00**.
+
+Then it starts building 30-minute appointments from the beginning of that window:
+
+| Start | End |
+| --- | --- |
+| 8:45 | 9:15 |
+| 9:15 | 9:45 |
+
+The final 15 minutes are too short for another appointment.
+
+The tutor has added working time, but the 9:00 and 9:30 choices have disappeared.
+
+## The first start time controls the rest
+
+Think of placing 30-minute blocks along a ruler. Wherever you place the first block determines where all the following blocks begin.
+
+In this design, the rule is:
+
+1. Find the working hours for the date.
+2. Apply any special changes for that date.
+3. Combine hours that overlap or touch.
+4. Create appointment choices, starting at each combined window's beginning.
+5. Remove choices that overlap existing bookings.
+
+Step four explains the surprise. Moving the beginning of the window moves the whole sequence of appointment starts.
+
+## An existing booking behaves differently
+
+Suppose the tutor works from 9:00 to noon and offers 60-minute appointments.
+
+The initial choices start at 9:00, 10:00, and 11:00.
+
+Now suppose an existing booking occupies 9:00 to 9:30. The system removes the 9:00 choice because it overlaps that booking. It keeps 10:00 and 11:00.
+
+It does not create a new 9:30 choice. Bookings remove choices from the original list; they do not restart the sequence.
+
+That distinction matters: **free time and offered appointment times are different things**.
+
+## Appointment length and start spacing are separate choices
+
+It is easy to assume that a 60-minute appointment should start every 60 minutes. That is one design, but it is not the only one.
+
+A service could offer 60-minute appointments beginning every 15 minutes. From 9:00 to 11:00, the possible starts would then be 9:00, 9:15, 9:30, 9:45, and 10:00. Each choice still needs a full hour before the working window ends.
+
+These are alternatives offered to users, not five appointments that can all be booked together. Once one is booked, overlapping alternatives must become unavailable.
+
+Keeping duration and spacing as separate concepts makes the product rule easier to discuss. Duration answers how long the appointment lasts. Spacing answers how often a new appointment is allowed to begin.
+
+## The anchor is a third choice
+
+Even after choosing duration and spacing, you still need to decide where the sequence starts.
+
+A window-based anchor starts at the beginning of the current working window. A fixed clock grid might allow starts at :00 and :30 past each hour. Those rules differ when someone begins work at 9:10.
+
+For a 30-minute appointment in a 9:10-10:40 window:
+
+| Rule | Offered starts |
+| --- | --- |
+| Every 30 minutes from window start | 9:10, 9:40, 10:10 |
+| Fixed half-hour clock grid | 9:30, 10:00 |
+
+Neither rule is inherently more correct. A tutor may want to use every available minute. A clinic may want starts aligned with its staffing schedule. The anchor should express that expectation rather than emerge accidentally from a loop in the code.
+
+## Touching is different from overlapping
+
+Suppose one appointment ends at 10:00 and another begins at 10:00. If no break is required, they can sit next to each other without conflict.
+
+An easy way to express that is to treat a time window as including its start but excluding its end. The first appointment occupies time before 10:00, and the second takes over at 10:00.
+
+For two appointments, a conflict exists when each starts before the other one ends. Using strictly before is important: changing it to before or at would reject appointments that merely touch.
+
+If the business requires five minutes for cleanup, model that buffer explicitly. Do not hide it inside an incorrect overlap rule, because the resulting behavior will be difficult to explain when appointment lengths change.
+
+## Combining windows can remove a break
+
+Consider working hours from 9:00 to noon and 1:00 to 3:00. There is a one-hour gap. Now add a special window from 11:30 to 1:30.
+
+The added window connects the morning and afternoon into continuous availability from 9:00 to 3:00. An appointment can now cross noon because, under these inputs, noon is no longer a break.
+
+That may be exactly what the user intended. But if lunch must always remain protected, working-hour additions and protected breaks need distinct meanings. A plain union of all available windows cannot preserve a break that another input explicitly fills.
+
+This is why input labels matter. "Add available hours" and "Override a protected break" may deserve different controls even if they look similar on a calendar.
+
+## Explain why a seemingly free time is missing
+
+Users may see an empty calendar region and expect to book it. The system may exclude it because the start is off-grid, the remaining duration is too short, or a buffer applies.
+
+When those distinctions matter, the interface can explain the relevant rule. For example: "Appointments start every half hour" or "This opening is shorter than the selected duration."
+
+Avoid displaying every internal calculation. Show the rule that helps the user choose a valid alternative. A product that makes its constraints understandable can feel more predictable even when it offers fewer choices than a user initially expected.
+
+The server should apply the same agreed rules when the user actually books, because the displayed list may have become stale since it was loaded.
+
+## Availability is a snapshot, not a reservation
+
+Two people can view the same available slot at the same time. Showing the slot does not reserve it for either person.
+
+When a booking request arrives, the system needs to validate the current state and record the booking with appropriate concurrency protection. Otherwise, both requests may see the slot as free and both save a booking.
+
+The historical scheduler used a single-process update path. That scope matters: protection inside one process is not automatically a guarantee across several servers.
+
+If the application later runs with multiple workers, revisit the booking boundary and the storage guarantees. The algorithm that generates slots and the mechanism that prevents competing bookings solve related but different problems.
+
+## Keep calendar dates separate from elapsed time
+
+A recurring rule such as "every Monday at 9:00" usually describes local calendar time. Adding exactly 24 elapsed hours is not always the same as moving to the same local time on the next date around daylight-saving changes.
+
+The historical implementation handled calendar-date iteration separately from slots represented as minutes after midnight. That distinction helped date enumeration, but did not by itself resolve repeated or nonexistent local times during clock changes.
+
+Before supporting those cases, define the intended behavior in the relevant time zone. Should a nonexistent local time be rejected? Which occurrence of a repeated time is meant? Storing a wall-clock number alone does not answer those questions.
+
+## Build a test table before building more features
+
+A small table of examples can protect the product's intended behavior:
+
+| Scenario | Question to settle |
+| --- | --- |
+| Add 15 minutes before opening | Should existing starts move? |
+| Add hours across lunch | Is the break removed? |
+| Booking touches another booking | Is that allowed, or is a buffer required? |
+| Free fragment shorter than duration | What explanation should appear? |
+| Two simultaneous booking requests | Which one can claim the slot? |
+| Local clock changes | How are ambiguous or missing times handled? |
+
+Write the expected result in plain language first. Then make the automated checks verify that agreement. Tests generated only from the current implementation can preserve an accidental rule just as faithfully as an intentional one.
+
+## Changing a rule can affect existing expectations
+
+Suppose the product switches from window-based starts to a fixed clock grid. Existing appointments should not silently move merely because future availability is calculated differently.
+
+Separate saved bookings from generated future choices, and decide how edits to working hours interact with already-booked time. If an edit makes an existing appointment fall outside the new hours, the product needs a clear policy and a visible explanation.
+
+The scheduling algorithm is only one part of that decision. The user's expectations, the saved data, and the interface all need to describe the same rule.
+
+## Choose the rule your users expect
+
+There are several reasonable designs:
+
+- Start appointments from the beginning of each working window.
+- Offer starts on a fixed clock grid, such as every half hour.
+- Offer a start every 15 minutes, even when appointments last an hour.
+
+Each produces different choices. None should be selected accidentally.
+
+For a scheduling feature, I would write down examples before writing the algorithm. What should happen when someone adds 15 minutes? What about a short booking in the middle?
+
+Those examples give the team something concrete to agree on. They also become useful tests: the system should produce the times people agreed it ought to offer.
+
+## Technical deep dive
+
+**Plain-language bridge:** A free stretch of time and a list of allowed appointment starts are different objects. The algorithm must define how it turns one into the other.
+
+### Diagram: Two appointments can touch without overlapping
+
+```text
+Time ----------> 09:30            10:00            10:30
+Appointment A    [================)
+Appointment B                     [================)
+
+At 10:00: A has ended; B may begin.
+```
+
+The brackets illustrate half-open intervals: the start is included and the end is excluded. A required cleanup buffer would change the occupied interval.
+
+### Specify the interval model
+
+Represent an appointment as a half-open interval \[start, end): it includes its start and excludes its end. Two intervals overlap exactly when:
+
+```text
+a.start < b.end AND b.start < a.end
+```
+
+That strict comparison allows one appointment to begin exactly when another ends. If cleanup time is required, expand the occupied interval by the specified buffer before checking conflicts. Keep the original appointment separate from its occupied interval so the interface does not claim the appointment itself lasts longer.
+
+For a fixed grid, let g be the anchor, s the start spacing, and d the duration. Candidate starts are g + k\*s for integer k. Keep a candidate t only if \[t, t+d) fits entirely inside available time and does not overlap an occupied interval.
+
+### Compare the two algorithms
+
+A window-anchored implementation resets g to each free fragment's start. A fixed-grid implementation preserves g while filtering candidates. Subtracting a booking before generating candidates can therefore produce a different answer from generating candidates first and removing conflicts.
+
+```text
+availability: [09:00, 11:00)
+booking:      [09:20, 09:40)
+duration:     30 minutes
+spacing:      30 minutes
+
+fragment-anchored: 09:40, 10:10
+fixed 09:00 grid:  10:00, 10:30
+```
+
+These are illustrative outputs under the stated policies, not a new historical trace. Neither policy should emerge accidentally from the order of helper calls.
+
+### Turn the policy into properties
+
+A property test checks a rule across many generated examples. Every emitted candidate must fit availability, avoid occupied time, and obey the chosen grid. For a fixed anchor, expanding availability should preserve old candidates when bookings, duration, spacing, time interpretation, and other policies stay constant. That preservation property does not hold for a window-relative anchor.
+
+Generate boundary cases with adjacent windows, duplicate bookings, zero-length invalid inputs, and fragments exactly one duration long. Keep local calendar-time generation separate from instant comparison. A daylight-saving transition requires an explicit choice for missing or repeated local times; arithmetic on clock labels alone is insufficient.
+
+### Enforce the decision again when booking
+
+Candidate generation reads a snapshot. Two callers can both see the same free slot. Acceptance therefore needs a database-enforced conflict rule or a transaction that serializes competing bookings for the relevant resource. A unique start time alone does not prevent differently timed appointments from overlapping.
+
+A useful concurrency test releases two booking requests together, then verifies that only one incompatible reservation commits and the other receives an actionable result. This checks the actual invariant rather than merely testing the calendar display.

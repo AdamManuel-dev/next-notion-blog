@@ -1,0 +1,408 @@
+/**
+ * Details.so-inspired interactions, kept isolated and layered last so they can
+ * be removed wholesale. Every effect degrades to a static, legible state under
+ * `prefers-reduced-motion: reduce`.
+ */
+
+/* ---------------------------------------------------------------------------
+ * 1. Related article arrows shift on hover and keyboard focus
+ * ------------------------------------------------------------------------ */
+.related-grid a .related-arrow {
+  display: inline-block;
+}
+.related-grid a:focus-visible {
+  border-color: var(--blog-focus);
+}
+
+/* ---------------------------------------------------------------------------
+ * 2. Article tools: compact disclosure with a soft, liquid popover
+ * ------------------------------------------------------------------------ */
+.notion-header.blog-header {
+  /* The popover must escape the header box; breadcrumbs keep their own scroll. */
+  overflow: visible;
+}
+.notion-header.blog-header .breadcrumbs {
+  overflow-x: auto;
+  min-width: 0;
+}
+
+.article-tools {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.article-tools-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.article-tools-trigger,
+.blog-header .blog-search-trigger {
+  min-width: 44px;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.article-tools-trigger svg,
+.blog-search-trigger svg {
+  flex-shrink: 0;
+}
+.article-tools-trigger[aria-expanded='true'] {
+  border-color: var(--blog-control-border);
+  background: var(--blog-panel);
+}
+.article-tools-panel {
+  position: absolute;
+  z-index: 210;
+  top: calc(100% + 8px);
+  right: 0;
+  width: min(320px, calc(100vw - 24px));
+  padding: 16px;
+  border: 1px solid var(--blog-control-border);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--blog-surface) 88%, transparent);
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 18px 44px rgba(20, 35, 20, 0.22);
+  color: var(--blog-text);
+  text-align: left;
+}
+.article-tools-panel[hidden] {
+  display: none;
+}
+.article-tools-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--blog-control-border);
+}
+.article-tools-row-label {
+  font-size: 14px;
+  color: var(--blog-muted);
+}
+.article-tools-panel .article-share {
+  margin: 0;
+  text-align: left;
+}
+.article-share-compact > p {
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+.article-share-compact .article-share-actions {
+  justify-content: flex-start;
+  gap: 8px;
+}
+.article-share-compact .article-share-actions :is(a, button) {
+  padding: 8px 12px;
+  font-size: 13px;
+}
+.article-share-compact .share-copy-fallback {
+  margin-left: 0;
+}
+@supports not (backdrop-filter: blur(1px)) {
+  .article-tools-panel {
+    background: var(--blog-surface);
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .article-tools-panel {
+    background: var(--blog-surface);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+@media (max-width: 520px) {
+  .article-tools-trigger > span:last-child {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .article-tools {
+    position: static;
+  }
+  .article-tools-panel {
+    right: 8px;
+    width: min(320px, calc(100vw - 40px));
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * 3. Collapsed article outline for narrow screens
+ * ------------------------------------------------------------------------ */
+.article-toc {
+  width: 100%;
+  margin: 4px 0 20px;
+  border: 1px solid var(--blog-control-border);
+  border-radius: 12px;
+  background: var(--blog-panel);
+  font-size: 14px;
+}
+.article-toc > summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  list-style: none;
+  font-weight: 600;
+}
+.article-toc > summary::-webkit-details-marker {
+  display: none;
+}
+.article-toc-count {
+  min-width: 22px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--blog-surface);
+  color: var(--blog-muted);
+  font-size: 12px;
+  font-weight: 400;
+  text-align: center;
+}
+.article-toc-chevron {
+  margin-left: auto;
+  line-height: 1;
+}
+.article-toc nav {
+  padding: 0 16px 12px;
+}
+.article-toc ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.article-toc li {
+  padding-left: var(--toc-indent, 0px);
+}
+.article-toc a {
+  display: block;
+  min-height: 40px;
+  padding: 10px 8px;
+  border-radius: 8px;
+  color: var(--blog-text);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.article-toc a:hover {
+  background: var(--blog-surface);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.article-toc a:focus-visible,
+.article-toc > summary:focus-visible {
+  outline: 3px solid var(--blog-focus);
+  outline-offset: 2px;
+}
+/* The sticky aside takes over once react-notion-x shows it. */
+@media (min-width: 1300px) and (min-height: 300px) {
+  .notion-page-content-has-aside .article-toc {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * 4. Single, brief title fade per page navigation
+ * ------------------------------------------------------------------------ */
+@media (prefers-reduced-motion: no-preference) {
+  .notion-title {
+    animation: details-title-fade 460ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+}
+@keyframes details-title-fade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * 5. Header morphs into a compact pill after the scroll threshold
+ * ------------------------------------------------------------------------ */
+.notion-header.blog-header {
+  /* Height stays fixed (--notion-header-height); only the inner bar morphs. */
+  background: transparent;
+  border-bottom-color: transparent;
+}
+.notion-header.blog-header .notion-nav-header {
+  position: relative;
+  width: min(1100px, calc(100% - 16px));
+  margin: 0 auto;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 0;
+  background: color-mix(in srgb, var(--blog-surface) 96%, transparent);
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+}
+.notion-header.blog-header.blog-header-compact .notion-nav-header {
+  top: 6px;
+  height: calc(100% - 12px);
+  width: min(960px, calc(100% - 24px));
+  padding: 0 8px;
+  border-color: var(--blog-control-border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--blog-surface) 86%, transparent);
+  box-shadow: 0 10px 28px rgba(20, 35, 20, 0.16);
+}
+.notion-header.blog-header.blog-header-compact .blog-search-trigger > span,
+.notion-header.blog-header.blog-header-compact
+  .article-tools-trigger
+  > span:last-child {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+@supports not (backdrop-filter: blur(1px)) {
+  .notion-header.blog-header .notion-nav-header {
+    background: var(--blog-surface);
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .notion-header.blog-header .notion-nav-header {
+    background: var(--blog-surface);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+@media (max-width: 400px) {
+  .notion-header.blog-header.blog-header-compact .notion-nav-header {
+    width: calc(100% - 12px);
+    padding: 0 6px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * 6. Color fill on the primary actions (search, article tools, copy link)
+ * ------------------------------------------------------------------------ */
+.blog-fill-button {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.blog-fill-button::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: var(--blog-focus);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+.blog-fill-button:is(:hover, :focus-visible)::before {
+  transform: scaleX(1);
+}
+.blog-fill-button:is(:hover, :focus-visible) {
+  color: var(--blog-surface);
+  border-color: var(--blog-focus);
+}
+.article-share-compact .blog-fill-button:is(:hover, :focus-visible) {
+  text-decoration: none;
+}
+
+.article-toc[open] .article-toc-chevron {
+  transform: rotate(180deg);
+}
+
+/* ---------------------------------------------------------------------------
+ * Motion: opt-in only, and never required to understand state
+ * ------------------------------------------------------------------------ */
+@media (prefers-reduced-motion: no-preference) {
+  .related-grid a .related-arrow,
+  .article-toc-chevron,
+  .blog-fill-button::before {
+    transition: transform 220ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .blog-fill-button {
+    transition: color 200ms ease, border-color 200ms ease;
+  }
+  .related-grid a:is(:hover, :focus-visible) .related-arrow {
+    transform: translate(3px, -3px);
+  }
+  .article-toc[open] > nav {
+    animation: details-fade-in 200ms ease-out both;
+  }
+  .article-tools-panel {
+    transform-origin: top right;
+  }
+  .article-tools-panel-open {
+    animation: details-popover-in 220ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+  .notion-header.blog-header .notion-nav-header {
+    transition: width 260ms cubic-bezier(0.22, 0.61, 0.36, 1),
+      top 260ms cubic-bezier(0.22, 0.61, 0.36, 1),
+      height 260ms cubic-bezier(0.22, 0.61, 0.36, 1), border-radius 260ms ease,
+      background-color 260ms ease, box-shadow 260ms ease;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notion-title,
+  .article-toc[open] > nav,
+  .article-tools-panel-open {
+    animation: none;
+  }
+  .related-grid a .related-arrow,
+  .article-toc-chevron,
+  .blog-fill-button,
+  .blog-fill-button::before,
+  .notion-header.blog-header .notion-nav-header {
+    transition: none;
+  }
+  .blog-fill-button::before {
+    transform: scaleX(0);
+  }
+  /* Without the sweep, hover/focus still need a visible state change. */
+  .blog-fill-button:is(:hover, :focus-visible)::before {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes details-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes details-popover-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Lite (oembed) mode shows content only — no chrome, no motion. */
+.notion-lite .article-toc,
+.notion-lite .article-tools {
+  display: none;
+}

@@ -1,0 +1,259 @@
+---
+title: "I Split the Background Jobs. They Still Waited on Each Other."
+description: "Why splitting a slow task did not remove the bottleneck."
+status: draft
+tags: [queues, performance, debugging]
+---
+
+# I Split the Background Jobs. They Still Waited on Each Other.
+
+**Reading paths:** Start below for the plain-language explanation, or jump to the
+[technical deep dive](#technical-deep-dive) for implementation details and verification.
+
+Two tasks can live in separate functions and still block each other completely.
+
+That was the important discovery in a file-processing investigation. One task searched
+shared folders for new files. Another sent waiting files to workers. Separating the tasks
+looked like the right performance fix, but a shared lock kept the old delay alive.
+
+## The checkout-line problem
+
+Imagine a shop that will only serve the next customer after checking every shelf.
+
+Even if the cashier is ready, the customer waits for the stock check. Giving the cashier
+and stock checker different job titles does not help if they still share one key.
+
+Our file scan played the stock checker. It could take several minutes. Dispatch, the
+step that hands a waiting job to a worker, needed to happen more frequently.
+
+## What the first change missed
+
+The plan separated scanning from dispatch. Existing backlog could then be sent to
+workers without waiting for another complete scan.
+
+But a review found that both paths still requested the same advisory lock.
+
+A lock is a way to let only one participant enter a protected section at a time.
+That is useful when two participants might otherwise interfere with each other.
+
+Here, a long scan held the lock that dispatch needed. The code had been separated,
+but the waiting relationship had survived.
+
+## Protect the right things separately
+
+The correction gave scanning and dispatch separate locks.
+
+Scanning still needed protection against two workers repeating the same full scan.
+Dispatch needed its own coordination so workers did not claim the same waiting item.
+Those were different responsibilities and needed different protection.
+
+The historical session reports passing focused tests after this change. That supports
+the implementation, but it does not establish a measured production speedup.
+
+## Draw the waiting chain before changing code
+
+The first useful picture is a sequence of events. Suppose a worker finishes at 10:00.
+A scan is already running and does not release its lock until 10:03. Dispatch then
+claims the next item, and the worker starts at 10:03:05.
+
+The worker was available for most of that interval. Buying another worker would not
+necessarily remove the delay, because the dispatcher would still be waiting for the
+same permission. The scarce resource was access to the protected section.
+
+These times are an illustration, not production measurements from the investigation.
+Their purpose is to distinguish three kinds of time: doing useful work, waiting for
+capacity, and waiting for coordination. A slow system can contain plenty of idle capacity.
+
+For each transition, ask who is waiting, what they need, and who currently controls it.
+That question often narrows the investigation faster than reading every function involved.
+
+## Why the shared lock seemed reasonable
+
+A shared lock usually starts as protection against a real problem. If two scans discover
+the same file simultaneously, they may both try to schedule it. If two dispatchers choose
+the same waiting row, they may both send it to workers.
+
+Putting a lock around the whole process is easy to explain: one participant does the
+work at a time. At small scale, its performance cost may barely matter.
+
+The cost becomes visible when the protected work includes a slow operation such as
+walking through a remote folder. Every other task using that lock inherits the slowest
+part of the operation, even when those tasks do not need its result.
+
+That history matters during a refactor. Removing the lock without understanding its
+original purpose can replace a performance problem with duplicate processing. The right
+question is which smaller sets of actions still need to happen together.
+
+## Separate discovery from ownership
+
+Discovery answers, "What work exists?" Dispatch answers, "Which worker should own the
+next available item?" Those answers change at different speeds.
+
+A folder scan may discover a batch of new files every few minutes. Workers should still
+be able to consume already-known files between scans. That is the practical benefit
+of separating the paths.
+
+However, the dispatcher needs a trustworthy source of pending work. It must not depend
+on an unfinished scan's temporary in-memory list. Once a discovered item is safely
+recorded, dispatch can consider it independently.
+
+This boundary also helps explain the remaining caveat from the historical change:
+items found inside an open scan transaction are not necessarily visible yet. Separating
+locks frees the existing backlog; it does not automatically make uncommitted discoveries
+available sooner.
+
+## A useful test must include overlap
+
+A test that runs scanning, waits for it to finish, and then runs dispatch can pass even
+when the shared-lock problem remains. Nothing is competing in that test.
+
+The important scenario puts the activities on top of each other:
+
+1. Record a pending item that existed before the scan.
+2. Start a scan and deliberately pause it at a controlled point.
+3. Ask dispatch to claim the existing pending item.
+4. Verify that dispatch can proceed while the scan remains paused.
+5. Release the scan and verify that its own protection still works.
+
+A second scenario should start two dispatchers together and check that they do not
+both own the same item. Speed and correctness are separate requirements. A good test
+set protects both rather than assuming that one passing scenario covers the other.
+
+## Watch for the next bottleneck
+
+Once one delay is removed, another can become visible. Perhaps dispatch now runs quickly,
+but both workers compete for a single browser session. Perhaps a downstream service
+accepts only one request at a time.
+
+That does not make the first fix pointless. It means the system's limit has moved, and
+the next decision needs fresh evidence.
+
+I would compare completed work and waiting time before and after the change at similar
+load. Increasing dispatch frequency alone is not the desired outcome if the newly
+dispatched jobs simply wait elsewhere.
+
+Watch failed attempts and duplicates as well. A higher apparent throughput that includes
+repeated work can look like progress while consuming more resources for the same result.
+
+## Make the operational report specific
+
+A useful report might say, "The old backlog can now be dispatched during a scan in the
+controlled concurrency test. Production observation is still required to measure the
+effect under real load."
+
+That statement separates a verified property from a hoped-for improvement. It tells
+the next person exactly which question remains open.
+
+For a production observation, I would record the relevant version, worker count, backlog
+size, scan duration, and observation period. A change in any of those can affect the
+comparison. If there are only a few runs, report their actual delays instead of presenting
+a fragile average as a settled performance claim.
+
+The review in this case was valuable because it tested the proposed explanation. It
+did not merely check that the two new functions existed. It asked whether they could
+actually operate independently when the slow activity was still happening.
+
+Queue order deserves a separate check. Faster dispatch should not indefinitely skip
+older eligible work in favor of newer arrivals. Observe which items are selected and
+whether any remain stuck, even while the aggregate completion count increases.
+
+## Measure the actual wait
+
+Useful follow-up measurements include:
+
+- Time between a worker finishing and the next job being dispatched.
+- Age of the oldest waiting item.
+- Time each task spends waiting for its lock.
+
+Newly discovered files could still wait for the scan's database transaction to finish.
+That remaining delay should be understood rather than hidden.
+
+When splitting work to make it faster, I now want to trace everything the tasks share:
+locks, database connections, transactions, and worker capacity. The bottleneck may be
+in one of those relationships rather than in the function being rewritten.
+
+## Technical deep dive
+
+**Plain-language bridge:** Moving work into two functions does not create concurrency
+if both still need the same key before they can start.
+
+### Diagram: Different functions can still share one bottleneck
+
+~~~text
+BEFORE
+Discovery ----> [shared lock] ----> remote scan
+Dispatch  ----> [same lock] ------> waits for scan
+
+POSSIBLE REDESIGN
+Discovery ----> scan ----> upsert discovered items
+                                      |
+                                      v
+                                [pending items]
+                                      |
+Dispatch ---------------------> atomic claim ----> send
+~~~
+
+The redesign separates slow discovery from the short ownership decision. The atomic
+claim must still prevent two dispatchers from taking the same item.
+
+
+### Model the critical section
+
+A critical section is the work protected by a lock. In the problematic shape, discovery
+performs slow external operations while holding a lock also required by dispatch:
+
+~~~text
+discovery: acquire L -> scan remote folders -> update queue -> release L
+dispatch:  acquire L -> claim pending item -> release L -> send work
+~~~
+
+Dispatch latency includes time waiting for L even when its own protected operation
+is short. Measure lock acquisition wait separately from lock hold duration and external
+request duration. Otherwise, a slow remote scan can appear to be a slow dispatcher.
+
+Splitting locks is safe only after identifying which shared invariants each protects.
+If discovery and dispatch both modify ownership of the same item, two unrelated locks
+may remove waiting while introducing duplicate execution.
+
+### Move ownership into an atomic claim
+
+An illustrative alternative makes discovery an idempotent upsert and dispatch an
+atomic state transition:
+
+~~~text
+discover(item):
+  insert pending item unless its source identity already exists
+
+claim(item, worker):
+  change pending -> running only if the item is still pending
+  return whether this caller changed exactly one row
+~~~
+
+In SQL, the important part is the conditional update and its affected-row count.
+Reading "pending" and updating it in separate unprotected operations is not a claim:
+two workers can read the same value first. A process-local mutex also cannot coordinate
+workers in other processes.
+
+Keep remote I/O outside the claim transaction where the design allows it. Database
+row locks remain held until transaction completion; a network call inside that interval
+can lengthen contention. See the [PostgreSQL locking documentation](https://www.postgresql.org/docs/current/explicit-locking.html).
+
+### Test the overlap deterministically
+
+A sleep-based test is fragile because it guesses the scheduler's timing. Use a barrier:
+start discovery, pause it after entering the slow phase, then start dispatch. Verify
+dispatch can reach its claim boundary before releasing discovery. Add a second test
+where two dispatchers race for one item and exactly one wins.
+
+That pair matters. The first checks independence; the second checks preserved ownership.
+A fix that passes only the first can be faster and incorrect.
+
+### Bound the operational claim
+
+Compare acquisition wait, claim latency, backlog age, and duplicate claims under a
+similar workload. Higher throughput alone can hide unfairness if one class of work
+starves. Also inspect error and retry volume so reduced waiting is not merely extra
+concurrent failure.
+
+These measurements are a proposed verification design. The historical focused checks
+do not supply a measured production speedup, and this example does not establish one.

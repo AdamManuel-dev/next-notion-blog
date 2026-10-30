@@ -1,0 +1,244 @@
+---
+title: "Stop Fixing Yesterday's Incident"
+description: "Why long debugging efforts need a fresh view of what is failing now."
+status: draft
+tags: [leadership, debugging, reliability]
+---
+
+# Stop Fixing Yesterday's Incident
+
+**Reading paths:** Start below for the plain-language explanation, or jump to the
+[technical deep dive](#technical-deep-dive) for implementation details and verification.
+
+A system can keep failing after a real fix because a different problem now blocks it.
+
+In a long production-queue investigation, early attention included dispatch and database
+behavior. Later, a batch analysis found that most observed failures were associated
+with a navigation element that existed but was not visible. Database failures remained,
+but they were no longer the dominant symptom in that sample.
+
+The lesson is not that the original diagnosis was necessarily wrong. It is that the
+current failure population needs to guide the next decision. Yesterday's important
+problem can become today's distracting explanation.
+
+## A request has several chances to fail
+
+Consider a simplified sequence: accept work, assign a worker, open the application,
+find the required record, and produce an output.
+
+If assignment fails, the system never reaches the application. Fixing assignment can
+expose a previously hidden navigation problem. The overall request still fails, but
+the system has moved past one boundary and stopped at another.
+
+That is why a single red status is an incomplete debugging signal. You need to know
+where the request stopped and what evidence supports the reported reason. A change
+in the failure location can be progress even before end-to-end completion improves.
+
+## Define the sample before counting
+
+Choose a period and a group of relevant executions. Record which software versions,
+environments, and input types the sample includes.
+
+Mixing old and new releases can make an already-fixed error appear current. Looking
+only at the latest failure can overemphasize a rare event. Looking only at successful
+runs hides the question entirely.
+
+The historical batch report supplied concrete counts, but this article has not independently
+recomputed that dataset. The useful supported observation is the reported shift in
+the dominant failure category. New operational decisions would need fresh data from
+the system as it exists now.
+
+## Group symptoms without pretending they are causes
+
+An error such as navigation timeout is a symptom. Its cause might be the wrong page,
+a hidden element, a delayed response, or a stale session.
+
+Group executions by evidence that helps distinguish those possibilities: the failing
+step, visible state, relevant error details, and whether the expected preceding transition
+occurred. Avoid combining every timeout into one bucket simply because the word matches.
+
+Then inspect representative cases from the largest groups. The grouping tells you
+where to spend attention; the detailed trace tests the explanation. A count alone does
+not establish root cause, but it can prevent a memorable anecdote from dominating the investigation.
+
+## Count failed requests and repeated attempts separately
+
+One request retried 20 times can produce more log entries than 10 different requests
+that each fail once. Depending on the question, either view may matter.
+
+For customer impact, count affected logical requests and the outcomes they reached.
+For resource waste, count attempts and time spent. Keep the relationship between them
+visible so a noisy retry loop does not distort the picture of how many people are affected.
+
+Also consider impact severity. A rare failure that produces incorrect output may deserve
+attention before a common failure that stops safely. Frequency helps prioritize, but
+it should not be the only dimension of the decision.
+
+## Verify that the earlier fix still holds
+
+Do not assume that a later failure proves earlier steps are now reliable in every case.
+It proves only that those steps passed in the observed attempt.
+
+Keep a focused regression check for the fixed boundary, and compare current failures
+with the earlier pattern. If the earlier issue returns, investigate whether the fix
+was incomplete, a new version changed the behavior, or a different input exposed a gap.
+
+This avoids two extremes: repeatedly reopening an already-addressed explanation without
+evidence, and declaring a whole subsystem solved after one run gets past it. The status
+should reflect the scope of what has actually been observed.
+
+## Choose the next intervention from the evidence
+
+Suppose the current sample contains many hidden-element failures, some detail-page
+readiness failures, and a smaller number of database errors. The next useful intervention
+may target the navigation state while preserving a separate investigation for the database.
+
+State why that choice is being made. It addresses the largest confirmed blocker in
+the defined sample, not every possible defect in the system.
+
+Choose a small change that tests the explanation. If the element is hidden because
+the wrong layout is active, merely increasing the click timeout may not help. The
+intervention should follow the observed state rather than the generic error label.
+
+## Watch for bottleneck migration
+
+After the navigation fix, a new group of failures may become dominant farther along
+the request path. That is expected in systems with several independent defects.
+
+Track the transition. More requests reaching the output stage is useful evidence,
+but the business outcome remains incomplete until the required result is delivered.
+
+A simple stage-funnel view can help: how many eligible requests entered each important
+stage, and how many progressed? Define the units carefully so retries do not inflate
+the counts. This shows whether the latest change moved the bottleneck or merely changed
+the error message at the same boundary.
+
+## Compare the same kinds of requests
+
+A change in the most common error can also come from a change in traffic. A release
+might receive larger inputs, more new accounts, or requests from a different environment.
+That shift can make one category grow even when the code responsible for it has not changed.
+
+Before crediting a fix or blaming a regression, compare similar groups where possible.
+For example, inspect requests using the same version and input type, then examine the
+new population separately. Keep groups large enough to be informative; splitting a
+small sample into dozens of categories can leave nothing useful to compare.
+
+If the available records cannot support a fair comparison, say so. You can still use
+the current failures to choose the next investigation without claiming that the latest
+release caused the change. Diagnosis and causal measurement are related but different
+questions, and confusing them can send a team back toward yesterday's explanation.
+
+## Keep a short hypothesis log
+
+For each meaningful change, record the suspected cause, supporting evidence, intervention,
+and observed result. Include what would disprove the explanation.
+
+That log reduces circular debugging. A new participant can see why the team stopped
+pursuing a theory and what changed before the current failure appeared.
+
+Keep it concise. The useful artifact is a sequence of tested explanations, not a transcript
+of every command. Link detailed evidence when needed, but lead with the decision each
+experiment supported. Long conversations become easier to learn from when their reasoning
+is captured in this form.
+
+## Communicate progress without hiding the remaining failure
+
+A useful update might say: "Dispatch is reaching the application in the inspected runs.
+The largest current failure group stops at a hidden navigation control. We are testing
+the page-state explanation next. End-to-end completion is still not established."
+
+That message tells the team what improved, what now matters, and what is still unknown.
+It avoids both empty optimism and the demoralizing impression that every failed run
+means nothing has been learned.
+
+For technical leadership, this is a practical responsibility: keep the team's attention
+aligned with current evidence while preserving a clear view of the user outcome that
+still needs to be delivered.
+
+## Technical deep dive
+
+**Plain-language bridge:** To know what is failing now, track requests through the same
+stages and distinguish their logical identity from each retry attempt.
+
+### Diagram: Fixing an early stage can expose the next blocker
+
+~~~text
+BEFORE
+[accepted] ---> [dispatch X]      [navigation]      [output]
+                   stops early
+
+AFTER AN EARLY FIX
+[accepted] ---> [dispatch OK] ---> [navigation X]   [output]
+                                      next blocker
+
+MORE REQUESTS REACHING NAVIGATION
+does not by itself mean navigation became less reliable.
+~~~
+
+The funnel is illustrative. Compare stage failures with stage entrants, and keep
+logical requests separate from retry attempts before drawing a conclusion.
+
+
+### Design a minimal event record
+
+An illustrative diagnostic event carries:
+
+~~~text
+logical_request_id
+attempt_id
+release_version
+input_class
+stage
+event_kind
+outcome_category
+event_time
+observed_time
+correlation_id
+~~~
+
+Event time records when the producer says the event happened; observed time records
+when the collector received it. Keeping both helps identify delayed telemetry.
+Use a monotonic clock for durations measured inside one process where possible,
+rather than subtracting wall-clock values that may jump.
+
+Keep diagnostic categories stable enough to compare releases, with a versioned mapping
+when categories change. Renaming an error can make a chart appear improved without
+changing the failure.
+
+### Build stage-conditioned rates
+
+For each stage, count requests that entered it and requests that passed it. The
+conditional failure rate is failures at that stage divided by entrants to that stage.
+Also retain the fraction of the original cohort reaching the stage.
+
+These answer different questions. If more requests survive an earlier fix, later-stage
+failures may increase in raw count even while that stage's own reliability improves.
+A funnel helps distinguish increased exposure from a regression.
+
+Choose whether the funnel tracks first attempts, final logical outcomes, or every
+attempt. Mixing those units can produce impossible counts or hide retry amplification.
+
+### Compare like populations
+
+Stratify by release, input class, and environment when they plausibly affect the failure.
+Inspect representative traces inside a large category before asserting a cause.
+A shared error message may combine several mechanisms.
+
+If logging coverage changed, report the measurement break. Missing events should not
+quietly become successful completions. Track instrumentation gaps as unknown outcomes
+until another authoritative source resolves them.
+
+### Tie an intervention to a predicted change
+
+Write the hypothesis in terms of an observable transition: "After correcting page
+selection, requests in this category should reach the detail stage while earlier
+dispatch behavior remains unchanged." Define a disconfirming result too.
+
+Then compare the expected stage transition, user-visible completion, and balancing
+signals such as retries or incorrect output. A later-stage failure can support the
+narrow hypothesis while leaving the overall request unsuccessful.
+
+The historical batch analysis motivated this method but was not recomputed here.
+The schema and calculations describe a proposed investigation design, not newly measured
+incident statistics.

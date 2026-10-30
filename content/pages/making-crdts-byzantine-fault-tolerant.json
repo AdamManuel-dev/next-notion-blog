@@ -1,0 +1,21 @@
+{
+  "id": "6930ed20a802492fad69f03b7fe5f345",
+  "slug": "making-crdts-byzantine-fault-tolerant",
+  "title": "Making CRDTs Byzantine Fault Tolerant",
+  "sourceUrl": "https://adams-blog.notion.site/Making-CRDTs-Byzantine-Fault-Tolerant-6930ed20a802492fad69f03b7fe5f345",
+  "extractedAt": "2026-10-30T19:40:57.339Z",
+  "blockCount": 5,
+  "cover": null,
+  "warnings": [
+    {
+      "id": "ffc2c5a6ad2b44ad809833e85ca0267b",
+      "type": "notion-file-block",
+      "reason": "No editable content leaf"
+    },
+    {
+      "id": "41d01b3715e04adb8e54b230eba2238a",
+      "type": "notion-pdf-block",
+      "reason": "No readable content or link in rendered block"
+    }
+  ]
+}

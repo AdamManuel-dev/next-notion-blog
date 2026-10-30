@@ -1,0 +1,17 @@
+{
+  "id": "d6046f2a9ddd92a6e35fc39888d968c3",
+  "slug": "testing-an-llm-integration-on-a-small-budget",
+  "title": "Testing an LLM Integration on a $10 Budget",
+  "source": "blog-draft",
+  "description": "A small experiment for learning whether an AI feature is useful.",
+  "tags": [
+    "ai",
+    "testing",
+    "product-development"
+  ],
+  "status": "published",
+  "sourceFile": "blog-drafts/testing-an-llm-integration-on-a-small-budget.md",
+  "sourceUrl": null,
+  "cover": null,
+  "warnings": []
+}

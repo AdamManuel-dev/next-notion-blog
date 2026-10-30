@@ -1,0 +1,17 @@
+{
+  "id": "1c144a5b94e5a1a20a55b08d6b4bf92f",
+  "slug": "permissions-belong-at-data-boundary",
+  "title": "Hiding a Button Does Not Protect the Data",
+  "source": "blog-draft",
+  "description": "Make customer isolation a rule enforced when data is read or changed, then test the boundaries directly.",
+  "tags": [
+    "architecture",
+    "security",
+    "testing"
+  ],
+  "status": "published",
+  "sourceFile": "blog-drafts/permissions-belong-at-data-boundary.md",
+  "sourceUrl": null,
+  "cover": null,
+  "warnings": []
+}

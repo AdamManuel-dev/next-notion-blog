@@ -1,0 +1,472 @@
+/*
+ * Static article reader for migrated Notion content.
+ *
+ * The reader owns no palette of its own: every `--lp-*` value below is an alias
+ * for one of the site-wide, contrast-tested `--blog-*` / `--notion-*` tokens in
+ * `styles/theme.css`, so light/dark follow `body.dark-mode` (noflash.js +
+ * `useDarkMode`) exactly like the rest of the blog.
+ */
+
+.page {
+  --lp-fg: var(--blog-text);
+  --lp-bg: var(--blog-surface);
+  --lp-muted: var(--blog-muted);
+  --lp-accent: var(--blog-focus);
+  --lp-link: var(--notion-blue);
+  --lp-border: var(--blog-control-border);
+  --lp-surface: var(--blog-panel);
+  /* Quiet hairline derived from the shared control border. */
+  --lp-hairline: color-mix(
+    in srgb,
+    var(--blog-control-border) 38%,
+    var(--blog-surface)
+  );
+  /* Original theme code surfaces; theme.css ships no token for them. */
+  --lp-code-bg: #f2f5ef;
+  --lp-code-border: #b5c0ad;
+  --lp-measure: 720px;
+  --lp-gutter: 16px;
+  --lp-header-height: 54px;
+
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--lp-bg);
+  color: var(--lp-fg);
+  font-family: var(--notion-font, system-ui, sans-serif);
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-text-size-adjust: 100%;
+}
+
+:global(body.dark-mode) .page {
+  --lp-code-bg: #111827;
+  --lp-code-border: #718169;
+}
+
+.wide {
+  --lp-measure: 900px;
+}
+
+/* --- focus visibility -------------------------------------------------- */
+
+.page a:focus-visible,
+.page summary:focus-visible {
+  outline: 3px solid var(--lp-accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.skipLink {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  padding: 0.5rem 1rem;
+  background: var(--lp-bg);
+  color: var(--lp-fg);
+  border: 1px solid var(--lp-border);
+  border-radius: 8px;
+  /* Must sit above the sticky header when focused. */
+  z-index: 100;
+}
+
+.skipLink:focus {
+  left: 1rem;
+  top: 0.5rem;
+}
+
+/* --- chrome ------------------------------------------------------------ */
+
+/* Full-bleed, flat header; only the inner bar is measured. */
+.header {
+  width: 100%;
+  background: var(--lp-bg);
+  border-bottom: 1px solid var(--lp-hairline);
+}
+
+.brand {
+  font-size: 15px;
+  color: var(--lp-fg);
+  text-decoration: none;
+}
+
+.main,
+.pageNav {
+  width: 100%;
+  max-width: var(--lp-measure);
+  margin: 0 auto;
+  padding-left: var(--lp-gutter);
+  padding-right: var(--lp-gutter);
+  box-sizing: border-box;
+}
+
+.main {
+  flex: 1 1 auto;
+  padding-top: 2.5rem;
+  padding-bottom: calc(max(5vh, 32px));
+}
+
+/* Covers retain the original wide, 30vh treatment and crop. */
+.cover {
+  display: block;
+  width: 100vw;
+  max-width: 1250px;
+  height: 30vh;
+  object-fit: cover;
+  margin: calc(-2.5rem + 8px) auto 1rem;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 0.75em;
+}
+
+@media only screen and (max-width: 1200px) {
+  .cover {
+    border-radius: 0;
+  }
+}
+
+.pageIcon {
+  display: block;
+  margin: 0 auto 32px;
+  font-size: 78px;
+  line-height: 1;
+  text-align: center;
+}
+
+.cover + .pageIcon {
+  position: relative;
+  margin-top: -62px;
+}
+
+/* Recovered icons can be downloaded images rather than emoji. */
+img.pageIcon {
+  width: 78px;
+  height: 78px;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.title {
+  display: block;
+  margin: 0 0 2.5rem;
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  text-align: center;
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+
+@media only screen and (max-width: 600px) {
+  .title {
+    font-size: 32px;
+  }
+
+  .pageIcon {
+    margin-bottom: 24px;
+    font-size: 64px;
+  }
+
+  .cover + .pageIcon {
+    margin-top: -48px;
+  }
+
+  img.pageIcon {
+    width: 64px;
+    height: 64px;
+  }
+}
+
+/* Small utility links; the shared <Footer> owns the real page footer. */
+.pageNav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  padding-top: 1.25rem;
+  padding-bottom: 0.5rem;
+  border-top: 1px solid var(--lp-hairline);
+  font-size: 14px;
+  color: var(--lp-muted);
+}
+
+.pageNav a {
+  color: var(--lp-muted);
+  text-decoration: none;
+}
+
+.pageNav a:hover {
+  color: var(--lp-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* --- homepage index ---------------------------------------------------- */
+
+.index {
+  margin-top: 3rem;
+  border-top: 1px solid var(--lp-hairline);
+  padding-top: 1.5rem;
+}
+
+.indexDetails > summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0.35rem 0;
+  list-style-position: outside;
+}
+
+.indexList {
+  margin: 0.75rem 0 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.indexList a {
+  color: var(--lp-link);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.indexList a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* --- migrated article content ------------------------------------------ */
+
+.content {
+  overflow-wrap: break-word;
+}
+
+.content > section {
+  margin: 0;
+}
+
+.content p,
+.content ul,
+.content ol {
+  margin: 0 0 1.1rem;
+  font-weight: 400;
+}
+
+.content ul,
+.content ol {
+  padding-left: 1.5rem;
+}
+
+.content li {
+  margin-bottom: 0.3rem;
+}
+
+.content li > ul,
+.content li > ol {
+  margin-top: 0.3rem;
+}
+
+.content h2,
+.content h3,
+.content h4 {
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  font-weight: 600;
+  margin: 2rem 0 0.5rem;
+  overflow-wrap: break-word;
+}
+
+.content h2 {
+  font-size: 30px;
+}
+
+.content h3 {
+  font-size: 24px;
+}
+
+.content h4 {
+  font-size: 20px;
+}
+
+/* Notion wraps heading text in <strong>; it must not become 900 weight. */
+.content :is(h1, h2, h3, h4, h5, h6) :is(strong, b) {
+  font-weight: inherit;
+  font-size: inherit;
+}
+
+.content a {
+  color: var(--lp-link);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  /* long bare URLs must not blow out the measure */
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.content a:hover {
+  text-decoration-thickness: 2px;
+}
+
+.content hr {
+  border: 0;
+  border-top: 1px solid var(--lp-hairline);
+  margin: 2em 0;
+}
+
+/* Plain quotes stay quiet and italic. */
+.content blockquote {
+  margin: 1.5rem 0;
+  padding: 0.25rem 0 0.25rem 1rem;
+  border-left: 3px solid var(--lp-border);
+  color: var(--lp-muted);
+  font-style: italic;
+}
+
+/* Imported Notion callouts arrive as a blockquote wrapping block sections:
+   they read as panels, not pull quotes, so they lose the italics. */
+.content blockquote:has(section) {
+  margin: 1.25em 0;
+  padding: 20px;
+  border: 1px solid var(--lp-hairline);
+  border-left: 3px solid var(--lp-border);
+  border-radius: 12px;
+  background: var(--lp-surface);
+  color: var(--lp-fg);
+  font-style: normal;
+}
+
+.content blockquote > *:last-child,
+.content blockquote section:last-child > *:last-child {
+  margin-bottom: 0;
+}
+
+.content figure {
+  margin: 1.75rem 0;
+}
+
+.content img,
+.content video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+  border-radius: 8px;
+}
+
+.content figcaption {
+  margin-top: 0.5rem;
+  font-size: 14px;
+  color: var(--lp-muted);
+  text-align: center;
+}
+
+.content details {
+  margin: 1.25rem 0;
+  padding: 0.75rem 1rem;
+  background: var(--lp-surface);
+  border: 1px solid var(--lp-hairline);
+  border-radius: 8px;
+}
+
+.content summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.content details > *:last-child {
+  margin-bottom: 0;
+}
+
+/* code: inline wraps, blocks scroll horizontally */
+
+.content code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.875em;
+  background: var(--lp-code-bg);
+  border-radius: 4px;
+  padding: 0.12em 0.35em;
+}
+
+.content pre {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: var(--lp-code-bg);
+  border: 1px solid var(--lp-code-border);
+  border-radius: 8px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  tab-size: 2;
+}
+
+.content pre code {
+  display: block;
+  padding: 0;
+  background: none;
+  white-space: pre;
+  overflow-wrap: normal;
+}
+
+/* tables: scroll container emitted by the migration, plus a bare fallback */
+
+.content :global(.table-scroll) {
+  margin: 1.5rem 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--lp-hairline);
+  border-radius: 8px;
+}
+
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.content :global(.table-scroll) > table {
+  margin: 0;
+  border: 0;
+}
+
+.content > table,
+.content section > table {
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 1.5rem 0;
+}
+
+.content th,
+.content td {
+  border: 1px solid var(--lp-hairline);
+  padding: 0.5rem 0.7rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.content th {
+  background: var(--lp-surface);
+  font-weight: 600;
+}
+
+/* --- motion ------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: no-preference) {
+  .page {
+    scroll-behavior: smooth;
+  }
+
+  .brand,
+  .pageNav a {
+    transition: color 120ms ease;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page,
+  .page * {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

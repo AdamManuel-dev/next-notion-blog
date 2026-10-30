@@ -1,0 +1,190 @@
+<p><strong>Reading paths:</strong> Start below for the plain-language explanation, or jump to the
+<a href="#technical-deep-dive">technical deep dive</a> for implementation details and verification.</p>
+<p>A recording appeared in the application, but downloading it failed.</p>
+<p>Because the report came from Windows, the first suspicion involved the Windows client.
+The investigation eventually found a more fundamental problem: the record existed,
+but it had no stored asset references to download.</p>
+<h2 id="a-listing-is-not-a-file">A listing is not a file</h2>
+<p>Think of a library catalog. A book can have a catalog entry even when the physical book
+is missing. The catalog proves that a record exists, not that the book is on the shelf.</p>
+<p>Our application had a similar separation:</p>
+<ul>
+<li>A database row described the recording.</li>
+<li>Separate storage held the video and other assets.</li>
+<li>The client requested links to download those assets.</li>
+</ul>
+<p>The row's uploaded label was not enough to establish that the download could work.</p>
+<h2 id="the-client-hid-important-clues">The client hid important clues</h2>
+<p>The investigation also found that the client replaced different backend errors with
+a generic message. That made several distinct problems look alike.</p>
+<p>A recording might be unfinished, inaccessible in the selected organization, or missing
+its assets. Each situation needs a different next step.</p>
+<p>Checking the exact record eventually showed uploaded metadata without the expected
+asset references. A client update could explain this better, but could not recreate
+the absent files.</p>
+<h2 id="improve-the-experience-without-overstating-the-repair">Improve the experience without overstating the repair</h2>
+<p>The recorded remediation included blocking obviously non-ready selections, preserving
+useful error details, and retaining successful downloads when another item in a batch failed.</p>
+<p>Those are real improvements. They should be reported separately from storage recovery.</p>
+<p>For the missing recording, the remaining action was to recover or upload the original
+assets if they were still available. Better error handling did not make that step disappear.</p>
+<h2 id="follow-the-request-one-boundary-at-a-time">Follow the request one boundary at a time</h2>
+<p>A failed download can begin in several places. The interface may request the wrong record.
+The API may reject access. Storage may not contain the asset. A temporary download link
+may have expired. The transfer may fail after it starts.</p>
+<p>These possibilities call for different checks. Begin by identifying the boundary where
+the failure occurs rather than guessing from the device on which it was reported.</p>
+<p>In this investigation, the failure occurred before a usable asset could be written to
+disk. That weakened the initial Windows-path explanation. It directed attention toward
+the request, record visibility, and available asset references.</p>
+<p>The useful question at each boundary is: what did this layer receive, what did it promise,
+and what evidence shows the next layer received it?</p>
+<h2 id="a-status-code-is-a-clue-not-the-whole-diagnosis">A status code is a clue, not the whole diagnosis</h2>
+<p>An HTTP response such as 404 often means the requested resource was not found. But the
+resource could be a metadata record, an asset reference, or the stored file itself.
+Some systems also deliberately avoid revealing whether an inaccessible record exists.</p>
+<p>That means a 404 alone should not be translated into a confident statement about which
+physical file is missing. The endpoint and the surrounding response matter.</p>
+<p>The recorded investigation initially established only that the item was unavailable
+to the current session. A later authorized backend lookup established the more specific
+storage problem. Those were different levels of evidence, and the explanation changed
+as stronger evidence became available.</p>
+<p>That is healthy debugging: update the conclusion when the evidence supports a narrower cause.</p>
+<h2 id="separate-upload-stages">Separate upload stages</h2>
+<p>A file upload is often a sequence rather than one event. A possible design creates a
+record, accepts bytes, stores required assets, processes them, and finally marks the
+record ready for use.</p>
+<p>Failure can occur between any two stages. The application should not make a later-stage
+promise merely because an earlier stage succeeded.</p>
+<p>For example, "received" might mean the server accepted the upload, while "ready" means
+the required outputs are available. The exact names matter less than their definitions.</p>
+<p>If a process crashes after creating metadata but before storing an asset, the record
+needs a recoverable state. It should not look indistinguishable from a fully usable upload.
+That also makes background reconciliation possible: find records whose promised state
+does not match their required resources.</p>
+<h2 id="keep-different-failures-distinct-in-a-batch">Keep different failures distinct in a batch</h2>
+<p>Suppose someone selects five recordings. Three download successfully, one is still
+processing, and one has missing assets.</p>
+<p>An all-or-nothing message such as "Download failed" hides the three successes and gives
+no useful explanation for the other two. A result per item is much clearer.</p>
+<table>
+<thead>
+<tr>
+<th>Result</th>
+<th>Useful next action</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Downloaded</td>
+<td>Show the saved location.</td>
+</tr>
+<tr>
+<td>Still processing</td>
+<td>Offer a later status check.</td>
+</tr>
+<tr>
+<td>Missing required asset</td>
+<td>Explain the recovery or re-upload path.</td>
+</tr>
+<tr>
+<td>Access rejected</td>
+<td>Ask the user to verify the selected account or organization.</td>
+</tr>
+</tbody></table>
+<p>These are illustrative categories. A real application should use its actual error
+contract and avoid revealing information the current user is not allowed to see.</p>
+<h2 id="make-retryability-a-decision">Make retryability a decision</h2>
+<p>Retrying can help a temporary connection failure. It is unlikely to create a missing
+asset reference in a permanently incomplete record.</p>
+<p>The system should distinguish a retryable failure from one requiring investigation or
+new input. It should also limit retries so one broken item does not consume the whole batch.</p>
+<p>When retrying a download, preserve completed items and avoid making the user repeat
+unrelated successes. If a partially written local file exists, the client needs a clear
+policy for replacing, resuming, or removing it.</p>
+<p>The user-facing message should reflect that policy. "Try later" is appropriate only
+when there is a plausible reason that later will be different.</p>
+<h2 id="test-promises-not-only-buttons">Test promises, not only buttons</h2>
+<p>A useful test collection would include a ready record with all required assets, a
+processing record, a ready-looking record missing an asset, and a mixed-success batch.</p>
+<p>Check that the interface offers only appropriate actions and preserves the backend's
+safe, useful explanation. Then check the actual downloaded artifact, not just that a
+download function was called.</p>
+<p>If packaging differs across operating systems, test those differences separately. A
+cross-platform backend failure should not be mistaken for proof that the desktop package
+is broken, and a passing backend test should not be treated as proof that every desktop
+build works.</p>
+<h2 id="close-the-incident-at-the-right-layer">Close the incident at the right layer</h2>
+<p>The client fix can be complete while the original missing recording remains unrecovered.
+Those should be separate tracked outcomes.</p>
+<p>An accurate incident note says which behavior improved, what data remains unavailable,
+and who can perform the next recovery step. It avoids declaring the user's problem
+fully solved just because the application now displays a better error.</p>
+<p>That distinction is especially important when the original source might no longer exist.
+Software should make the limitation visible rather than inviting someone to keep clicking
+a button that cannot produce the requested file.</p>
+<h2 id="define-what-a-status-promises">Define what a status promises</h2>
+<p>An uploaded status should have a documented meaning. Does it mean the upload request
+was accepted, every asset was stored, or every asset was verified and ready to download?</p>
+<p>Different stages may deserve different labels. A readiness check can also confirm the
+required assets before offering the download action.</p>
+<p>When debugging, I want to follow the complete chain from the visible promise to the
+underlying resource. The most useful question was not just "Why does download fail?"
+It was "What evidence says there is something available to download?"</p>
+<h2 id="technical-deep-dive">Technical deep dive</h2>
+<p><strong>Plain-language bridge:</strong> A database row saying a file exists is a pointer. Readiness
+requires evidence that the bytes behind that pointer are usable.</p>
+<h3 id="diagram-metadata-and-file-bytes-must-agree">Diagram: Metadata and file bytes must agree</h3>
+<pre><code class="language-text">[upload request]
+       |
+       v
+[storage accepts bytes] ----&gt; [verify required properties]
+                                      |
+                                      v
+                              [commit ready record]
+                                      |
+                                      v
+                              [authorized download]
+
+[stale upload or mismatch] ----&gt; [reconcile both systems]
+</code></pre>
+<p>This illustrates one possible ordering. A database row alone cannot prove the object
+is ready, and interruptions between systems need a reconciliation path.</p>
+<h3 id="model-the-upload-as-separate-durable-states">Model the upload as separate durable states</h3>
+<p>An illustrative state model is:</p>
+<pre><code class="language-text">created -&gt; uploading -&gt; stored -&gt; verified -&gt; ready
+               |          |          |
+               +----------+----------+-&gt; failed
+</code></pre>
+<p>"Stored" means the storage service accepted the object under the expected identity.
+"Verified" can include a size or digest check appropriate to the upload mechanism.
+"Ready" may additionally require processing and an authorized retrieval path.</p>
+<p>Do not treat a provider's generic object tag as a universal content checksum; its
+meaning depends on the provider and upload method. If byte identity matters, choose
+an explicit digest protocol and retain the expected value from a trusted stage.</p>
+<h3 id="handle-the-databasestorage-boundary">Handle the database/storage boundary</h3>
+<p>Writing an object and committing a database transaction are usually separate operations.
+A crash between them can leave an unreferenced object or a record pointing to absent
+bytes. A local transaction alone cannot make both systems atomic.</p>
+<p>One design uploads to a staged object identity, verifies it, then commits the ready
+record. A reconciliation process inspects stale staged uploads and inconsistent records.
+Cleanup needs a grace period and ownership checks so it does not delete an upload
+that is still legitimately in progress.</p>
+<p>The exact order depends on the storage API and product requirements. The invariant is
+that a record does not claim readiness before the required evidence exists.</p>
+<h3 id="classify-retrieval-failures-at-the-correct-boundary">Classify retrieval failures at the correct boundary</h3>
+<p>Separate missing metadata, absent object, rejected authorization, expired access link,
+and transient provider failure. An HTTP error at the client may be a translated symptom,
+so preserve a request correlation ID that connects the client report to server evidence.</p>
+<p>A retry should follow that classification. Retrying a missing asset forever wastes
+time. Refreshing an expired link may help without touching the asset. An authorization
+failure requires checking the trusted account context, not widening permissions.</p>
+<h3 id="exercise-interruption-and-recovery">Exercise interruption and recovery</h3>
+<p>Use a fake storage boundary or disposable test storage to interrupt after object creation
+but before metadata commit, and after metadata creation but before verification.
+Then run reconciliation and inspect both sides.</p>
+<p>For a batch download, return an outcome per asset. The overall operation can contain
+successes and failures without pretending every failure has the same remedy. Verify
+that the interface preserves these distinctions and does not display "downloaded"
+until the local save step has actually succeeded.</p>
+<p>These states and tests are a proposed design. The historical incident established
+a missing-asset diagnosis; it did not prove every recovery path described here.</p>

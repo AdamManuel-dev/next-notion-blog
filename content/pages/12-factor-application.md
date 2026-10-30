@@ -1,0 +1,486 @@
+---
+title: "12 Factor Application"
+id: "5411ae772ed1491d854991b4b464d33b"
+slug: "12-factor-application"
+source_url: "https://adams-blog.notion.site/12-Factor-Application-5411ae772ed1491d854991b4b464d33b"
+extracted_at: "2026-10-30T19:38:49.505Z"
+cover: null
+---
+
+# 12 Factor Application
+
+<a id="10ed3ab259bd4a7a9e8f6f77625b8da3"></a>
+
+<details open=""><summary>Source</summary><section id="84522dbf134941e885bccafec7ed9db8"><p><a href="https://12factor.net/">https://12factor.net/</a></p></section></details>
+
+<a id="051c6830d67f4633b888b50342c3bbdb"></a>
+
+**Table of Contents**
+
+<a id="6b2ce46e9a5a4b84863db65846fa24b5"></a>
+
+### I. Codebase
+
+<a id="81f90a679b6f40028e702358aebcd344"></a>
+
+> One codebase tracked in revision control, many deploys
+
+<a id="7254b38764c54bb983627cdf3b3904fe"></a>
+
+A twelve-factor app is always tracked in a version control system, such as [Git](http://git-scm.com/), [Mercurial](https://www.mercurial-scm.org/), or [Subversion](http://subversion.apache.org/). A copy of the revision tracking database is known as a *code repository*, often shortened to *code repo* or just *repo*.
+
+<a id="99d6333032a242be853b4bc060f32e1c"></a>
+
+A *codebase* is any single repo (in a centralized revision control system like Subversion), or any set of repos who share a root commit (in a decentralized revision control system like Git).
+
+<a id="73ad956428e045cc8d4e5aa744531b87"></a>
+
+![](/content-assets/2c289a3544f53bac18c6.png)
+
+<a id="99c06aa4eb7a44668683a1a48172f029"></a>
+
+There is always a one-to-one correlation between the codebase and the app:
+
+<a id="7a9d6dc610134056b506d477cef85617"></a>
+
+- If there are multiple codebases, it’s not an app – it’s a distributed system. Each component in a distributed system is an app, and each can individually comply with twelve-factor.
+
+<a id="d15311a4c7424acc8650a136359beef5"></a>
+
+- Multiple apps sharing the same code is a violation of twelve-factor. The solution here is to factor shared code into libraries which can be included through the [dependency manager](https://12factor.net/dependencies).
+
+<a id="45cd227911d14159b0aa47cb8319502f"></a>
+
+There is only one codebase per app, but there will be many deploys of the app. A *deploy* is a running instance of the app. This is typically a production site, and one or more staging sites. Additionally, every developer has a copy of the app running in their local development environment, each of which also qualifies as a deploy.
+
+<a id="1e8a3acdc57e4de79d9f1110c5dd1dda"></a>
+
+The codebase is the same across all deploys, although different versions may be active in each deploy. For example, a developer has some commits not yet deployed to staging; staging has some commits not yet deployed to production. But they all share the same codebase, thus making them identifiable as different deploys of the same app.
+
+<a id="1d70df07f5ed433b8384274d76de5f04"></a>
+
+### II. Dependencies
+
+<a id="e237bf3938324801b8352c949ba9afdf"></a>
+
+> Explicitly declare and isolate dependencies
+
+<a id="c194f41df2d64a8fb7438923984d78fc"></a>
+
+Most programming languages offer a packaging system for distributing support libraries, such as [CPAN](http://www.cpan.org/) for Perl or [Rubygems](http://rubygems.org/) for Ruby. Libraries installed through a packaging system can be installed system-wide (known as “site packages”) or scoped into the directory containing the app (known as “vendoring” or “bundling”).
+
+<a id="0f22ff209947493ba1dd07afa111208f"></a>
+
+**A twelve-factor app never relies on implicit existence of system-wide packages.** It declares all dependencies, completely and exactly, via a *dependency declaration* manifest. Furthermore, it uses a *dependency isolation* tool during execution to ensure that no implicit dependencies “leak in” from the surrounding system. The full and explicit dependency specification is applied uniformly to both production and development.
+
+<a id="aaca68fc308944869aa0c259aa5d026e"></a>
+
+For example, [Bundler](https://bundler.io/) for Ruby offers the `Gemfile` manifest format for dependency declaration and `bundle exec` for dependency isolation. In Python there are two separate tools for these steps – [Pip](http://www.pip-installer.org/en/latest/) is used for declaration and [Virtualenv](http://www.virtualenv.org/en/latest/) for isolation. Even C has [Autoconf](http://www.gnu.org/s/autoconf/) for dependency declaration, and static linking can provide dependency isolation. No matter what the toolchain, dependency declaration and isolation must always be used together – only one or the other is not sufficient to satisfy twelve-factor.
+
+<a id="be76756183634779958cac87e75c3d5e"></a>
+
+One benefit of explicit dependency declaration is that it simplifies setup for developers new to the app. The new developer can check out the app’s codebase onto their development machine, requiring only the language runtime and dependency manager installed as prerequisites. They will be able to set up everything needed to run the app’s code with a deterministic *build command*. For example, the build command for Ruby/Bundler is `bundle install`, while for Clojure/[Leiningen](https://github.com/technomancy/leiningen#readme) it is `lein deps`.
+
+<a id="9b1839cc001c4cd1bb778dd665c60413"></a>
+
+Twelve-factor apps also do not rely on the implicit existence of any system tools. Examples include shelling out to ImageMagick or `curl`. While these tools may exist on many or even most systems, there is no guarantee that they will exist on all systems where the app may run in the future, or whether the version found on a future system will be compatible with the app. If the app needs to shell out to a system tool, that tool should be vendored into the app.
+
+<a id="52f4c4ebdf04466798b1528749734898"></a>
+
+### III. Config
+
+<a id="e10d122f79724cc9b53e8ab92742a5e3"></a>
+
+> Store config in the environment
+
+<a id="9905e2a774654fdcb0f1bb60709b7aa1"></a>
+
+An app’s *config* is everything that is likely to vary between [deploys](https://12factor.net/codebase) (staging, production, developer environments, etc). This includes:
+
+<a id="da0d7752743146d09842bfab0f47d94c"></a>
+
+- Resource handles to the database, Memcached, and other [backing services](https://12factor.net/backing-services)
+
+<a id="1f06e11573de4213be04b01159dc1e97"></a>
+
+- Credentials to external services such as Amazon S3 or Twitter
+
+<a id="91ac362a84724eca99585cb8a8b1c9de"></a>
+
+- Per-deploy values such as the canonical hostname for the deploy
+
+<a id="812156c4180e4b78a6e9fdfed83f8995"></a>
+
+Apps sometimes store config as constants in the code. This is a violation of twelve-factor, which requires **strict separation of config from code**. Config varies substantially across deploys, code does not.
+
+<a id="dabde0a0ae744461849c55bdb8b0a865"></a>
+
+A litmus test for whether an app has all config correctly factored out of the code is whether the codebase could be made open source at any moment, without compromising any credentials.
+
+<a id="b9cc2a129dba4214a3c2f110387aa1b4"></a>
+
+Note that this definition of “config” does **not** include internal application config, such as `config/routes.rb` in Rails, or how [code modules are connected](http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html) in [Spring](http://spring.io/). This type of config does not vary between deploys, and so is best done in the code.
+
+<a id="d334d35d05924b7fbe41fc3f1231ee99"></a>
+
+Another approach to config is the use of config files which are not checked into revision control, such as `config/database.yml` in Rails. This is a huge improvement over using constants which are checked into the code repo, but still has weaknesses: it’s easy to mistakenly check in a config file to the repo; there is a tendency for config files to be scattered about in different places and different formats, making it hard to see and manage all the config in one place. Further, these formats tend to be language- or framework-specific.
+
+<a id="6f93cb9e1d1a4e0b94eefde1f0182004"></a>
+
+**The twelve-factor app stores config in** ***environment variables*** (often shortened to *env vars* or *env*). Env vars are easy to change between deploys without changing any code; unlike config files, there is little chance of them being checked into the code repo accidentally; and unlike custom config files, or other config mechanisms such as Java System Properties, they are a language- and OS-agnostic standard.
+
+<a id="6ba32d66a74c412ea5d3a7628b5ec7d6"></a>
+
+Another aspect of config management is grouping. Sometimes apps batch config into named groups (often called “environments”) named after specific deploys, such as the `development`, `test`, and `production` environments in Rails. This method does not scale cleanly: as more deploys of the app are created, new environment names are necessary, such as `staging` or `qa`. As the project grows further, developers may add their own special environments like `joes-staging`, resulting in a combinatorial explosion of config which makes managing deploys of the app very brittle.
+
+<a id="b880aac282ed4f09b43e2eae9bc2b2bf"></a>
+
+In a twelve-factor app, env vars are granular controls, each fully orthogonal to other env vars. They are never grouped together as “environments”, but instead are independently managed for each deploy. This is a model that scales up smoothly as the app naturally expands into more deploys over its lifetime.
+
+<a id="398cb19e0f544beab737cf54c47684c3"></a>
+
+### IV. Backing services
+
+<a id="ac1ddce7ba094f9fac26c41bc2f6576a"></a>
+
+> Treat backing services as attached resources
+
+<a id="db3685a0aae9442b88c7c8400a44af6c"></a>
+
+A *backing service* is any service the app consumes over the network as part of its normal operation. Examples include datastores (such as [MySQL](http://dev.mysql.com/) or [CouchDB](http://couchdb.apache.org/)), messaging/queueing systems (such as [RabbitMQ](http://www.rabbitmq.com/) or [Beanstalkd](https://beanstalkd.github.io/)), SMTP services for outbound email (such as [Postfix](http://www.postfix.org/)), and caching systems (such as [Memcached](http://memcached.org/)).
+
+<a id="1510fe4657ae45edbf6f0a985443a8f7"></a>
+
+Backing services like the database are traditionally managed by the same systems administrators who deploy the app’s runtime. In addition to these locally-managed services, the app may also have services provided and managed by third parties. Examples include SMTP services (such as [Postmark](http://postmarkapp.com/)), metrics-gathering services (such as [New Relic](http://newrelic.com/) or [Loggly](http://www.loggly.com/)), binary asset services (such as [Amazon S3](http://aws.amazon.com/s3/)), and even API-accessible consumer services (such as [Twitter](http://dev.twitter.com/), [Google Maps](https://developers.google.com/maps/), or [Last.fm](http://www.last.fm/api)).
+
+<a id="8d426710625c4cfa944c4d0b8fab540e"></a>
+
+**The code for a twelve-factor app makes no distinction between local and third party services.** To the app, both are attached resources, accessed via a URL or other locator/credentials stored in the [config](https://12factor.net/config). A [deploy](https://12factor.net/codebase) of the twelve-factor app should be able to swap out a local MySQL database with one managed by a third party (such as [Amazon RDS](http://aws.amazon.com/rds/)) without any changes to the app’s code. Likewise, a local SMTP server could be swapped with a third-party SMTP service (such as Postmark) without code changes. In both cases, only the resource handle in the config needs to change.
+
+<a id="c378aae5d4cd48bd89696699fa4d0a75"></a>
+
+Each distinct backing service is a *resource*. For example, a MySQL database is a resource; two MySQL databases (used for sharding at the application layer) qualify as two distinct resources. The twelve-factor app treats these databases as *attached resources*, which indicates their loose coupling to the deploy they are attached to.
+
+<a id="f54e67c831684e22a178c31b0c91b9ef"></a>
+
+![](/content-assets/cb4522c4579211757cf2.png)
+
+<a id="f405f1d6b7d5440fb3f0eeb002e11dd4"></a>
+
+Resources can be attached to and detached from deploys at will. For example, if the app’s database is misbehaving due to a hardware issue, the app’s administrator might spin up a new database server restored from a recent backup. The current production database could be detached, and the new database attached – all without any code changes.
+
+<a id="2f0f51e8fcb94e3eb74b1010f634189a"></a>
+
+### V. Build, release, run
+
+<a id="d1272c0db3164247ae1ced0c70172edc"></a>
+
+> Strictly separate build and run stages
+
+<a id="5c48442ffeb941a49d1e6dc301257807"></a>
+
+A [codebase](https://12factor.net/codebase) is transformed into a (non-development) deploy through three stages:
+
+<a id="1f15c65d623941a384ae12282d0db597"></a>
+
+- The *build stage* is a transform which converts a code repo into an executable bundle known as a *build*. Using a version of the code at a commit specified by the deployment process, the build stage fetches vendors [dependencies](https://12factor.net/dependencies) and compiles binaries and assets.
+
+<a id="e03618adb0214625874002a3250cfcc1"></a>
+
+- The *release stage* takes the build produced by the build stage and combines it with the deploy’s current [config](https://12factor.net/config). The resulting *release* contains both the build and the config and is ready for immediate execution in the execution environment.
+
+<a id="71ef103023fd4a768c69b9a0a9d6f282"></a>
+
+- The *run stage* (also known as “runtime”) runs the app in the execution environment, by launching some set of the app’s [processes](https://12factor.net/processes) against a selected release.
+
+<a id="d1c5dab3e49945e2a74fb8938258183c"></a>
+
+![](/content-assets/d997853b54707bb0fef5.png)
+
+<a id="f8e84f6f327846f29897a8b1a35c16e2"></a>
+
+**The twelve-factor app uses strict separation between the build, release, and run stages.** For example, it is impossible to make changes to the code at runtime, since there is no way to propagate those changes back to the build stage.
+
+<a id="18e5b6b116ad42fd9e9a12e10473e133"></a>
+
+Deployment tools typically offer release management tools, most notably the ability to roll back to a previous release. For example, the [Capistrano](https://github.com/capistrano/capistrano/wiki) deployment tool stores releases in a subdirectory named `releases`, where the current release is a symlink to the current release directory. Its `rollback` command makes it easy to quickly roll back to a previous release.
+
+<a id="63f64ad148bb460388c68b5849535349"></a>
+
+Every release should always have a unique release ID, such as a timestamp of the release (such as `2011-04-06-20:32:17`) or an incrementing number (such as `v100`). Releases are an append-only ledger and a release cannot be mutated once it is created. Any change must create a new release.
+
+<a id="89975cc7e6a748a4b2cc2e3159594ef4"></a>
+
+Builds are initiated by the app’s developers whenever new code is deployed. Runtime execution, by contrast, can happen automatically in cases such as a server reboot, or a crashed process being restarted by the process manager. Therefore, the run stage should be kept to as few moving parts as possible, since problems that prevent an app from running can cause it to break in the middle of the night when no developers are on hand. The build stage can be more complex, since errors are always in the foreground for a developer who is driving the deploy.
+
+<a id="68b8693bc22744f78fdb557ad07ffe04"></a>
+
+### VI. Processes
+
+<a id="51783c780e4e418d95757388d0e80e97"></a>
+
+> Execute the app as one or more stateless processes
+
+<a id="8710443e709f42da94607fb367e3a909"></a>
+
+The app is executed in the execution environment as one or more *processes*.
+
+<a id="af87a69070144cf4b5e8f4e0b5adb9ac"></a>
+
+In the simplest case, the code is a stand-alone script, the execution environment is a developer’s local laptop with an installed language runtime, and the process is launched via the command line (for example, `python my_script.py`). On the other end of the spectrum, a production deploy of a sophisticated app may use many [process types, instantiated into zero or more running processes](https://12factor.net/concurrency).
+
+<a id="63ed936df70f4bcca40d78d712929d24"></a>
+
+**Twelve-factor processes are stateless and** [share-nothing](http://en.wikipedia.org/wiki/Shared_nothing_architecture)**.** Any data that needs to persist must be stored in a stateful [backing service](https://12factor.net/backing-services), typically a database.
+
+<a id="e0d9dcd6bdf84c72bc0b5ccfdcb53c09"></a>
+
+The memory space or filesystem of the process can be used as a brief, single-transaction cache. For example, downloading a large file, operating on it, and storing the results of the operation in the database. The twelve-factor app never assumes that anything cached in memory or on disk will be available on a future request or job – with many processes of each type running, chances are high that a future request will be served by a different process. Even when running only one process, a restart (triggered by code deploy, config change, or the execution environment relocating the process to a different physical location) will usually wipe out all local (e.g., memory and filesystem) state.
+
+<a id="430bb747bc4743b9b5bc5f5f47c21bc7"></a>
+
+Asset packagers like [django-assetpackager](http://code.google.com/p/django-assetpackager/) use the filesystem as a cache for compiled assets. A twelve-factor app prefers to do this compiling during the [build stage](https://12factor.net/build-release-run). Asset packagers such as [Jammit](http://documentcloud.github.com/jammit/) and the [Rails asset pipeline](http://ryanbigg.com/guides/asset_pipeline.html) can be configured to package assets during the build stage.
+
+<a id="7cc42190021f4c6fa134481ef5252477"></a>
+
+Some web systems rely on [“sticky sessions”](http://en.wikipedia.org/wiki/Load_balancing_%28computing%29#Persistence) – that is, caching user session data in memory of the app’s process and expecting future requests from the same visitor to be routed to the same process. Sticky sessions are a violation of twelve-factor and should never be used or relied upon. Session state data is a good candidate for a datastore that offers time-expiration, such as [Memcached](http://memcached.org/) or [Redis](http://redis.io/).
+
+<a id="8ba0ab7aa57942a486d7c8c6319fce8e"></a>
+
+### VII. Port binding
+
+<a id="21cb1a998ae74220921aca9d44116459"></a>
+
+> Export services via port binding
+
+<a id="65dcd8787a564cd6ad95276575078080"></a>
+
+Web apps are sometimes executed inside a webserver container. For example, PHP apps might run as a module inside [Apache HTTPD](http://httpd.apache.org/), or Java apps might run inside [Tomcat](http://tomcat.apache.org/).
+
+<a id="caf178dd546443a192af716390342832"></a>
+
+**The twelve-factor app is completely self-contained** and does not rely on runtime injection of a webserver into the execution environment to create a web-facing service. The web app **exports HTTP as a service by binding to a port**, and listening to requests coming in on that port.
+
+<a id="c9e3d37ddc584426b0a483b20cf7c865"></a>
+
+In a local development environment, the developer visits a service URL like `http://localhost:5000/` to access the service exported by their app. In deployment, a routing layer handles routing requests from a public-facing hostname to the port-bound web processes.
+
+<a id="490558c1c32c4c398701107920d59840"></a>
+
+This is typically implemented by using [dependency declaration](https://12factor.net/dependencies) to add a webserver library to the app, such as [Tornado](http://www.tornadoweb.org/) for Python, [Thin](http://code.macournoyer.com/thin/) for Ruby, or [Jetty](http://www.eclipse.org/jetty/) for Java and other JVM-based languages. This happens entirely in *user space*, that is, within the app’s code. The contract with the execution environment is binding to a port to serve requests.
+
+<a id="7776dd8c7c724cec92e322dab367d6cc"></a>
+
+HTTP is not the only service that can be exported by port binding. Nearly any kind of server software can be run via a process binding to a port and awaiting incoming requests. Examples include [ejabberd](http://www.ejabberd.im/) (speaking [XMPP](http://xmpp.org/)), and [Redis](http://redis.io/) (speaking the [Redis protocol](http://redis.io/topics/protocol)).
+
+<a id="0bcea29cc6354074a37b187a6fbd931b"></a>
+
+Note also that the port-binding approach means that one app can become the [backing service](https://12factor.net/backing-services) for another app, by providing the URL to the backing app as a resource handle in the [config](https://12factor.net/config) for the consuming app.
+
+<a id="18f5bec667e949e1a6f311c0abe6b37e"></a>
+
+### VIII. Concurrency
+
+<a id="c7e2a040b2e64c84b46e5f48a3a73a12"></a>
+
+> Scale out via the process model
+
+<a id="227ad7c696174e2c84f15eea6e212127"></a>
+
+Any computer program, once run, is represented by one or more processes. Web apps have taken a variety of process-execution forms. For example, PHP processes run as child processes of Apache, started on demand as needed by request volume. Java processes take the opposite approach, with the JVM providing one massive uberprocess that reserves a large block of system resources (CPU and memory) on startup, with concurrency managed internally via threads. In both cases, the running process(es) are only minimally visible to the developers of the app.
+
+<a id="7ed75d9ce13a4a058853c2a498487c2b"></a>
+
+![](/content-assets/cb0d7a84aa63a56f76a0.png)
+
+<a id="cdda2caec00d46a48bd30976f1a77090"></a>
+
+**In the twelve-factor app, processes are a first class citizen.** Processes in the twelve-factor app take strong cues from [the unix process model for running service daemons](https://adam.herokuapp.com/past/2011/5/9/applying_the_unix_process_model_to_web_apps/). Using this model, the developer can architect their app to handle diverse workloads by assigning each type of work to a *process type*. For example, HTTP requests may be handled by a web process, and long-running background tasks handled by a worker process.
+
+<a id="ba686a6f91db477aa4a1dacf9ee7daf8"></a>
+
+This does not exclude individual processes from handling their own internal multiplexing, via threads inside the runtime VM, or the async/evented model found in tools such as [EventMachine](https://github.com/eventmachine/eventmachine), [Twisted](http://twistedmatrix.com/trac/), or [Node.js](http://nodejs.org/). But an individual VM can only grow so large (vertical scale), so the application must also be able to span multiple processes running on multiple physical machines.
+
+<a id="3669d4f3e81d4ff7a14c060cc8109341"></a>
+
+The process model truly shines when it comes time to scale out. The [share-nothing, horizontally partitionable nature of twelve-factor app processes](https://12factor.net/processes) means that adding more concurrency is a simple and reliable operation. The array of process types and number of processes of each type is known as the *process formation*.
+
+<a id="d1167a1e9c21411da60fc5874ee99026"></a>
+
+Twelve-factor app processes [should never daemonize](http://dustin.github.com/2010/02/28/running-processes.html) or write PID files. Instead, rely on the operating system’s process manager (such as [systemd](https://www.freedesktop.org/wiki/Software/systemd/), a distributed process manager on a cloud platform, or a tool like [Foreman](http://blog.daviddollar.org/2011/05/06/introducing-foreman.html) in development) to manage [output streams](https://12factor.net/logs), respond to crashed processes, and handle user-initiated restarts and shutdowns.
+
+<a id="5660de29f7144923a0d0a08a03af8987"></a>
+
+### IX. Disposability
+
+<a id="5b85f24a65fc4647a5ad94d879491e6f"></a>
+
+> Maximize robustness with fast startup and graceful shutdown
+
+<a id="fb62a8d2c2334f6baf650529985c94b4"></a>
+
+**The twelve-factor app’s** [processes](https://12factor.net/processes) **are** ***disposable*****, meaning they can be started or stopped at a moment’s notice.** This facilitates fast elastic scaling, rapid deployment of [code](https://12factor.net/codebase) or [config](https://12factor.net/config) changes, and robustness of production deploys.
+
+<a id="e9fe9b5417d544f680c3f236fe55020a"></a>
+
+Processes should strive to **minimize startup time**. Ideally, a process takes a few seconds from the time the launch command is executed until the process is up and ready to receive requests or jobs. Short startup time provides more agility for the [release](https://12factor.net/build-release-run) process and scaling up; and it aids robustness, because the process manager can more easily move processes to new physical machines when warranted.
+
+<a id="37f22a5ee358498ab1a0766202d16121"></a>
+
+Processes **shut down gracefully when they receive a** [SIGTERM](http://en.wikipedia.org/wiki/SIGTERM) signal from the process manager. For a web process, graceful shutdown is achieved by ceasing to listen on the service port (thereby refusing any new requests), allowing any current requests to finish, and then exiting. Implicit in this model is that HTTP requests are short (no more than a few seconds), or in the case of long polling, the client should seamlessly attempt to reconnect when the connection is lost.
+
+<a id="3c45980d18864d23aae93cf11cb7db73"></a>
+
+For a worker process, graceful shutdown is achieved by returning the current job to the work queue. For example, on [RabbitMQ](http://www.rabbitmq.com/) the worker can send a [NACK](http://www.rabbitmq.com/amqp-0-9-1-quickref.html#basic.nack); on [Beanstalkd](https://beanstalkd.github.io/), the job is returned to the queue automatically whenever a worker disconnects. Lock-based systems such as [Delayed Job](https://github.com/collectiveidea/delayed_job#readme) need to be sure to release their lock on the job record. Implicit in this model is that all jobs are [reentrant](http://en.wikipedia.org/wiki/Reentrant_%28subroutine%29), which typically is achieved by wrapping the results in a transaction, or making the operation [idempotent](http://en.wikipedia.org/wiki/Idempotence).
+
+<a id="ec6ae4aec24c4875a231c0b55f49652b"></a>
+
+Processes should also be **robust against sudden death**, in the case of a failure in the underlying hardware. While this is a much less common occurrence than a graceful shutdown with `SIGTERM`, it can still happen. A recommended approach is use of a robust queueing backend, such as Beanstalkd, that returns jobs to the queue when clients disconnect or time out. Either way, a twelve-factor app is architected to handle unexpected, non-graceful terminations. [Crash-only design](http://lwn.net/Articles/191059/) takes this concept to its [logical conclusion](http://docs.couchdb.org/en/latest/intro/overview.html).
+
+<a id="6ba1b894697b4c629c9e986c14b8b365"></a>
+
+### X. Dev/prod parity
+
+<a id="10acfa7f771a44d2a48ee6b51803246c"></a>
+
+> Keep development, staging, and production as similar as possible
+
+<a id="078479c1d391499d950438bc79226492"></a>
+
+Historically, there have been substantial gaps between development (a developer making live edits to a local [deploy](https://12factor.net/codebase) of the app) and production (a running deploy of the app accessed by end users). These gaps manifest in three areas:
+
+<a id="5ff9188dbd37421abe7f90e55b64020b"></a>
+
+- **The time gap**: A developer may work on code that takes days, weeks, or even months to go into production.
+
+<a id="c4b36c309f394cf3916d64376cbde460"></a>
+
+- **The personnel gap**: Developers write code, ops engineers deploy it.
+
+<a id="bc8d7795548f4fbd92b2a5ba5eaf0d72"></a>
+
+- **The tools gap**: Developers may be using a stack like Nginx, SQLite, and OS X, while the production deploy uses Apache, MySQL, and Linux.
+
+<a id="8c867d7e7835407d81dac8ad3914b262"></a>
+
+**The twelve-factor app is designed for** [continuous deployment](http://avc.com/2011/02/continuous-deployment/) **by keeping the gap between development and production small.** Looking at the three gaps described above:
+
+<a id="16c53fa6627f47c6b873c8ae0e2a0634"></a>
+
+- Make the time gap small: a developer may write code and have it deployed hours or even just minutes later.
+
+<a id="3a8691b9828748ebaa4b7cdb3d70c9cd"></a>
+
+- Make the personnel gap small: developers who wrote code are closely involved in deploying it and watching its behavior in production.
+
+<a id="404d40ef26a247ed9291e64465ca1abf"></a>
+
+- Make the tools gap small: keep development and production as similar as possible.
+
+<a id="da76541054d2494bb8ac5472d10e685e"></a>
+
+Summarizing the above into a table:
+
+<a id="5ae448178e274aa29d63043ec568938d"></a>
+
+<MISSING>
+
+<a id="90c2409faa8447e0a09907aed67d6003"></a>
+
+[Backing services](https://12factor.net/backing-services), such as the app’s database, queueing system, or cache, is one area where dev/prod parity is important. Many languages offer libraries which simplify access to the backing service, including *adapters* to different types of services. Some examples are in the table below.
+
+<a id="de3d55a8230c437998f7227412d0fe7b"></a>
+
+<MISSING>
+
+<a id="c53d36b035d84cbb876bce5a33574af9"></a>
+
+Developers sometimes find great appeal in using a lightweight backing service in their local environments, while a more serious and robust backing service will be used in production. For example, using SQLite locally and PostgreSQL in production; or local process memory for caching in development and Memcached in production.
+
+<a id="eed85ae5d7724a06a7dbf830c0724040"></a>
+
+**The twelve-factor developer resists the urge to use different backing services between development and production**, even when adapters theoretically abstract away any differences in backing services. Differences between backing services mean that tiny incompatibilities crop up, causing code that worked and passed tests in development or staging to fail in production. These types of errors create friction that disincentivizes continuous deployment. The cost of this friction and the subsequent dampening of continuous deployment is extremely high when considered in aggregate over the lifetime of an application.
+
+<a id="b352369816054d7f830347e9fafb94b0"></a>
+
+Lightweight local services are less compelling than they once were. Modern backing services such as Memcached, PostgreSQL, and RabbitMQ are not difficult to install and run thanks to modern packaging systems, such as [Homebrew](http://mxcl.github.com/homebrew/) and [apt-get](https://help.ubuntu.com/community/AptGet/Howto). Alternatively, declarative provisioning tools such as [Chef](http://www.opscode.com/chef/) and [Puppet](http://docs.puppetlabs.com/) combined with light-weight virtual environments such as [Docker](https://www.docker.com/) and [Vagrant](http://vagrantup.com/) allow developers to run local environments which closely approximate production environments. The cost of installing and using these systems is low compared to the benefit of dev/prod parity and continuous deployment.
+
+<a id="e011e61e730c47c0bfdabb6d2a79ab25"></a>
+
+Adapters to different backing services are still useful, because they make porting to new backing services relatively painless. But all deploys of the app (developer environments, staging, production) should be using the same type and version of each of the backing services.
+
+<a id="bbe5a2f1361e404c9ae5b6e9ca3ed2cf"></a>
+
+### XI. Logs
+
+<a id="bbfe6b0d45114552b6fd66368b84a689"></a>
+
+> Treat logs as event streams
+
+<a id="123edc2955454e9892309d1999bec2b1"></a>
+
+*Logs* provide visibility into the behavior of a running app. In server-based environments they are commonly written to a file on disk (a “logfile”); but this is only an output format.
+
+<a id="bdcb4da029354e0585c2297785d2c648"></a>
+
+Logs are the [stream](https://adam.herokuapp.com/past/2011/4/1/logs_are_streams_not_files/) of aggregated, time-ordered events collected from the output streams of all running processes and backing services. Logs in their raw form are typically a text format with one event per line (though backtraces from exceptions may span multiple lines). Logs have no fixed beginning or end, but flow continuously as long as the app is operating.
+
+<a id="9e59ada1e260468888c5f1a54b23363d"></a>
+
+**A twelve-factor app never concerns itself with routing or storage of its output stream.** It should not attempt to write to or manage logfiles. Instead, each running process writes its event stream, unbuffered, to `stdout`. During local development, the developer will view this stream in the foreground of their terminal to observe the app’s behavior.
+
+<a id="e7e1a25ad1c24428ac1e0d207e82c23d"></a>
+
+In staging or production deploys, each process’ stream will be captured by the execution environment, collated together with all other streams from the app, and routed to one or more final destinations for viewing and long-term archival. These archival destinations are not visible to or configurable by the app, and instead are completely managed by the execution environment. Open-source log routers (such as [Logplex](https://github.com/heroku/logplex) and [Fluentd](https://github.com/fluent/fluentd)) are available for this purpose.
+
+<a id="8de14fb4c78d43668897d1e5b95e6fa1"></a>
+
+The event stream for an app can be routed to a file, or watched via realtime tail in a terminal. Most significantly, the stream can be sent to a log indexing and analysis system such as [Splunk](http://www.splunk.com/), or a general-purpose data warehousing system such as [Hadoop/Hive](http://hive.apache.org/). These systems allow for great power and flexibility for introspecting an app’s behavior over time, including:
+
+<a id="16f8e29de65644f5a63a55a95bd24059"></a>
+
+- Finding specific events in the past.
+
+<a id="71c803fa25c345e9988c6c5bf5dfe209"></a>
+
+- Large-scale graphing of trends (such as requests per minute).
+
+<a id="49c611283f4a42f186abddd2e2a1b6a1"></a>
+
+- Active alerting according to user-defined heuristics (such as an alert when the quantity of errors per minute exceeds a certain threshold).
+
+<a id="f009c711c099466eb595d4e88220bd46"></a>
+
+### XII. Admin processes
+
+<a id="3ef517e9ab09466493d1f48f46cc7eb8"></a>
+
+> Run admin/management tasks as one-off processes
+
+<a id="e224e18656ad4637a5c99915816f6650"></a>
+
+The [process formation](https://12factor.net/concurrency) is the array of processes that are used to do the app’s regular business (such as handling web requests) as it runs. Separately, developers will often wish to do one-off administrative or maintenance tasks for the app, such as:
+
+<a id="8a41a2bb619249bc84c3f1a6c0f49dc8"></a>
+
+- Running database migrations (e.g. `manage.py migrate` in Django, `rake db:migrate` in Rails).
+
+<a id="e33760a936a74b7a9b0969095b25d044"></a>
+
+- Running a console (also known as a [REPL](http://en.wikipedia.org/wiki/Read-eval-print_loop) shell) to run arbitrary code or inspect the app’s models against the live database. Most languages provide a REPL by running the interpreter without any arguments (e.g. `python` or `perl`) or in some cases have a separate command (e.g. `irb` for Ruby, `rails console` for Rails).
+
+<a id="a8ba6948bbd74a4586d2816cf415e616"></a>
+
+- Running one-time scripts committed into the app’s repo (e.g. `php scripts/fix_bad_records.php`).
+
+<a id="ea66d7067d05448287be433bcfba1c06"></a>
+
+One-off admin processes should be run in an identical environment as the regular [long-running processes](https://12factor.net/processes) of the app. They run against a [release](https://12factor.net/build-release-run), using the same [codebase](https://12factor.net/codebase) and [config](https://12factor.net/config) as any process run against that release. Admin code must ship with application code to avoid synchronization issues.
+
+<a id="1da83c018dd84efd9bc40be37c1753d6"></a>
+
+The same [dependency isolation](https://12factor.net/dependencies) techniques should be used on all process types. For example, if the Ruby web process uses the command `bundle exec thin start`, then a database migration should use `bundle exec rake db:migrate`. Likewise, a Python program using Virtualenv should use the vendored `bin/python` for running both the Tornado webserver and any `manage.py` admin processes.
+
+<a id="cbe90fb71d7e4a6e9d936e1f0a67b9e3"></a>
+
+Twelve-factor strongly favors languages which provide a REPL shell out of the box, and which make it easy to run one-off scripts. In a local deploy, developers invoke one-off admin processes by a direct shell command inside the app’s checkout directory. In a production deploy, developers can use ssh or other remote command execution mechanism provided by that deploy’s execution environment to run such a process.

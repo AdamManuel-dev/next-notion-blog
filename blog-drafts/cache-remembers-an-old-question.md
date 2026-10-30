@@ -1,0 +1,249 @@
+---
+title: "Your Cache May Be Answering Yesterday's Question"
+description: "Why cached AI results need to remember the inputs and rules that produced them."
+status: draft
+tags: [architecture, ai, data-correctness]
+---
+
+# Your Cache May Be Answering Yesterday's Question
+
+**Reading paths:** Start below for the plain-language explanation, or jump to the
+[technical deep dive](#technical-deep-dive) for implementation details and verification.
+
+A cache saves a previous result so the system does not have to calculate it again.
+That can make a product faster and cheaper. It can also make the product confidently
+repeat an answer to a question that has changed.
+
+In a long job-matching discussion, the design included profile versions, bounded reanalysis,
+and the origin of cached results. The user could add new evidence, which changed what
+the matching system should know. Reusing old results without accounting for that change
+would defeat the purpose of collecting the information.
+
+The reviewed discussion contains both implementation work and later plans. This article
+describes the design problem and a practical way to reason about it, without claiming
+that every proposed cache behavior was delivered.
+
+## The input is more than the visible item
+
+A job match might appear to depend only on the job posting. In reality, it also depends
+on the person's profile, preferences, the matching policy, and the model or prompt used.
+
+If any important dependency changes, the earlier result may no longer answer the current
+question. The job is the same, but the meaning of suitable has changed.
+
+Write down the dependencies before designing the cache key. A cache key identifies
+which question a stored answer belongs to. Leaving out a meaningful dependency can
+cause unrelated questions to share one answer simply because they reference the same item.
+
+## Separate freshness from relevance
+
+A result can be only a minute old and already invalid because the user corrected a
+critical fact. Another result can be several days old and still be valid if none of
+its relevant inputs changed.
+
+Time-based expiration is useful for information that becomes stale with time, but it
+does not replace dependency tracking. A ten-minute lifetime still permits ten minutes
+of wrong answers after an important profile update.
+
+Choose expiration and invalidation rules according to the product's needs. Expiration
+limits age. Invalidation marks a result unsuitable because something relevant changed.
+The two mechanisms solve related but distinct problems.
+
+## Version the facts that affect the answer
+
+A profile version can identify the set of information used for an analysis. A policy
+version can identify the interpretation rules. The result stores those references
+alongside its own output.
+
+When the user adds information, a new profile version makes the difference inspectable.
+The system can determine which saved results still correspond to the current question.
+
+Versions should change for meaningful updates according to a defined rule. If every
+unrelated formatting edit invalidates everything, the cache may provide little value.
+If important changes do not create a new version, the record gives a false sense of precision.
+
+## Cache at the right layer
+
+Some work is independent of the user. Extracting basic fields from a job description
+may be reusable across profiles. Matching those fields against a particular person's
+evidence is profile-dependent.
+
+Separating those layers can avoid repeating work unnecessarily. A profile change may
+require rematching without requiring another document extraction.
+
+The separation must follow real dependencies. If extraction itself uses user preferences
+to decide what to retain, it is not truly profile-independent.
+
+This is why a dependency map matters more than a blanket instruction to cache expensive
+calls. The map tells you which results can be reused safely and which need a new calculation.
+
+## Handle work that finishes after the question changes
+
+Suppose analysis begins under profile version four. Before it completes, the user creates
+version five. The old analysis returns successfully.
+
+It may still be useful as historical information, but it should not silently overwrite
+the current result for version five. Completion time does not determine relevance.
+
+Associate the in-flight task with the inputs it actually used. When it returns, compare
+those references with the intended destination. The system can store the old result,
+discard it, or schedule updated work according to policy.
+
+This protects against a common race in asynchronous applications: an older request
+arrives later and replaces a newer answer merely because it finished last.
+
+## Recalculate within a budget
+
+A small profile change can affect many saved items. Immediately recalculating everything
+may create unnecessary cost and a burst of background work.
+
+Prioritize the items the user is likely to inspect, the results most affected by the
+changed fact, and the decisions that remain active. Keep the remaining work visible
+as pending rather than pretending every item is already refreshed.
+
+The historical plan called for bounded reanalysis. That is a useful design goal: new
+evidence should improve relevant results without creating an uncontrolled loop. Define
+how much work can run, how duplicates are avoided, and what happens if another profile
+change arrives before the refresh completes.
+
+## Do not make recalculation imply notification
+
+Updating an internal result and sending a message are separate product decisions.
+A profile correction may justify new analysis without justifying dozens of immediate notifications.
+
+Keep notification scheduling tied to its own rule, such as an agreed digest window
+or a meaningful-change threshold. Otherwise, improving data freshness can make the
+product noisier and less useful.
+
+This separation appeared in the matching discussion: updated profiles could trigger
+reanalysis without immediate messages. The principle generalizes to dashboards, recommendation
+feeds, and monitoring systems where background computation should not automatically interrupt a person.
+
+## Explain stale results clearly
+
+If a user opens a result while its update is pending, show the relevant status. It
+might say that the result used an earlier profile and is being refreshed.
+
+Avoid replacing a useful older result with an unexplained blank unless the old result
+would be unsafe or misleading to show. The correct presentation depends on the decision
+the result supports.
+
+The interface should preserve the difference between current, older-but-available,
+and unavailable. Those states help the user decide whether to wait or inspect the existing
+information with its limitation in mind.
+
+## Test the changes, not only the cache hit
+
+A cache test should include a repeated identical request, a changed profile, a changed
+policy, and an old in-flight response arriving after the change.
+
+Verify that genuinely reusable work is reused and affected work is refreshed. Check
+that partial failure does not mark every item current and that retries do not duplicate
+the same refresh task.
+
+Use tiny examples with known dependencies so the expected result is hand-checkable.
+The point is to test whether the cache preserves meaning, not only whether it returns
+something quickly on the second request.
+
+## Include ownership in the reuse boundary
+
+Two people can ask the same-looking question while having access to different evidence.
+A reusable result must respect that difference. A cache key or surrounding access rule
+should prevent one person's private context from becoming another person's answer.
+
+This is separate from freshness: a result can be perfectly current and still belong
+to the wrong context. Testing reuse across different users or organizations helps
+establish that the shortcut preserves the original access boundary as well as the
+meaning of the question.
+
+## Measure saved work alongside wrong-answer risk
+
+A high cache-hit rate is useful only if the hits are valid. Track the kinds of invalidation,
+the cost of refresh, and incidents caused by stale or mismatched results where those
+can be observed reliably.
+
+The architectural goal is selective reuse: preserve work whose assumptions still hold,
+and repeat work whose question has changed. That makes the system both more efficient
+and easier to explain. The cache should remember the answer and the question it belongs
+to, not merely the last value stored under a convenient identifier.
+
+## Technical deep dive
+
+**Plain-language bridge:** Reuse is safe only when the saved answer belongs to the
+same effective question, evidence, permissions, and decision rules.
+
+### Diagram: An old result must not replace a newer answer
+
+~~~text
+Time ---------------------------------------------------->
+
+request v7 ----> compute v7 --------------------> result v7
+       request v8 ----> compute v8 ----> result v8
+                                           |         |
+                                           v         v
+                                    publish v8   store as v7
+                                                 do not replace
+                                                 current v8
+~~~
+
+The versioned cache key preserves each result's meaning. Publishing the current answer
+needs a version check, not a rule that the last response received wins.
+
+
+### Define a dependency fingerprint
+
+An illustrative identity includes more than an item ID:
+
+~~~text
+tenant scope
+item content version
+profile evidence version
+extraction schema version
+evaluation policy version
+model/configuration version when relevant
+~~~
+
+Serialize these fields canonically before hashing them. Canonical means equivalent
+inputs produce the same byte representation: field order and absent-versus-null values
+must have deliberate meanings. A hash is a compact identity, not authorization or
+encryption; sensitive source inputs should not be exposed simply because a key is hashed.
+
+Cache intermediate extraction separately from user-specific assessment when their
+dependencies differ. An unchanged job description may reuse extraction while a changed
+profile requires a new match assessment.
+
+### Prevent stale completion from becoming current
+
+Suppose version 7 begins computing, version 8 is requested, and version 7 finishes last.
+Do not let "last response received" decide the current answer.
+
+~~~text
+result is stored under its complete versioned key
+current pointer advances only if the expected version is still current
+older result remains available only under an explicit stale-result policy
+~~~
+
+A compare-and-set update ties publication to the requested version. Cancellation can
+save resources, but it is not the correctness mechanism: a canceled remote request may
+still complete.
+
+### Bound duplicate refresh and refresh fan-out
+
+Single-flight behavior means callers asking for the same missing key share one
+in-progress calculation. Across processes, this requires shared coordination or acceptance
+of occasional duplicate computation; a local promise map only coordinates one process.
+
+For a large profile change, prioritize refresh by relevance and cap concurrency. Preserve
+per-item versions so a partial refresh cannot mark the whole collection current.
+A time-to-live limits age but cannot substitute for dependency invalidation: an answer
+can become wrong one second after creation if its inputs change.
+
+### Verify meaning with controlled changes
+
+Use a test table where each dependency changes independently. Confirm which layer
+recomputes and which remains reusable. Include reordered equivalent input, a missing
+field becoming explicit null, a tenant change, and an old in-flight result arriving last.
+
+Measure hit rate alongside invalid reuse and refresh delay. A high hit rate is not an
+improvement if it comes from ignoring input changes. The correct optimization target
+is avoided computation for equivalent questions under the same access boundary.

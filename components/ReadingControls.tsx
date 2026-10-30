@@ -4,7 +4,15 @@ import {
   parseReadingPreferences
 } from 'lib/reading-storage'
 
-export function ReadingControls() {
+export function ReadingControls({
+  onDialogOpenChange
+}: {
+  /**
+   * Lets a containing disclosure stay open while this modal is showing, so the
+   * dialog is never hidden by a collapsed ancestor and focus can return here.
+   */
+  onDialogOpenChange?: (open: boolean) => void
+} = {}) {
   const dialog = React.useRef<HTMLDialogElement>(null)
   const trigger = React.useRef<HTMLButtonElement>(null)
   const previousFocus = React.useRef<HTMLElement>(null)
@@ -22,7 +30,9 @@ export function ReadingControls() {
           localStorage.getItem('blog-reading-preferences')
         )
       )
-    } catch {}
+    } catch {
+      // Storage can be blocked (private mode); defaults are fine.
+    }
     setReady(true)
     const shortcut = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement
@@ -57,11 +67,19 @@ export function ReadingControls() {
         'blog-reading-preferences',
         JSON.stringify(preferences)
       )
-    } catch {}
+    } catch {
+      // Preferences simply will not persist when storage is unavailable.
+    }
   }, [preferences, ready])
   React.useEffect(() => {
-    if (view) dialog.current?.showModal()
-    else dialog.current?.close()
+    onDialogOpenChange?.(!!view)
+  }, [view, onDialogOpenChange])
+  React.useEffect(() => {
+    if (view) {
+      if (!dialog.current?.open) dialog.current?.showModal()
+    } else if (dialog.current?.open) {
+      dialog.current.close()
+    }
   }, [view])
   const close = () => setView(null)
   return (

@@ -1,0 +1,17 @@
+{
+  "id": "64a1f40ca347cbceb44c8e0d029fe4bd",
+  "slug": "using-an-llm-to-understand-a-codebase",
+  "title": "What I Want an LLM to Tell Me About an Unfamiliar Codebase",
+  "source": "blog-draft",
+  "description": "A practical way to turn code and Git history into questions worth investigating.",
+  "tags": [
+    "ai",
+    "engineering",
+    "onboarding"
+  ],
+  "status": "published",
+  "sourceFile": "blog-drafts/using-an-llm-to-understand-a-codebase.md",
+  "sourceUrl": null,
+  "cover": null,
+  "warnings": []
+}

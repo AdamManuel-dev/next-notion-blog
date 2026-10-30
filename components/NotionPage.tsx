@@ -33,6 +33,7 @@ import { PageActions } from './PageActions'
 import { BlogHeader } from './BlogHeader'
 import { ImageReveal } from './ImageReveal'
 import { ReadingResume } from './ReadingResume'
+import { ArticleTableOfContents } from './ArticleTableOfContents'
 import { RelatedArticles } from './RelatedArticles'
 import { FootnotePreview } from './FootnotePreview'
 import { ReaderDelight } from './ReaderDelight'
@@ -245,7 +246,14 @@ export const NotionPage: React.FC<types.PageProps> = ({
             !isLiteMode &&
             pageId.replace(/-/g, '') !==
               site.rootNotionPageId.replace(/-/g, '') ? (
-              <ReadingResume key={pageId} pageId={pageId} />
+              <>
+                <ReadingResume key={pageId} pageId={pageId} />
+                <ArticleTableOfContents
+                  key={`toc-${pageId}`}
+                  block={block}
+                  recordMap={recordMap}
+                />
+              </>
             ) : null
           }
           pageFooter={

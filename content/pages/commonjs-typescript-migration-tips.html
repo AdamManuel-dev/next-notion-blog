@@ -1,0 +1,144 @@
+
+<section id="522c295297fc4ffea253f4372ceabd85"><p><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype">Documentation - Utility TypesTypeScript provides several utility types to facilitate common type transformations. These utilities are available globally. Constructs a type with all properties of Type set to optional. This utility will return a type that represents all subsets of a given type. Constructs a type consisting of all properties of Type set to required.https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype</a></p></section>
+
+<section id="64af3cd4559f458da4eed1c5fb4581d3"><h2><strong>Type Extraction from CommonJS</strong></h2></section>
+<section id="abf1eb5f56b640b5b6f4d523481d29ae"><h3><strong>When using a CommonJS export where there are named exports <strong>and</strong> a default class export</strong></h3></section>
+<section id="d351ffdcf8dd47ff89f28dabbb40f809"><p>To access the type of the class instance and not the constructor, you must use the <code>prototype</code> named export</p></section>
+<section id="f19b03a1a1b34f7d8465b42b971a1641"><pre><code>class Example {
+	public integrationConfigurationRepository: IntegrationConfigurationRepository;
+
+	constructor(
+    private companyService: typeof CompanyService,
+    private projectService: typeof ProjectService,
+    private tokenService: InstanceType&lt;typeof TokenService&gt;,
+    private urlGenerator: InstanceType&lt;typeof UrlGenerator&gt;,
+  ) {
+    this.integrationConfigurationRepository = new IntegrationConfigurationRepository();
+  }
+{
+</code></pre></section>
+
+<section id="1d0be9ad40de46849f968e16052e6ae9"><h3><strong>When using a CommonJS factory method</strong></h3></section>
+<section id="000c528f447f4c468cefa8be555bcd14"><p>To access the type of the instance the factory creates, you must use <code>ReturnType&lt;typeof Logger&gt;</code> where Logger is the factory method. </p></section>
+<section id="26020e7d54724e3ebd556c663dad0a57"><pre><code>class Example {
+	public integrationConfigurationRepository: IntegrationConfigurationRepository;
+
+	constructor(
+    private logger: ReturnType&lt;typeof Logger&gt;,
+    private notificationService: ReturnType&lt;typeof NotificationService&gt;,
+	  ) {
+    this.integrationConfigurationRepository = new IntegrationConfigurationRepository();
+  }
+{
+</code></pre></section>
+
+<section id="8dac33eb6c8247f9bd811256a6096f43"><h3><strong>Importing the type without the actaul code</strong></h3></section>
+<section id="08827c26c3a44153957fd31eb0b0d0ba"><p>When using the <code>import</code> syntax you can import the type <strong>ONLY</strong> by using the <code>type</code> keyword after <code>import</code></p><section id="8701dec35f8b44849cedb20a80adadb6"><pre><code>import type { UserRef } from '../../../generic_company/domain/common';
+</code></pre></section></section>
+<section id="0ee322fd246841fcafdfe8b3946828e5"><p>When the typescript gets compiled to JS, it will <strong>NOT</strong> import the code from that import, and will instead ignore the import completely since JS cannot use types. It <strong>WILL</strong> still include the JSDoc typings, allowing you to have code completion without increasing the load time of the file</p></section>
+
+<section id="c3b3557e72144b18b04a95945d812323"><h3><strong>Defining reusable types within a CommonJS files</strong></h3></section>
+<section id="8279ae3fb636423b9e72d58d5665e538"><p>To defined a reusable type definition within a CommonJS file, you must use <code>@typedef</code> and define the type as if it's a normal JSDoc comment. </p></section>
+<section id="ef513383c8a4481a96573e692dcebe25"><p>When importing from that CommonJS file in Typescript, it will let you import the type definition explicitly. </p></section>
+<section id="83bc9284c1434de1a81760e3837ba4f3"><pre><code>/**
+ * @typedef {import('generic_company/domain/company/Company') &amp; import('lib/entities/Company.entity').Company} CompanyEntity Company Schema &amp; Company Entity TypeDef
+ */
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @typedef {DEFINE_TYPE_HERE} EXPORTED_TYPE_NAME
+ */
+</code></pre></section>
+
+<section id="770dcc17c772489f87ccd362e8cbfddb"><h3><strong>Defining dependencies type when using a constructor based dependency injection in CommonJS</strong></h3></section>
+<section id="5c10a13cc6cc433183f46f2c0cade473"><pre><code>/**
+ * @this
+ * @param {import('generic_company/infrastructure/repositories/company/CompanyRepository.js')} companyRepository
+ */
+constructor(companyRepository) {
+  this.companyRepository = companyRepository;
+}
+</code></pre></section>
+
+<section id="30e90d6f36de47f1a7f823b5c12ead9e"><h3><strong>Exporting the Type of a CommonJS class with the class itself</strong></h3></section>
+<section id="1b525c92f07e4b8fad04ed57eb1e27fd"><p>This is a nice pattern to use, because it allows you to more easily import the type without the class in TS. You don't need to use typeof all over your codebase, and the <code>tsc</code> has an easier time with it. </p></section>
+<section id="2395991a7aa64072ba9257f69e1d15a7"><pre><code>/////////////////////////////////////////////////////////////////////
+// lib/CompanyRepository.js /////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+
+/**
+ * @typedef {typeof CompanyRepository} CompanyRepositoryI
+ */
+module.exports = CompanyRepository;
+
+/////////////////////////////////////////////////////////////////////
+// index.ts /////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+
+import { CompanyRepository, CompanyRepositoryI } from './lib/CompanyRepository'
+</code></pre></section>
+
+
+<section id="069ce06751d2468a91c0315edabe89b5"><h3><strong>Using Typescripts ability to declare a property inside the constructor </strong></h3></section>
+<section id="38babce92d3240adb3b9456ce0330077"><h4><strong>Why is this useful?</strong></h4></section>
+<section id="b09982d82d094bd789402677c49a3d7d"><p>This allows you to eaily dependency inject any of the required dependencies of the class while keeping the type information for the newly defined property. While that might seem like a decent trade-off already the other aspect is the ability to inject mock dependencies during Unit Tests to have full control of the dependencies when testing this classes functionality. </p></section>
+
+<section id="078c7d5b1b0e436abc8251ad7399cb25"><details open><summary>CommonJS</summary><section id="9a75711f78794e8ba6540668d37f5472"><pre><code>	private assignmentService: typeof AssignmentService;
+  private userService: import('lib/services/user/UserService');
+  private legacyUserService: import('generic_company/app/user/UserService');
+  private legacyCompanyService: import('generic_company/app/company/CompanyService');
+  private projectService: import('generic_company/app/project/ProjectService');
+  private integrationAttach: AttachDocuments;
+  private tokenService: import('generic_company/app/project/TokenService');
+  private notificationService: import('lib/services/NotificationService');
+  private claimService: typeof ClaimService;
+
+  constructor(
+    {
+      userService = UserService(),
+      legacyUserService = UserFactory.userService(),
+      legacyCompanyService = CompanyFactory.companyService(),
+      projectService = ProjectFactory.projectService(),
+      integrationAttach = new AttachDocuments(),
+      tokenService = TokenService(),
+      notificationService = LegacyFactory.notificationService(),
+      claimService = ClaimService,
+      assignmentService = AssignmentService,
+    } = {
+      userService: UserService(),
+      legacyUserService: UserFactory.userService(),
+      legacyCompanyService: CompanyFactory.companyService(),
+      projectService: ProjectFactory.projectService(),
+      integrationAttach: new AttachDocuments(),
+      tokenService: TokenService(),
+      notificationService: LegacyFactory.notificationService(),
+      claimService: ClaimService,
+      assignmentService: AssignmentService,
+    }
+  ) {
+    this.assignmentService = assignmentService;
+    this.userService = userService;
+    this.legacyUserService = legacyUserService;
+    this.legacyCompanyService = legacyCompanyService;
+    this.projectService = projectService;
+    this.integrationAttach = integrationAttach;
+    this.tokenService = tokenService;
+    this.notificationService = notificationService;
+    this.claimService = claimService;
+  }
+</code></pre></section></details></section>
+<section id="e3714658ae564ccbb75f4e34c7ebfe66"><p>         <strong>VS</strong></p></section>
+<section id="95725adf8c2e4d6eb8e38e55ef7d9374"><details open><summary>Typescript</summary><section id="d149326619094e75ba82365dc37940ec"><pre><code>	constructor(
+    private userService = UserService(),
+    private legacyUserService = UserFactory.userService(),
+    private legacyCompanyService = CompanyFactory.companyService(),
+    private projectService = ProjectFactory.projectService(),
+    private integrationAttach = new AttachDocuments(),
+    private tokenService = TokenService(),
+    private notificationService = LegacyFactory.notificationService(),
+    private claimService = ClaimService,
+    private assignmentService = AssignmentService
+  ) {}
+</code></pre></section></details></section>
+

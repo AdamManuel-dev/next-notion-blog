@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
+  isReadingAnchor,
   parseReadingPreferences,
   parseReadingPosition
 } from '../lib/reading-storage.ts'
@@ -42,6 +43,37 @@ test('resume data rejects expired, future, invalid and unsafe anchors', () => {
     )
   assert.equal(parseReadingPosition('broken', now), null)
 })
+test('resume positions support local headings and archived section IDs as well as legacy blocks', () => {
+  const now = 40 * 86400000
+  for (const anchor of [
+    '',
+    'local-heading-3',
+    'footnote-1',
+    'a'.repeat(32),
+    'notion-block-' + 'a'.repeat(32)
+  ]) {
+    const position = { y: 1200, anchor, offset: -30, updated: now - 1000 }
+    assert.equal(isReadingAnchor(anchor), true)
+    assert.deepEqual(
+      parseReadingPosition(JSON.stringify(position), now),
+      position
+    )
+  }
+})
+
+test('resume anchor IDs cannot contain selectors, fragments or unbounded input', () => {
+  for (const anchor of [
+    '#fn1',
+    'body > script',
+    '../private',
+    'a b',
+    'x]',
+    'a'.repeat(129),
+    null
+  ])
+    assert.equal(isReadingAnchor(anchor), false)
+})
+
 test('related articles rank shared topics, deduplicate and exclude self or unsafe URLs', () => {
   const pages = selectRelatedPages(
     { id: 'aa-bb', title: 'MongoDB shard keys' },

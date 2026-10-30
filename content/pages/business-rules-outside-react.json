@@ -1,0 +1,17 @@
+{
+  "id": "f455a4bfde82bf59e03050199d1c9347",
+  "slug": "business-rules-outside-react",
+  "title": "Business Rules Should Survive a UI Rewrite",
+  "source": "blog-draft",
+  "description": "Separate product decisions from rendering so a frontend migration does not rewrite the business.",
+  "tags": [
+    "architecture",
+    "leadership",
+    "react"
+  ],
+  "status": "published",
+  "sourceFile": "blog-drafts/business-rules-outside-react.md",
+  "sourceUrl": null,
+  "cover": null,
+  "warnings": []
+}

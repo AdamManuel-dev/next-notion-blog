@@ -1,0 +1,17 @@
+{
+  "id": "2d09fb3baba068fb7140963a5f1e177c",
+  "slug": "hourly-notifications-need-a-time-identity",
+  "title": "An Hourly Digest Needs More Than an Hourly Timer",
+  "source": "blog-draft",
+  "description": "Give scheduled notifications a stable identity so delayed results and retries do not create extra messages.",
+  "tags": [
+    "distributed-systems",
+    "product-design",
+    "reliability"
+  ],
+  "status": "published",
+  "sourceFile": "blog-drafts/hourly-notifications-need-a-time-identity.md",
+  "sourceUrl": null,
+  "cover": null,
+  "warnings": []
+}

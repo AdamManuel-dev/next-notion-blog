@@ -1,0 +1,298 @@
+---
+title: "Optimizing Performance"
+id: "56ce1e358bf243b584ecba6282720f95"
+slug: "optimizing-performance"
+source_url: "https://adams-blog.notion.site/Optimizing-Performance-56ce1e358bf243b584ecba6282720f95"
+extracted_at: "2026-10-30T19:39:13.396Z"
+cover: null
+---
+
+# Optimizing Performance
+
+<a id="5e46fe3a6796412d9e39d00b16594e0d"></a>
+
+### [OS, Storage, Database, Network](https://stackify.com/application-performance-metrics/)
+
+<a id="f5cad00234674c51ad9c05f845bc3dd9"></a>
+
+- [Improving Performance with Background Data Prefetching at Instagram](https://engineering.instagram.com/improving-performance-with-background-data-prefetching-b191acb39898)
+
+<a id="6fd06ad87df34c039228b4549b8b2249"></a>
+
+- [Fixing Linux filesystem performance regressions at LinkedIn](https://engineering.linkedin.com/blog/2020/fixing-linux-filesystem-performance-regressions)
+
+<a id="e4820b672f7443d1b2005f0eb0bd4372"></a>
+
+- [Compression Techniques to Solve Network I/O Bottlenecks at eBay](https://www.ebayinc.com/stories/blogs/tech/how-ebays-shopping-cart-used-compression-techniques-to-solve-network-io-bottlenecks/)
+
+<a id="3c13948f8d7e4f938ecae05583efb8c3"></a>
+
+- [Optimizing Web Servers for High Throughput and Low Latency at Dropbox](https://blogs.dropbox.com/tech/2017/09/optimizing-web-servers-for-high-throughput-and-low-latency/)
+
+<a id="1740c2a65599445ab2e4d59dde5647b9"></a>
+
+- [Linux Performance Analysis in 60.000 Milliseconds at Netflix](https://medium.com/netflix-techblog/linux-performance-analysis-in-60-000-milliseconds-accc10403c55)
+
+<a id="564be4838bda45aaa5740192612a8264"></a>
+
+- [Live Downsizing Google Cloud Persistent Disks (PD-SSD) at Mixpanel](https://engineering.mixpanel.com/2018/07/31/live-downsizing-google-cloud-pds-for-fun-and-profit/)
+
+<a id="744b7060dd634620b8cc78e16477975d"></a>
+
+- [Decreasing RAM Usage by 40% Using jemalloc with Python & Celery at Zapier](https://zapier.com/engineering/celery-python-jemalloc/)
+
+<a id="4038d04d94ac4b0ebde98f5244555a87"></a>
+
+- [Reducing Memory Footprint at Slack](https://slack.engineering/reducing-slacks-memory-footprint-4480fec7e8eb)
+
+<a id="27d00b71abff4dc183263789c3462d5d"></a>
+
+- [Performance Improvements at Pinterest](https://medium.com/@Pinterest_Engineering/driving-user-growth-with-performance-improvements-cfc50dafadd7)
+
+<a id="18ef4272894c4cb389da4dba16b580b3"></a>
+
+- [Server Side Rendering at Wix](https://www.youtube.com/watch?v=f9xI2jR71Ms)
+
+<a id="e48ecec0c5ce43678ebcf6a4a43acb44"></a>
+
+- [30x Performance Improvements on MySQLStreamer at Yelp](https://engineeringblog.yelp.com/2018/02/making-30x-performance-improvements-on-yelps-mysqlstreamer.html)
+
+<a id="7004fba4c6f24da7acfd6ca32b9d50f3"></a>
+
+- [Optimizing APIs at Netflix](https://medium.com/netflix-techblog/optimizing-the-netflix-api-5c9ac715cf19)
+
+<a id="4b2ad4d557454abc9c798632dae41c2b"></a>
+
+- [Performance Monitoring with Riemann and Clojure at Walmart](https://medium.com/walmartlabs/performance-monitoring-with-riemann-and-clojure-eafc07fcd375)
+
+<a id="302018562d8840c4af7c0fff68e933a5"></a>
+
+- [Performance Tracking Dashboard for Live Games at Zynga](https://www.zynga.com/blogs/engineering/live-games-have-evolving-performance)
+
+<a id="3f228d24eb1943febfeff5fa6c925aab"></a>
+
+- [Optimizing CAL Report Hadoop MapReduce Jobs at eBay](https://www.ebayinc.com/stories/blogs/tech/optimization-of-cal-report-hadoop-mapreduce-job/)
+
+<a id="abf0705c29f14bf4b0e9fd479b4058d5"></a>
+
+- [Performance Tuning on Quartz Scheduler at eBay](https://www.ebayinc.com/stories/blogs/tech/performance-tuning-on-quartz-scheduler/)
+
+<a id="b0fd42b9923c4897a4cc86e56ad23ff4"></a>
+
+- [Profiling C++ (Part 1: Optimization, Part 2: Measurement and Analysis) at Riot Games](https://engineering.riotgames.com/news/profiling-optimisation)
+
+<a id="06a37be4207440239c8287a692fb1d79"></a>
+
+- [Profiling React Server-Side Rendering at HomeAway](https://medium.com/homeaway-tech-blog/profiling-react-server-side-rendering-to-free-the-node-js-event-loop-7f0fe455a901)
+
+<a id="c8a238196d764877a90933a671b8fc87"></a>
+
+- [Hardware-Assisted Video Transcoding at Dailymotion](https://medium.com/dailymotion-engineering/hardware-assisted-video-transcoding-at-dailymotion-66cd2db448ae)
+
+<a id="a34abd0fbca84e12a7398dd1778f7881"></a>
+
+- [Cross Shard Transactions at 10 Million RPS at Dropbox](https://blogs.dropbox.com/tech/2018/11/cross-shard-transactions-at-10-million-requests-per-second/)
+
+<a id="5bcb70ee5f5147ac96a832796666eee3"></a>
+
+- [API Profiling at Pinterest](https://medium.com/@Pinterest_Engineering/api-profiling-at-pinterest-6fa9333b4961)
+
+<a id="5f0d1f4fbc334460b5a33e66570ad2c9"></a>
+
+- [Pagelets Parallelize Server-side Processing at Yelp](https://engineeringblog.yelp.com/2017/07/generating-web-pages-in-parallel-with-pagelets.html)
+
+<a id="aab1e69021ee40919c9c796ed0cbca06"></a>
+
+- [Improving key expiration in Redis at Twitter](https://blog.twitter.com/engineering/en_us/topics/infrastructure/2019/improving-key-expiration-in-redis.html)
+
+<a id="5586e1c1ec7d4f01a4f84a27be9e8896"></a>
+
+- [Ad Delivery Network Performance Optimization with Flame Graphs at MindGeek](https://medium.com/mindgeek-engineering-blog/ad-delivery-network-performance-optimization-with-flame-graphs-bc550cf59cf7)
+
+<a id="35286f08a1e840b98340d3fff150700b"></a>
+
+- [Predictive CPU isolation of containers at Netflix](https://medium.com/netflix-techblog/predictive-cpu-isolation-of-containers-at-netflix-91f014d856c7)
+
+<a id="15646a9979734340bbb11f1032604a93"></a>
+
+- [Improving HDFS I/O Utilization for Efficiency at Uber](https://eng.uber.com/improving-hdfs-i-o-utilization-for-efficiency/)
+
+<a id="9548412fbaf94156b6e26d3eff17319f"></a>
+
+- [Cloud Jewels: Estimating kWh in the Cloud at Etsy](https://codeascraft.com/2020/04/23/cloud-jewels-estimating-kwh-in-the-cloud/)
+
+<a id="cfd19768e18d42dc9e81fea279f243ce"></a>
+
+- [Unthrottled: Fixing CPU Limits in the Cloud (2 parts) at Indeed](https://engineering.indeedblog.com/blog/2019/12/unthrottled-fixing-cpu-limits-in-the-cloud/)
+
+<a id="76e5291884514b298ec00e3a954dcf99"></a>
+
+### [Tuning Garbage Collection](https://confluence.atlassian.com/enterprise/garbage-collection-gc-tuning-guide-461504616.html)
+
+<a id="fe99a4d907104a1ab32dcfddcd7a0f68"></a>
+
+- [Garbage Collection in Java Applications at LinkedIn](https://engineering.linkedin.com/garbage-collection/garbage-collection-optimization-high-throughput-and-low-latency-java-applications)
+
+<a id="c59ba8736c6b4dc69c799729bb3efa23"></a>
+
+- [Garbage Collection in High-Throughput, Low-Latency Machine Learning Services at Adobe](https://medium.com/adobetech/engineering-high-throughput-low-latency-machine-learning-services-7d45edac0271)
+
+<a id="e4cbce957c9d4bcb9117f0bd1e711708"></a>
+
+- [Garbage Collection in Redux Applications at SoundCloud](https://developers.soundcloud.com/blog/garbage-collection-in-redux-applications)
+
+<a id="f220ef348f62458aa5cf7d380de4de9f"></a>
+
+- [Garbage Collection in Go Application at Twitch](https://blog.twitch.tv/go-memory-ballast-how-i-learnt-to-stop-worrying-and-love-the-heap-26c2462549a2)
+
+<a id="7b20f1917b584209ab3eb073067bdb97"></a>
+
+- [Analyzing V8 Garbage Collection Logs at Alibaba](https://www.linux.com/blog/can-nodejs-scale-ask-team-alibaba)
+
+<a id="4c270fc0ef13419a8d34186fab59d7d0"></a>
+
+- [Python Garbage Collection for Dropping 50% Memory Growth Per Request at Instagram](https://instagram-engineering.com/copy-on-write-friendly-python-garbage-collection-ad6ed5233ddf)
+
+<a id="afcd0650d2084b1796d860f5ef4d5471"></a>
+
+- [Performance Impact of Removing Out of Band Garbage Collector (OOBGC) at Github](https://githubengineering.com/removing-oobgc/)
+
+<a id="ef7bd3b4328d45f48cda2f9bf541f8c7"></a>
+
+- [Debugging Java Memory Leaks at Allegro](https://allegro.tech/2018/05/a-comedy-of-errors-debugging-java-memory-leaks.html)
+
+<a id="c5c180f03bf54712828a61bc6b48f416"></a>
+
+- [Optimizing JVM at Alibaba](https://www.youtube.com/watch?v=X4tmr3nhZRg)
+
+<a id="0ccbf69140364affb90394d2afebd6e7"></a>
+
+- [Tuning JVM Memory for Large-scale Services at Uber](https://eng.uber.com/jvm-tuning-garbage-collection/)
+
+<a id="d4b6c97d16d74b1c96fe83873aaa501a"></a>
+
+- [Solr Performance Tuning at Walmart](https://medium.com/walmartglobaltech/solr-performance-tuning-beb7d0d0f8d9)
+
+<a id="7a39f62b93dd49a3924c05514e36ea8f"></a>
+
+- [Memory Tuning a High Throughput Microservice at Flipkart](https://tech.flipkart.com/memory-tuning-a-high-throughput-microservice-ed57b3e60997)
+
+<a id="7221558994a741b8892f46e17edbfead"></a>
+
+### [Image, Video, Page Load](https://developers.google.com/web/fundamentals/performance/why-performance-matters/)
+
+<a id="043a9d768f304de188bf4c6c33e341c1"></a>
+
+- [Optimizing 360 Photos at Scale at Facebook](https://code.facebook.com/posts/129055711052260/optimizing-360-photos-at-scale/)
+
+<a id="4a265f2b8498424d82447e56ee4298c7"></a>
+
+- [Reducing Image File Size in the Photos Infrastructure at Etsy](https://codeascraft.com/2017/05/30/reducing-image-file-size-at-etsy/)
+
+<a id="4b66a58840f24c3daf138e909e45b1cc"></a>
+
+- [Improving GIF Performance at Pinterest](https://medium.com/@Pinterest_Engineering/improving-gif-performance-on-pinterest-8dad74bf92f1)
+
+<a id="b15d42b66f7e4cfc8b895ec4c1cf81c9"></a>
+
+- [Optimizing Video Playback Performance at Pinterest](https://medium.com/@Pinterest_Engineering/optimizing-video-playback-performance-caf55ce310d1)
+
+<a id="db2424ba2d224ae498e74785591fa13d"></a>
+
+- [Optimizing Video Stream for Low Bandwidth with Dynamic Optimizer at Netflix](https://medium.com/netflix-techblog/optimized-shot-based-encodes-now-streaming-4b9464204830)
+
+<a id="0fce757946964ccc90b591b0ba8e9604"></a>
+
+- [Adaptive Video Streaming at YouTube](https://youtube-eng.googleblog.com/2018/04/making-high-quality-video-efficient.html)
+
+<a id="501f8a85543945339d5a53ccfe60dab7"></a>
+
+- [Reducing Video Loading Time at Dailymotion](https://medium.com/dailymotion/reducing-video-loading-time-fa9c997a2294)
+
+<a id="099f6a9b576f427aa7398408f06bae94"></a>
+
+- [Improving Homepage Performance at Zillow](https://www.zillow.com/engineering/improving-homepage-performance/)
+
+<a id="2c0d10b9856b432dafe7e7ee51abdc72"></a>
+
+- [The Process of Optimizing for Client Performance at Expedia](https://medium.com/expedia-engineering/go-fast-or-go-home-the-process-of-optimizing-for-client-performance-57bb497402e)
+
+<a id="d47354a4f838487dba5f751c7449f31c"></a>
+
+- [Web Performance at BBC](https://medium.com/bbc-design-engineering/bbc-world-service-web-performance-26b08f7abfcc)
+
+<a id="7f94edf0f41445c3ab3e16e1fb89eee3"></a>
+
+### [Brotli Compression](https://blogs.akamai.com/2016/02/understanding-brotlis-potential.html)
+
+<a id="eb525f158dab440b8bd089cdef2c9896"></a>
+
+- [Boosting Site Speed Using Brotli Compression at LinkedIn](https://engineering.linkedin.com/blog/2017/05/boosting-site-speed-using-brotli-compression)
+
+<a id="09b613e0ec5a4fedb3b5b335edf91fad"></a>
+
+- [Brotli at Booking.com](https://medium.com/booking-com-development/bookings-journey-with-brotli-978b249d34f3)
+
+<a id="8a655c27af8049acab00cfbbab09579e"></a>
+
+- [Brotli at Treebo](https://tech.treebo.com/a-tale-of-brotli-compression-bcb071d9780a)
+
+<a id="919995cc14de46af9c4d6abc786b6cb0"></a>
+
+- [Deploying Brotli for Static Content at Dropbox](https://dropbox.tech/infrastructure/deploying-brotli-for-static-content)
+
+<a id="7b4ade3e34024752bda7d40cc10a5668"></a>
+
+- [Progressive Enhancement with Brotli at Yelp](https://engineeringblog.yelp.com/2017/07/progressive-enhancement-with-brotli.html)
+
+<a id="16bc503577ee4e42a38266d02e11a656"></a>
+
+- [Speeding Up Redis with Compression at Doordash](https://doordash.engineering/2019/01/02/speeding-up-redis-with-compression/)
+
+<a id="e4f81b6b5d3c4b8d9b4baaa64e438b2c"></a>
+
+### [Languages and Frameworks](https://www.techempower.com/benchmarks/)
+
+<a id="e35eb1c7d4784c9bb2538da763b9fada"></a>
+
+- [Python at Netflix](https://netflixtechblog.com/python-at-netflix-bba45dae649e)
+
+<a id="5ad54862810c411b992f76e445fbff83"></a>
+
+- [Python at scale (3 parts) at Instagram](https://instagram-engineering.com/python-at-scale-strict-modules-c0bb9245c834)
+
+<a id="5fecd2d1116c40499b81c85a4bf650c5"></a>
+
+- [OCaml best practices (2 parts) at Issuu](https://engineering.issuu.com/2018/12/10/our-current-ocaml-best-practices-part-2)
+
+<a id="7cd73c47b6ba487189be0c8294c41b6d"></a>
+
+- [PHP at Slack](https://slack.engineering/taking-php-seriously-cf7a60065329)
+
+<a id="a7ab395a165d4b858cfd05da2a5eb79e"></a>
+
+- [Go at Trivago](https://tech.trivago.com/2020/03/02/why-we-chose-go/)
+
+<a id="8853ff6920f441dc8df37faff9701188"></a>
+
+- [TypeScript at Etsy](https://codeascraft.com/2021/11/08/etsys-journey-to-typescript/)
+
+<a id="e8321e2ef58d47b0b21ec6e208d17104"></a>
+
+- [BPF and Go at Bumble](https://medium.com/bumble-tech/bpf-and-go-modern-forms-of-introspection-in-linux-6b9802682223)
+
+<a id="a5cd567078e54f81a1757367bf8ca590"></a>
+
+- [Ruby on Rails at GitLab](https://medium.com/gitlab-magazine/why-we-use-ruby-on-rails-to-build-gitlab-601dce4a7a38)
+
+<a id="e9b969a91e344aa88a9cdb7e2910bb4f"></a>
+
+- [Choosing a Language Stack at WeWork](https://engineering.wework.com/choosing-a-language-stack-cac3726928f6)
+
+<a id="0b291ecd93b843e69509077bf09361de"></a>
+
+- [Switching from Go to Rust at Discord](https://blog.discord.com/why-discord-is-switching-from-go-to-rust-a190bbca2b1f)
+
+<a id="a9c6de17134247ecb244dd503643d4ea"></a>
+
+- [ASP.NET Core Performance Optimization at Agoda](https://medium.com/agoda-engineering/happy-asp-net-core-performance-optimization-4e21a383d299)

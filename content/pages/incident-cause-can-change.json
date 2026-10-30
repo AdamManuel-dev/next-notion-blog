@@ -1,0 +1,17 @@
+{
+  "id": "a820a7ae1e66f7c2830ffcd05b56a1a8",
+  "slug": "incident-cause-can-change",
+  "title": "Stop Fixing Yesterday's Incident",
+  "source": "blog-draft",
+  "description": "Why long debugging efforts need a fresh view of what is failing now.",
+  "tags": [
+    "leadership",
+    "debugging",
+    "reliability"
+  ],
+  "status": "published",
+  "sourceFile": "blog-drafts/incident-cause-can-change.md",
+  "sourceUrl": null,
+  "cover": null,
+  "warnings": []
+}

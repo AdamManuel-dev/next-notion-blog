@@ -33,9 +33,8 @@ export function ReaderDelight({ title, url }: { title: string; url: string }) {
       frame = 0
       const marker = end.current
       if (!marker) return
-      const top =
-        document.querySelector('.notion-title')?.getBoundingClientRect().top +
-          window.scrollY || 0
+      const title = document.querySelector('.lr-title, .notion-title')
+      const top = title ? title.getBoundingClientRect().top + window.scrollY : 0
       const bottom = marker.getBoundingClientRect().top
       const distance = Math.max(
         1,
@@ -45,8 +44,7 @@ export function ReaderDelight({ title, url }: { title: string; url: string }) {
       if (progress.current)
         progress.current.style.transform = `scaleX(${amount})`
       setShowTop(window.scrollY > 500)
-      if (window.scrollY > 80 && bottom <= window.innerHeight && bottom >= 0)
-        setFinished(true)
+      if (window.scrollY > 80 && bottom <= window.innerHeight) setFinished(true)
     }
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(update)
@@ -82,7 +80,9 @@ export function ReaderDelight({ title, url }: { title: string; url: string }) {
                 ? 'auto'
                 : 'smooth'
             })
-            const title = document.querySelector<HTMLElement>('.notion-title')
+            const title = document.querySelector<HTMLElement>(
+              '.lr-title, .notion-title'
+            )
             title?.setAttribute('tabindex', '-1')
             title?.focus({ preventScroll: true })
           }}

@@ -1,0 +1,194 @@
+---
+title: "Laws of UX"
+id: "2194b1be9ae14fd1b378cdbb8a9e1af4"
+slug: "laws-of-ux"
+source_url: "https://adams-blog.notion.site/Laws-of-UX-2194b1be9ae14fd1b378cdbb8a9e1af4"
+extracted_at: "2026-10-30T19:38:32.212Z"
+cover: null
+---
+
+# Laws of UX
+
+<a id="384eabd208b64a5fa126d2427d802db3"></a>
+
+### Jakob's Law
+
+<a id="7a35c14c689543448bf5c2b46e895184"></a>
+
+- Users will transfer expectations they have built around one familiar product to another that appears similar.
+
+<a id="0889d81087cf40b7a9cff68f92ec3c9f"></a>
+
+- By leveraging existing mental models, we can create superior user experiences in which the users can focus on their tasks rather than on learning new models.
+
+<a id="64fd905911cf4193a2ebb06fd57b76b2"></a>
+
+- When making changes, minimize discord by empowering users to continue using a familiar version for a limited time.
+
+<a id="6c021c93311b4ecd8a223d6fe3e44002"></a>
+
+### Fitts’s Law
+
+<a id="9de9dd06ea5448259a933e2532b3c337"></a>
+
+- Touch targets should be large enough for users to accurately select them.
+
+<a id="d825b3b988254eb0b6074b79f0fdbbcf"></a>
+
+- Touch targets should have ample spacing between them.
+
+<a id="ddc9cdcf3c1846eb8283ff4455442105"></a>
+
+- Touch targets should be placed in areas of an interface that allow them to be easily acquired.
+
+<a id="e9dcd1f17f6a4ff79d7a655bdd736cf9"></a>
+
+### Hick’s Law
+
+<a id="7e9bcdbf872141a8bf3d78ee38172400"></a>
+
+- Minimize choices when response times are critical to increase decision time.
+
+<a id="d974570588c0489db126f2550b955646"></a>
+
+- Break complex tasks into smaller steps in order to decrease cognitive load.
+
+<a id="298cc45cfc82454f95d398b0f1393eb8"></a>
+
+- Avoid overwhelming users by highlighting recommended options.
+
+<a id="f7ca8ad2449a48069dcdf5e6ac37cc11"></a>
+
+- Use progressive onboarding to minimize cognitive load for new users.
+
+<a id="4918d2ad2da74301b05493e608cc18fd"></a>
+
+- Be careful not to simplify to the point of abstraction.
+
+<a id="e58323ddda134fb5adb9c42badc74ccd"></a>
+
+### Miller’s Law
+
+<a id="d06eb19684974ba49ef846e188775000"></a>
+
+- Don’t use the “magical number seven” to justify unnecessary design limitations.
+
+<a id="850614b829d94f8b8b4b3fbd67ebe070"></a>
+
+- Organize content into smaller chunks to help users process, understand, and memorize easily.
+
+<a id="699e091d97964a7d85e2e26cb8eb20e1"></a>
+
+- Remember that short-term memory capacity will vary per individual, based on their prior knowledge and situational context.
+
+<a id="b01a320690dd4819a241206fce73439e"></a>
+
+### Postel’s Law
+
+<a id="90ff282cba2f4b22890746e9ecc83943"></a>
+
+- Be empathetic to, flexible about, and tolerant of any of the various actions the user could take or any input they might provide.
+
+<a id="0d1cece6e7cd4f9c86220b8f366cf3ad"></a>
+
+- Anticipate virtually anything in terms of input, access, and capability while providing a reliable and accessible interface.
+
+<a id="e4f48141df5a464bbe7f49867c4c4465"></a>
+
+- The more we can anticipate and plan for in design, the more resilient the design will be.
+
+<a id="9306a415ee1a44e6a1ed7104fae2087b"></a>
+
+- Accept variable input from users, translating that input to meet your requirements, defining boundaries for input, and providing clear feedback to the user.
+
+<a id="c89752edd62e468faec9d7e583af4fd4"></a>
+
+### Peak–End Rule
+
+<a id="930a31c72a8b41f5821a60c135bf50a9"></a>
+
+- Pay close attention to the most intense points and the final moments (the “end”) of the user journey.
+
+<a id="2d38fa74f3fc45b08fd9b67b702ba059"></a>
+
+- Identify the moments when your product is most helpful, valuable, or entertaining and design to delight the end user.
+
+<a id="4f5156405f5f4d54a3d6966967427ea4"></a>
+
+- Remember that people recall negative experiences more vividly than positive ones.
+
+<a id="118cbb30b7384174961c9988c8dfed20"></a>
+
+### Aesthetic–Usability Effect
+
+<a id="381c1a8f19c247d490c86fe5a6d2e9e8"></a>
+
+- An aesthetically pleasing design creates a positive response in people’s brains and leads them to believe the design actually works better.
+
+<a id="21f4439d902f458a94592c1b9bc3cb04"></a>
+
+- People are more tolerant of minor usability issues when the design of a product or service is aesthetically pleasing.
+
+<a id="3284129b63f448a18d7fd42f18d74446"></a>
+
+- Visually pleasing design can mask usability problems and prevent issues from being discovered during usability testing.
+
+<a id="44e163048ca044fb8f021cd0d85ea103"></a>
+
+### von Restorff Effect
+
+<a id="2078767df5984f94b4ec650a4a9554a5"></a>
+
+- Make important information or key actions visually distinctive.
+
+<a id="aed77dc357bd4e65b6a1bdc19b37036d"></a>
+
+- Use restraint when placing emphasis on visual elements to avoid them competing with one another and to ensure salient items don’t get mistakenly identified as ads.
+
+<a id="51fd16bac3544340a4d8efc841371374"></a>
+
+- Don’t exclude those with a color vision deficiency or low vision by relying exclusively on color to communicate contrast.
+
+<a id="ada1a2a9062744f8bbd3239d1ce749f2"></a>
+
+- Carefully consider users with motion sensitivity when using motion to communicate contrast.
+
+<a id="f9822c7ddde1459d80191c6b1b5f97fc"></a>
+
+### Tesler’s Law
+
+<a id="3b4db204d658448d8f61ea239636cf61"></a>
+
+- All processes have a core of complexity that cannot be designed away and therefore must be assumed by either the system or the user.
+
+<a id="3c9cbe0988134a5c8ddab423792a127c"></a>
+
+- Ensure as much as possible of the  burden is lifted from users by dealing with inherent complexity during design and development.
+
+<a id="8fc9765d1c1149e0a5db2eb77cbcf244"></a>
+
+- Take care not to simplify interfaces to the point of abstraction.
+
+<a id="d18fe6e09bc44b808519e26fea5f55bb"></a>
+
+### Doherty Threshold
+
+<a id="e2733475ee52444ba86c3be0f4cfe97e"></a>
+
+- Provide system feedback within 400 ms in order to keep users’ attention and increase productivity.
+
+<a id="631741ab16de4a9884d929661b6fbe9d"></a>
+
+- Use perceived performance to improve response time and reduce the perception of waiting.
+
+<a id="76358df394c74eb3b37425062898ca7f"></a>
+
+- Animation is one way to visually engage people while loading or processing is happening in the background.
+
+<a id="72ce72e695074877bdea8a88338c61df"></a>
+
+- Progress bars help make wait times tolerable, regardless of their accuracy.
+
+<a id="10fc01a6f7cc46ee9780d138b6c8dcda"></a>
+
+- Purposefully adding a delay to a process can actually increase its perceived value and instill a sense of trust, even when the process itself actually takes much less time.

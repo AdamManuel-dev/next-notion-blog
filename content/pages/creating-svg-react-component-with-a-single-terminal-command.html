@@ -1,0 +1,21 @@
+<section id="fc7f5586e2814886bed2eb783629e969"><section id="9b975bf4c5664a29941d04ad4a591002"><blockquote>This is only possible by utilizing the <a href="https://react-svgr.com/docs/cli/">svgr</a> npm module to render the component</blockquote></section></section>
+
+<section id="e6cc52ec3ddf4a64b4f74b4273c03985"><blockquote>This only works if you are either using VS Code, or have VSC Insiders aliased to <code>code</code></blockquote></section>
+<section id="0eb431fadd564c128390b2e6b19aa63c"><h3><strong>Generate from an URL</strong></h3></section>
+<section id="00a5d212a3a24e5799d605652091e551"><ol><li>First you need to find an SVG on the internet<section id="2a2b6e4dcd94486998c991f7ef284f90"><p>(I suggest <a href="https://www.svgrepo.com/">SVGRepo</a> for finding open-source SVGs)</p></section></li></ol></section>
+<section id="b4063cecd93f46e488ee875e842ae091"><ol><li>Then right-click and “Copy Image Address”</li></ol></section>
+<section id="33608040abbb4498a3b1ad603d1c35d9"><ol><li>Then you just need to paste the url into this command<section id="2bc20ada6b274c668ca59d6aceb26389"><pre><code>curl &quot;https://www.svgrepo.com/show/414849/education-library-metting.svg&quot; \
+| npx @svgr/cli \
+| code -&amp;
+</code></pre></section></li></ol></section>
+<section id="0d4ec452f99e457b81b707ca00acc1d8"><ol><li>This should open up into a temporary file inside of VS Code<section id="84c07a8b5bd841e99c8f857bc53abcb6"><p>Once the generation is completed, it will create the SVG component right there in the editor</p></section></li></ol></section>
+<section id="ad0fdfe81479469283c739fd960ceb6b"><ol><li>Done!  🎉</li></ol></section>
+
+<section id="3119d11c0fd1464ba9e68a03368982d0"><h3><strong>Generate from a file</strong></h3></section>
+<section id="629ce964e92045a082f0ecd8c6b640e5"><ol><li>Since we already have the file we don’t need to <code>curl</code> to grab it, and instead we can use <code>cat</code> to output the files contents directly to stdout</li></ol></section>
+<section id="0b1232414095426d9f434befb502a367"><pre><code>cat temp.svg | npx @svgr/cli | code -&amp;
+</code></pre></section>
+<section id="c21be6340b9841cfa71ab22e91a63d42"><ol><li>This should open up into a temporary file inside of VS Code<section id="94eab0a25e774bbba6157bac46a76c2d"><p>Once the generation is completed, it will create the SVG component right there in the editor</p></section></li></ol></section>
+<section id="7ae9f28fcea44a42adc54d2f56ed47b1"><ol><li>Done!  🎉</li></ol></section>
+
+

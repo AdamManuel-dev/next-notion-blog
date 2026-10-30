@@ -1,0 +1,953 @@
+<section id="23910a0af92080108d9cf416c7e259d7"><blockquote><section id="23910a0af9208075ae2dd3b52644d40a"><p>If you just want to create a new project with this architecture, look at the following link</p></section>
+<section id="23910a0af92081dcb9a2f6480f55a33d"><p><a href="/my-favorite-express-architecture-setup-guide">🛠️My Favorite Express Architecture Setup Guide</a></p></section></blockquote></section>
+<section id="23910a0af92081e99648f5282ba2e8d3"><h2><strong>Express.js Enterprise Architecture Tutorial</strong></h2></section>
+<section id="23910a0af9208110ac49d5cd609e5bd3"><p>This comprehensive tutorial demonstrates how to implement proven enterprise architectural patterns in Express.js applications. Follow this step-by-step guide to build scalable, maintainable applications with enterprise-level patterns.</p></section>
+<section id="23910a0af92081d88257c6b4b938e762"><h3><strong>🏗️ Table of Contents</strong></h3></section>
+<section id="23910a0af92081a48a6ad2a3bdc2bea1"><ol><li><a href="https://adams-blog.notion.site/null">Project Foundation</a></li></ol></section>
+<section id="23910a0af9208190ad2bf0f009a85cc8"><ol><li><a href="https://adams-blog.notion.site/null">Domain-Driven Directory Structure</a></li></ol></section>
+<section id="23910a0af92081f29d95e1a18265d3e4"><ol><li><a href="https://adams-blog.notion.site/null">Dependency Injection Setup</a></li></ol></section>
+<section id="23910a0af92081d6af7bc4a312822c3d"><ol><li><a href="https://adams-blog.notion.site/null">Database Architecture with MikroORM</a></li></ol></section>
+<section id="23910a0af92081d7a55ed4aedd9be8e1"><ol><li><a href="https://adams-blog.notion.site/null">Middleware Architecture</a></li></ol></section>
+<section id="23910a0af92081ee9b3cc3f13b547138"><ol><li><a href="https://adams-blog.notion.site/null">Route Organization</a></li></ol></section>
+<section id="23910a0af92081ca8d6dcc3b19369167"><ol><li><a href="https://adams-blog.notion.site/null">Service Layer Patterns</a></li></ol></section>
+<section id="23910a0af9208102bb53d044261bdd14"><ol><li><a href="https://adams-blog.notion.site/null">Error Handling Strategy</a></li></ol></section>
+<section id="23910a0af92081469537fa831d738035"><ol><li><a href="https://adams-blog.notion.site/null">Authentication &amp; Authorization</a></li></ol></section>
+<section id="23910a0af92081b1bb04c406f6c83e74"><ol><li><a href="https://adams-blog.notion.site/null">Utility Functions</a></li></ol></section>
+<section id="23910a0af920818bbaf1f71615335e5a"><ol><li><a href="https://adams-blog.notion.site/null">Real-time Features</a></li></ol></section>
+<section id="23910a0af920818992eed894b2d6c0ab"><ol><li><a href="https://adams-blog.notion.site/null">Testing Setup</a></li></ol></section>
+<section id="23910a0af92081a7bba6f37d18f1ff27"><hr></section>
+<section id="23910a0af920810a8f37d65de7ed9a90"><h3><strong>1. Project Foundation</strong></h3></section>
+<section id="23910a0af92080b3a685d3d83c4caea1"><blockquote><section id="23910a0af92080738180cd4f61ed0dba"><p>A clear foundation is crucial for any enterprise application. This section helps you set up the necessary dependencies, TypeScript configuration, and project structure to ensure scalability and maintainability from the start.</p></section></blockquote></section>
+<section id="23910a0af9208163a207fdb8445197f5"><h4><strong>Initial Setup</strong></h4></section>
+<section id="23910a0af92081efa4c6c3a6b91f2939"><pre><code># Initialize project
+npm init -y
+npm install express typescript ts-node-dev @types/express @types/node
+
+# Core dependencies
+npm install @mikro-orm/core @mikro-orm/mongodb @mikro-orm/cli
+npm install express-validator cors helmet morgan winston
+npm install jsonwebtoken bcryptjs dotenv luxon
+npm install accesscontrol zod
+
+# Development dependencies
+npm install @types/cors @types/morgan @types/luxon
+npm install jest @types/jest ts-jest supertest @types/supertest
+npm install eslint @typescript-eslint/eslint-plugin @typescript-eslint/parser
+</code></pre></section>
+<section id="23910a0af92081e29ac6f6553a27b106"><h4><strong>TypeScript Configuration</strong></h4></section>
+<section id="23910a0af920811386eff7aa22e59c03"><p>Create <code>tsconfig.json</code>:</p></section>
+<section id="23910a0af92081c09853eb8e02c121c5"><pre><code>{
+  &quot;compilerOptions&quot;: {
+    &quot;target&quot;: &quot;ES2020&quot;,
+    &quot;module&quot;: &quot;commonjs&quot;,
+    &quot;lib&quot;: [&quot;ES2020&quot;],
+    &quot;outDir&quot;: &quot;./dist&quot;,
+    &quot;rootDir&quot;: &quot;./src&quot;,
+    &quot;strict&quot;: true,
+    &quot;esModuleInterop&quot;: true,
+    &quot;skipLibCheck&quot;: true,
+    &quot;forceConsistentCasingInFileNames&quot;: true,
+    &quot;experimentalDecorators&quot;: true,
+    &quot;emitDecoratorMetadata&quot;: true,
+    &quot;resolveJsonModule&quot;: true,
+    &quot;declaration&quot;: true,
+    &quot;sourceMap&quot;: true
+  },
+  &quot;include&quot;: [&quot;src/**/*&quot;],
+  &quot;exclude&quot;: [&quot;node_modules&quot;, &quot;dist&quot;, &quot;**/*.test.ts&quot;]
+}
+</code></pre></section>
+<section id="23910a0af92081bc9ff6d80cfa82acdd"><h4><strong>Package.json Scripts</strong></h4></section>
+<section id="23910a0af9208189bc26c1b4165acca7"><pre><code>{
+  &quot;scripts&quot;: {
+    &quot;build&quot;: &quot;tsc&quot;,
+    &quot;start&quot;: &quot;node dist/src/index.js&quot;,
+    &quot;dev&quot;: &quot;NODE_ENV=development ts-node-dev --watch .env.development src/index.ts&quot;,
+    &quot;test&quot;: &quot;cross-env NODE_ENV=test jest&quot;,
+    &quot;lint&quot;: &quot;eslint src/**/*.ts&quot;
+  }
+}
+</code></pre></section>
+<section id="23910a0af92081a8a64aee7505a01957"><hr></section>
+<section id="23910a0af920813cb2a1ea9772fb51bc"><h3><strong>2. Domain-Driven Directory Structure</strong></h3></section>
+<section id="23910a0af9208065b906f612c35499f6"><blockquote><section id="23910a0af92080d1be8dfbe3ce0d480d"><p>Organizing your code by business domains rather than technical function creates better separation of concerns. This structure makes your codebase more intuitive to navigate and allows teams to work independently on different domains.</p></section></blockquote></section>
+<section id="23910a0af92081f99f1eee6ad1bba9a4"><p>Create the following directory structure:</p></section>
+<section id="23910a0af9208157ba40c781b1525145"><pre><code>src/
+├── shared/
+│   ├── entities/           # Base entity classes
+│   ├── middleware/         # Reusable middleware
+│   ├── services/          # Shared services
+│   ├── utils/             # Utility functions
+│   ├── errors/            # Custom error classes
+│   └── types/             # TypeScript type definitions
+├── user/                  # User domain
+│   ├── user.entity.ts
+│   ├── user.service.ts
+│   ├── user.controller.ts
+│   ├── user.routes.ts
+│   └── __tests__/
+├── auth/                  # Authentication domain
+├── product/               # Example business domain
+└── config.ts</code></pre></section>
+<section id="23910a0af920812b9daaf16ba48c74f6"><h4><strong>Core Configuration</strong></h4></section>
+<section id="23910a0af920819e906fe2a3c1dee74e"><p>Create <code>src/config.ts</code>:</p></section>
+<section id="23910a0af920813abfd9e8997007efe5"><pre><code>import { config as dotenvConfig } from 'dotenv';
+
+dotenvConfig({ path: `.env.${process.env.NODE_ENV || 'development'}` });
+
+export const config = {
+  nodeEnv: process.env.NODE_ENV || 'development',
+  port: parseInt(process.env.PORT || '3000'),
+  mongoConnectionString: process.env.MONGODB_URL || 'mongodb://localhost:27017/myapp',
+  jwtSecret: process.env.JWT_SECRET || 'your-secret-key',
+  clientOrigins: {
+    development: ['http://localhost:3000'],
+    production: ['https://yourdomain.com'],
+    test: ['http://localhost:3000']
+  }
+};
+</code></pre></section>
+<section id="23910a0af920819383e1cd7eccc8852b"><hr></section>
+<section id="23910a0af9208115924fc8915328f9e5"><h3><strong>3. Dependency Injection Setup</strong></h3></section>
+<section id="23910a0af92080b2a758ecf2238e008e"><blockquote><section id="23910a0af92080328f25ef2806b7cbe2"><p>Dependency injection improves testability and decouples components. This pattern allows for easier mocking during tests and provides a clean way to manage service instances throughout your application.</p></section></blockquote></section>
+<section id="23910a0af920819480aac3ce2463ddfd"><p>Create <code>src/DI.ts</code>:</p></section>
+<section id="23910a0af920817ebb38e84f798d57d3"><pre><code>import { MikroORM, EntityManager } from '@mikro-orm/core';
+import { Db } from 'mongodb';
+import * as winston from 'winston';
+import * as http from 'http';
+
+export const DI = {} as {
+  server: http.Server;
+  orm: MikroORM;
+  em: EntityManager;
+  nativeClient: Db;
+  logger: winston.Logger;
+};
+```
+
+Create `src/services.ts` for service instantiation:
+
+```typescript
+import { UserService } from './user/user.service';
+import { AuthService } from './auth/auth.service';
+
+// Singleton service instances
+export let userService: UserService;
+export let authService: AuthService;
+
+export const initializeServices = () =&gt; {
+  userService = new UserService();
+  authService = new AuthService();
+};
+</code></pre></section>
+<section id="23910a0af92081afb33ed64b407a9d39"><p>Create <code>src/services.ts</code> for service instantiation:</p></section>
+<section id="23910a0af920819288afe0f5781188a3"><pre><code>
+import { UserService } from './user/user.service';
+import { AuthService } from './auth/auth.service';
+
+// Singleton service instances
+export let userService: UserService;
+export let authService: AuthService;
+
+export const initializeServices = () =&gt; {
+  userService = new UserService();
+  authService = new AuthService();
+};
+</code></pre></section>
+<section id="23910a0af920817abe41c9c9ec086e2c"><hr></section>
+<section id="23910a0af92081afbf67e953521d31f5"><h3><strong>4. Database Architecture with MikroORM</strong></h3></section>
+<section id="23910a0af92080fa9113f97431724437"><blockquote><section id="23910a0af9208013b11df3d09d2d7ffc"><p>A robust database layer is essential for enterprise applications. MikroORM provides type-safe entity management with support for MongoDB, making it ideal for scalable applications while maintaining data integrity.</p></section></blockquote></section>
+<section id="23910a0af92081c483a3ceeb9efa3fc9"><h4><strong>Base Entity Setup</strong></h4></section>
+<section id="23910a0af92081fab41de008782ee582"><p>Create <code>src/shared/entities/base.entity.ts</code>:</p></section>
+<section id="23910a0af92081e2a59df0bb27e73d03"><pre><code>import { Entity, PrimaryKey, SerializedPrimaryKey, Property } from '@mikro-orm/core';
+import { ObjectId } from '@mikro-orm/mongodb';
+
+@Entity({ abstract: true })
+export abstract class BaseEntity {
+  @PrimaryKey()
+  _id!: ObjectId;
+
+  @SerializedPrimaryKey()
+  id!: string;
+
+  @Property()
+  createdAt = new Date();
+
+  @Property({ onUpdate: () =&gt; new Date() })
+  updatedAt = new Date();
+
+  // If entity was generate in unit/integration/e2e test
+  @Property({ hidden: true })
+  testValue = false;
+}
+</code></pre></section>
+<section id="23910a0af920813992f5d36b42c030c5"><h4><strong>MikroORM Configuration</strong></h4></section>
+<section id="23910a0af92081f99a56e7937561e024"><p>Create <code>src/mikro-orm.config.ts</code>:</p></section>
+<section id="23910a0af9208134a6b8c0516e094ed3"><pre><code>import { defineConfig } from '@mikro-orm/core';
+import { MongoHighlighter } from '@mikro-orm/mongo-highlighter';
+import { config } from './config';
+
+// Import all entities
+import { User } from './user/user.entity';
+import { Product } from './product/product.entity';
+
+const entities = [User, Product];
+
+export default defineConfig({
+  entities,
+  dbName: 'myapp',
+  clientUrl: config.mongoConnectionString,
+  highlighter: new MongoHighlighter(),
+  debug: config.nodeEnv === 'development',
+  allowGlobalContext: config.nodeEnv === 'test',
+});
+</code></pre></section>
+<section id="23910a0af92081618a0ddcf03b0e038c"><h4><strong>Example Entity</strong></h4></section>
+<section id="23910a0af9208159b3cbc6440e49b1fb"><p>Create <code>src/user/user.entity.ts</code>:</p></section>
+<section id="23910a0af92081a19a41dbcfe98ac9b9"><pre><code>import { Entity, Property, Collection, OneToMany } from '@mikro-orm/core';
+import { BaseEntity } from '../shared/entities/base.entity';
+
+interface UserRole {
+  role: string;
+  group: string;
+}
+
+@Entity()
+export class User extends BaseEntity {
+  @Property()
+  username!: string;
+
+  @Property()
+  firstName?: string;
+
+  @Property()
+  lastName?: string;
+
+  @Property()
+  email!: string;
+
+  @Property()
+  passwordHash?: string;
+
+  constructor(username: string, email: string) {
+    super();
+    this.username = username;
+    this.email = email;
+  }
+
+  get fullName(): string {
+    return `${this.firstName || ''} ${this.lastName || ''}`.trim();
+  }
+}
+</code></pre></section>
+<section id="23910a0af9208147a43cd0a35b3532bb"><hr></section>
+<section id="23910a0af920810e86b8ec509a289d4c"><h3><strong>5. Middleware Architecture</strong></h3></section>
+<section id="23910a0af920807d90c5c71ac739b6f3"><blockquote><section id="23910a0af920805ab032e51c5389d927"><p>Middleware provides cross-cutting functionality across your application. This organized approach to middleware creation and registration ensures consistent request processing, error handling, and authentication throughout your application.</p></section></blockquote></section>
+<section id="23910a0af92081c59903c9114ad7598f"><h4><strong>Global Middleware Setup</strong></h4></section>
+<section id="23910a0af92081ffa7fac164350e7aa9"><p>Create <code>src/shared/middleware/index.ts</code>:</p></section>
+<section id="23910a0af9208149a2e3da9eefb62419"><pre><code>
+export { tryCatch } from './tryCatch.middleware';
+export { validateRequest } from './validateRequest.middleware';
+export { errorHandler } from './error.middleware';
+export { authMiddleware } from './auth.middleware';
+export { routeNotFoundHandler } from './routeNotFound.middleware';
+</code></pre></section>
+<section id="23910a0af920810f9b64d2c9362203f6"><h4><strong>Try-Catch Wrapper</strong></h4></section>
+<section id="23910a0af92081b887b7dc08ff0e5150"><p>Create <code>src/shared/middleware/tryCatch.middleware.ts</code>:</p></section>
+<section id="23910a0af920813d91afd8e632884923"><pre><code>
+import { Request, Response, NextFunction, RequestHandler } from 'express';
+
+export const tryCatch = (fn: RequestHandler): RequestHandler =&gt; {
+  return (req: Request, res: Response, next: NextFunction): void =&gt; {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
+};
+</code></pre></section>
+<section id="23910a0af92081d59e72d39ecd0f138e"><h4><strong>Request Validation Middleware</strong></h4></section>
+<section id="23910a0af92081318615f5dee458cb1a"><p>Create <code>src/shared/middleware/validateRequest.middleware.ts</code>:</p></section>
+<section id="23910a0af9208166b123e7bae0173f65"><pre><code>
+import { Request, Response, NextFunction } from 'express';
+import { ValidationChain, validationResult } from 'express-validator';
+
+export const validateRequest = (validatorArray: ValidationChain[]) =&gt; [
+  validatorArray,
+  (req: Request, res: Response, next: NextFunction) =&gt; {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ 
+        error: 'Validation failed',
+        details: errors.array() 
+      });
+    }
+    next();
+  },
+];
+</code></pre></section>
+<section id="23910a0af92081f39ac3d6eb51326a24"><h4><strong>Authentication Middleware</strong></h4></section>
+<section id="23910a0af920812095f4edb9df79bdd5"><p>Create <code>src/shared/middleware/auth.middleware.ts</code>:</p></section>
+<section id="23910a0af92081469bfdf7189cdd7935"><pre><code>import { Request, Response, NextFunction } from 'express';
+import * as jwt from 'jsonwebtoken';
+import { userService } from '../../services';
+import { config } from '../../config';
+
+interface AuthenticatedRequest extends Request {
+  userId?: string;
+  user?: any;
+}
+
+export async function authMiddleware(
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+): Promise&lt;void&gt; {
+  const token = req.headers.authorization?.replace('Bearer ', '');
+
+  if (!token) {
+    return next();
+  }
+
+  try {
+    const decoded = jwt.verify(token, config.jwtSecret) as { userId: string };
+    req.userId = decoded.userId;
+
+    const user = await userService.getUserById(decoded.userId);
+    if (user) {
+      req.user = user;
+    }
+  } catch (error) {
+    console.error('Auth middleware error:', error);
+  }
+
+  next();
+}
+</code></pre></section>
+<section id="23910a0af9208124a1ececfb79615ad0"><h4><strong>Error Handling Middleware</strong></h4></section>
+<section id="23910a0af92081ddbe0fd9b949c38742"><p>Create <code>src/shared/middleware/error.middleware.ts</code>:</p></section>
+<section id="23910a0af9208161a0f2cef158c67ca0"><pre><code>import { Request, Response, NextFunction, ErrorRequestHandler } from 'express';
+import { DI } from '../../DI';
+
+export const errorHandler: ErrorRequestHandler = (err, req, res, next) =&gt; {
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  
+  DI.logger.error('Error occurred:', {
+    message: err.message,
+    stack: err.stack,
+    url: req.url,
+    method: req.method
+  });
+
+  // Custom error handling
+  if (err.name === 'ValidationError') {
+    return res.status(400).json({
+      error: 'Validation Error',
+      message: err.message,
+      ...(isDevelopment &amp;&amp; { stack: err.stack })
+    });
+  }
+
+  if (err.name === 'UnauthorizedError') {
+    return res.status(401).json({
+      error: 'Unauthorized',
+      message: 'Authentication required'
+    });
+  }
+
+  // Generic error response
+  res.status(err.statusCode || 500).json({
+    error: 'Internal Server Error',
+    message: isDevelopment ? err.message : 'Something went wrong',
+    ...(isDevelopment &amp;&amp; { stack: err.stack })
+  });
+};
+</code></pre></section>
+<section id="23910a0af92081a7a72fdd42ffa6b333"><hr></section>
+<section id="23910a0af92081118c01fab981012ae0"><h3><strong>6. Route Organization</strong></h3></section>
+<section id="23910a0af9208016afb1f53adc072ff6"><blockquote><section id="23910a0af92080c98e99ea8fab143d2e"><p>Clean route organization improves API discoverability and maintenance. This section demonstrates how to structure routes by domain and separate public from authenticated endpoints for better security and clarity.</p></section></blockquote></section>
+<section id="23910a0af9208197a4e2e52c3da0f2a0"><h4><strong>Route Structure Pattern</strong></h4></section>
+<section id="23910a0af9208100afc4ea727c7accc2"><p>Create <code>src/user/user.routes.ts</code>:</p></section>
+<section id="23910a0af9208184a9fded7d17af64df"><pre><code>import express from 'express';
+import { body, param } from 'express-validator';
+import { UserController } from './user.controller';
+import { tryCatch, validateRequest } from '../shared/middleware';
+
+const userController = new UserController();
+const router = express.Router();
+
+// GET /user/:id
+router.get(
+  '/:id',
+  ...validateRequest([
+    param('id').isMongoId().withMessage('Valid user ID required')
+  ]),
+  tryCatch(userController.getUserById)
+);
+
+// POST /user
+router.post(
+  '/',
+  ...validateRequest([
+    body('firstName').optional().isLength({ min: 1, max: 50 }),
+    body('lastName').optional().isLength({ min: 1, max: 50 }),
+    body('email').isEmail().withMessage('Valid email required')
+  ]),
+  tryCatch(userController.createUser)
+);
+
+// PUT /user/:id
+router.put(
+  '/:id',
+  ...validateRequest([
+    param('id').isMongoId().withMessage('Valid user ID required'),
+    body('firstName').optional().isLength({ min: 1, max: 50 }),
+    body('lastName').optional().isLength({ min: 1, max: 50 })
+  ]),
+  tryCatch(userController.updateUser)
+);
+
+export { router as UserRouter };
+</code></pre></section>
+<section id="23910a0af92081d888b0ecc6b0f9a141"><h4><strong>Public Routes Pattern</strong></h4></section>
+<section id="23910a0af92081af873cfe45adba8a9e"><p>Create <code>src/user/user.public-routes.ts</code>:</p></section>
+<section id="23910a0af920812f8b2bd444914c2f59"><pre><code>import express from 'express';
+import { param } from 'express-validator';
+import { UserController } from './user.controller';
+import { tryCatch, validateRequest } from '../shared/middleware';
+
+const userController = new UserController();
+const router = express.Router();
+
+// GET /public/user/:id - Public user profile
+router.get(
+  '/:id',
+  ...validateRequest([
+    param('id').isMongoId().withMessage('Valid user ID required')
+  ]),
+  tryCatch(userController.getPublicUserProfile)
+);
+
+export { router as PublicUserRouter };
+</code></pre></section>
+<section id="23910a0af920810b8a0cf91ba751a68c"><h4><strong>Controller Pattern</strong></h4></section>
+<section id="23910a0af92081feb0dde83731909db0"><p>Create <code>src/user/user.controller.ts</code>:</p></section>
+<section id="23910a0af9208192ab8be5a871ee2c71"><pre><code>import { Request, Response } from 'express';
+import { UserService } from './user.service';
+
+interface AuthenticatedRequest extends Request {
+  user?: any;
+}
+
+export class UserController {
+  private userService = new UserService();
+
+  getUserById = async (req: Request, res: Response): Promise&lt;void&gt; =&gt; {
+    const { id } = req.params;
+    const user = await this.userService.getUserById(id);
+    
+    if (!user) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+
+    res.json({ user });
+  };
+
+  getPublicUserProfile = async (req: Request, res: Response): Promise&lt;void&gt; =&gt; {
+    const { id } = req.params;
+    const profile = await this.userService.getPublicProfile(id);
+    
+    if (!profile) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+
+    res.json({ profile });
+  };
+
+  createUser = async (req: AuthenticatedRequest, res: Response): Promise&lt;void&gt; =&gt; {
+    const userData = req.body;
+    const user = await this.userService.createUser(userData);
+    res.status(201).json({ user });
+  };
+
+  updateUser = async (req: AuthenticatedRequest, res: Response): Promise&lt;void&gt; =&gt; {
+    const { id } = req.params;
+    const updates = req.body;
+    
+    // Check ownership
+    if (req.user?.id !== id) {
+      res.status(403).json({ error: 'Access denied' });
+      return;
+    }
+
+    const user = await this.userService.updateUser(id, updates);
+    res.json({ user });
+  };
+}
+</code></pre></section>
+<section id="23910a0af92081caa395d2fd6d096bec"><h4><strong>Central Route Registration</strong></h4></section>
+<section id="23910a0af920819aad7bf7d5425572cc"><p>Create <code>src/routes.ts</code>:</p></section>
+<section id="23910a0af92081bda1ccc589abc7aadb"><pre><code>
+// Export all route modules
+export { UserRouter } from './user/user.routes';
+export { PublicUserRouter } from './user/user.public-routes';
+export { ProductRouter } from './product/product.routes';
+</code></pre></section>
+<section id="23910a0af920810db8efca0f58a75f1e"><hr></section>
+<section id="23910a0af92081a6a777e2c7e258cfe0"><h3><strong>7. Service Layer Patterns</strong></h3></section>
+<section id="23910a0af9208029b9f6ca4f55439196"><blockquote><section id="23910a0af92080339703c9c1a0be84e7"><p>The service layer encapsulates business logic away from controllers. This separation allows for reusable business logic that can be called from multiple entry points while maintaining a single source of truth.</p></section></blockquote></section>
+<section id="23910a0af9208195aec9cc94991f421f"><h4><strong>Service Base Pattern</strong></h4></section>
+<section id="23910a0af92081778064efcd795386a3"><p>Create <code>src/user/user.service.ts</code>:</p></section>
+<section id="23910a0af92081ebae60f6008dc651ed"><pre><code>import { DI } from '../DI';
+import { User } from './user.entity';
+
+export class UserService {
+  async getUserById(id: string): Promise&lt;User | null&gt; {
+    return await DI.em.findOne(User, { id });
+  }
+
+  async getUserByUsername(username: string): Promise&lt;User | null&gt; {
+    return await DI.em.findOne(User, { username });
+  }
+
+  async createUser(userData: Partial&lt;User&gt;): Promise&lt;User&gt; {
+    const user = new User(userData.username!, userData.email!);
+    Object.assign(user, userData);
+    
+    await DI.em.persistAndFlush(user);
+    return user;
+  }
+
+  async updateUser(id: string, updates: Partial&lt;User&gt;): Promise&lt;User | null&gt; {
+    const user = await this.getUserById(id);
+    if (!user) return null;
+
+    Object.assign(user, updates);
+    await DI.em.flush();
+    return user;
+  }
+
+  async getPublicProfile(id: string): Promise&lt;Partial&lt;User&gt; | null&gt; {
+    const user = await this.getUserById(id);
+    if (!user) return null;
+
+    return {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      // Don't expose sensitive data
+    };
+  }
+
+  async searchUsers(query: string, limit = 20): Promise&lt;User[]&gt; {
+    return await DI.em.find(User, {
+      $or: [
+        { firstName: new RegExp(query, 'i') },
+        { lastName: new RegExp(query, 'i') },
+        { email: new RegExp(query, 'i') }
+      ]
+    }, { limit });
+  }
+}
+</code></pre></section>
+<section id="23910a0af920814b9fdcf41f086304b6"><hr></section>
+<section id="23910a0af92081a98ef5c2384333d0fa"><h3><strong>8. Error Handling Strategy</strong></h3></section>
+<section id="23910a0af9208097819bc39cc53a7e91"><blockquote><section id="23910a0af92080eba60dd7c2e963964f"><p>Comprehensive error handling creates more robust applications. Using custom error classes helps standardize error responses and makes debugging easier while providing clear feedback to API consumers.</p></section></blockquote></section>
+<section id="23910a0af9208174a5aefa9515c28bb2"><h4><strong>Custom Error Classes</strong></h4></section>
+<section id="23910a0af9208194a8a2dec0037a052e"><p>Create <code>src/shared/errors/index.ts</code>:</p></section>
+<section id="23910a0af92081c68e86df6dcb305f3f"><pre><code>export class AppError extends Error {
+  constructor(
+    public message: string,
+    public statusCode: number = 500,
+    public isOperational: boolean = true
+  ) {
+    super(message);
+    this.name = this.constructor.name;
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+
+export class ValidationError extends AppError {
+  constructor(message: string, public details?: any[]) {
+    super(message, 400);
+  }
+}
+
+export class NotFoundError extends AppError {
+  constructor(message: string = 'Resource not found') {
+    super(message, 404);
+  }
+}
+
+export class UnauthorizedError extends AppError {
+  constructor(message: string = 'Authentication required') {
+    super(message, 401);
+  }
+}
+
+export class ForbiddenError extends AppError {
+  constructor(message: string = 'Access denied') {
+    super(message, 403);
+  }
+}
+</code></pre></section>
+<section id="23910a0af92081cbb3e6c1e928a237b7"><hr></section>
+<section id="23910a0af92081a7be5ec89ab26d5fc9"><h3><strong>9. Authentication &amp; Authorization</strong></h3></section>
+<section id="23910a0af920809b861ec2f2489acf5e"><blockquote><section id="23910a0af92080d7a8d8d0f32f0e3507"><p>Security is paramount in enterprise applications. This implementation of role-based access control ensures proper permission management and protects sensitive operations based on user roles.</p></section></blockquote></section>
+
+<section id="23910a0af92081c49d06d0168e57fcac"><h4><strong>Role-Based Access Control</strong></h4></section>
+<section id="23910a0af92081de94fae08e378907ee"><p>Create <code>src/shared/middleware/accessControl.middleware.ts</code>:</p></section>
+<section id="23910a0af92081e6bb23cc47452f9da3"><pre><code>import { Request, Response, NextFunction } from 'express';
+import AccessControl from 'accesscontrol';
+
+// Define roles and permissions
+const ac = new AccessControl();
+
+ac.grant('user')
+  .readOwn('profile')
+  .updateOwn('profile');
+
+ac.grant('admin')
+  .extend('user')
+  .readAny('profile')
+  .updateAny('profile')
+  .deleteAny('profile');
+
+interface AuthorizedRequest extends Request {
+  user?: { id: string; roles: Array&lt;{ role: string; group: string }&gt; };
+}
+
+export const checkAccess = (resource: string, action: string) =&gt; {
+  return (req: AuthorizedRequest, res: Response, next: NextFunction) =&gt; {
+    const user = req.user;
+    
+    if (!user) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    const userRoles = user.roles || [{ role: 'user', group: 'global' }];
+    
+    const hasPermission = userRoles.some(userRole =&gt; {
+      const permission = ac.can(userRole.role)[action](resource);
+      return permission.granted;
+    });
+
+    if (!hasPermission) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    next();
+  };
+};
+</code></pre></section>
+<section id="23910a0af920814a917bf9e722491b63"><hr></section>
+<section id="23910a0af92081c1abc4d9b569da6e3d"><h3><strong>10. Utility Functions</strong></h3></section>
+<section id="23910a0af920806ea449c2f573216025"><blockquote><section id="23910a0af92080c0a53bdeb2137a4e93"><p>Reusable utilities prevent code duplication and standardize common operations. These pagination and search utilities ensure consistent API behavior and help maintain clean controller code.</p></section></blockquote></section>
+<section id="23910a0af92081d0a455ceaa1196d917"><h4><strong>Pagination Utilities</strong></h4></section>
+<section id="23910a0af92081869812c1460c5ec041"><p>Create <code>src/shared/utils/pagination.ts</code>:</p></section>
+<section id="23910a0af9208184894ae4651e2c75e9"><pre><code>import { Request } from 'express';
+
+export interface PaginationParams {
+  limit: number;
+  offset: number;
+  orderBy: string;
+  direction: 'asc' | 'desc';
+}
+
+export const getPaginationParams = (req: Request): PaginationParams =&gt; {
+  const limit = Math.min(parseInt(req.query.limit as string) || 20, 100);
+  const offset = Math.max(parseInt(req.query.offset as string) || 0, 0);
+  const orderBy = req.query.orderBy as string || 'createdAt';
+  const direction = (req.query.direction as string)?.toLowerCase() === 'asc' ? 'asc' : 'desc';
+
+  return { limit, offset, orderBy, direction };
+};
+</code></pre></section>
+<section id="23910a0af920817781d1cf0829515a70"><h4><strong>Search Utilities</strong></h4></section>
+<section id="23910a0af92081c59e01c2b6f750c03c"><p>Create <code>src/shared/utils/search.ts</code>:</p></section>
+<section id="23910a0af9208129b7cffd23d73adfe3"><pre><code>export const sanitizeSearchQuery = (query: string): string =&gt; {
+  return query
+    .replace(/[.*+?^${}()|[\]\\]/g, '\\$&amp;') // Escape regex characters
+    .trim()
+    .substring(0, 100); // Limit length
+};
+
+export const buildSearchConditions = (searchTerm: string, fields: string[]) =&gt; {
+  const sanitized = sanitizeSearchQuery(searchTerm);
+  return {
+    $or: fields.map(field =&gt; ({
+      [field]: new RegExp(sanitized, 'i')
+    }))
+  };
+};
+</code></pre></section>
+<section id="23910a0af92081bba92ec81741820709"><hr></section>
+<section id="23910a0af9208114a73ff68f34c25584"><h3><strong>11. Real-time Features</strong></h3></section>
+<section id="23910a0af920804e85eed556bc4b0aff"><blockquote><section id="23910a0af920801db5d1e335b9dc5970"><p>Modern applications often require real-time capabilities. The Server-Sent Events implementation provides an efficient way to push updates to clients without the complexity of WebSockets.</p></section></blockquote></section>
+<section id="23910a0af9208172adf4fde0a6d0e41c"><h4><strong>Server-Sent Events</strong></h4></section>
+<section id="23910a0af92081cbb97fd9630143ccfa"><p>Create <code>src/shared/services/sse.service.ts</code>:</p></section>
+<section id="23910a0af92081e49669fb1c402f77ee"><pre><code>import { Response } from 'express';
+
+export class SSEService {
+  private connections = new Map&lt;string, Response&gt;();
+
+  addConnection(userId: string, res: Response): void {
+    res.writeHead(200, {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+      'Access-Control-Allow-Origin': '*',
+    });
+
+    this.connections.set(userId, res);
+
+    res.on('close', () =&gt; {
+      this.connections.delete(userId);
+    });
+  }
+
+  sendToUser(userId: string, event: string, data: any): void {
+    const connection = this.connections.get(userId);
+    if (connection) {
+      connection.write(`event: ${event}\n`);
+      connection.write(`data: ${JSON.stringify(data)}\n\n`);
+    }
+  }
+
+  broadcast(event: string, data: any): void {
+    for (const connection of this.connections.values()) {
+      connection.write(`event: ${event}\n`);
+      connection.write(`data: ${JSON.stringify(data)}\n\n`);
+    }
+  }
+}
+</code></pre></section>
+<section id="23910a0af9208186b398c69eed3c1273"><hr></section>
+<section id="23910a0af920818d9413cc5df26a1a6c"><h3><strong>12. Testing Setup</strong></h3></section>
+<section id="23910a0af920801b82c3db066d47f3b3"><blockquote><section id="23910a0af92080458d16ebbde554f93c"><p>A comprehensive testing strategy is essential for maintaining quality. This setup enables unit, integration, and e2e tests with proper database isolation for reliable test results.</p></section></blockquote></section>
+<section id="23910a0af920812db5fcedc141c94cec"><h4><strong>Jest Configuration</strong></h4></section>
+<section id="23910a0af92081df80b1e2026f8fe02e"><p>Create <code>jest.config.ts</code>:</p></section>
+<section id="23910a0af92081f1b854f67b72e5608c"><pre><code>export default {
+  preset: 'ts-jest',
+  testEnvironment: 'node',
+  roots: ['&lt;rootDir&gt;/src'],
+  testMatch: ['**/__tests__/**/*.test.ts'],
+  collectCoverageFrom: [
+    'src/**/*.ts',
+    '!src/**/*.d.ts',
+    '!src/index.ts'
+  ],
+  setupFilesAfterEnv: ['&lt;rootDir&gt;/src/__tests__/setup.ts']
+};
+</code></pre></section>
+<section id="23910a0af920815699fdc558c67ea284"><h4><strong>Test Setup</strong></h4></section>
+<section id="23910a0af92081cf8a0cf46c9e4c99fa"><p>Create <code>src/__tests__/setup.ts</code>:</p></section>
+<section id="23910a0af920813c9188eeb680821206"><pre><code>import { DI } from '../DI';
+import { MikroORM } from '@mikro-orm/core';
+import config from '../mikro-orm.config';
+
+beforeAll(async () =&gt; {
+  DI.orm = await MikroORM.init({
+    ...config,
+    dbName: 'test-db',
+    allowGlobalContext: true
+  });
+  DI.em = DI.orm.em;
+});
+
+afterAll(async () =&gt; {
+  await DI.orm.close();
+});
+
+beforeEach(async () =&gt; {
+  await DI.orm.getSchemaGenerator().clearDatabase();
+});
+</code></pre></section>
+<section id="23910a0af92081cfb379d0180992327d"><h4><strong>Example Test</strong></h4></section>
+<section id="23910a0af920812dbe5affcf1aedc509"><p>Create <code>src/user/__tests__/user.service.test.ts</code>:</p></section>
+<section id="23910a0af920810f928eddfcaea95b7d"><pre><code>import { UserService } from '../user.service';
+import { User } from '../user.entity';
+import { DI } from '../../DI';
+
+describe('UserService', () =&gt; {
+  let userService: UserService;
+
+  beforeEach(() =&gt; {
+    userService = new UserService();
+  });
+
+  it('should create a user', async () =&gt; {
+    const userData = {
+      username: 'johndoe',
+      firstName: 'John',
+      lastName: 'Doe',
+      email: 'john@example.com'
+    };
+
+    const user = await userService.createUser(userData);
+
+    expect(user).toBeInstanceOf(User);
+    expect(user.firstName).toBe('John');
+    expect(user.email).toBe('john@example.com');
+  });
+
+  it('should find user by ID', async () =&gt; {
+    const user = new User('janedoe', 'jane@example.com');
+    user.firstName = 'Jane';
+    await DI.em.persistAndFlush(user);
+
+    const foundUser = await userService.getUserById(user.id);
+
+    expect(foundUser).toBeTruthy();
+    expect(foundUser?.firstName).toBe('Jane');
+  });
+});
+</code></pre></section>
+<section id="23910a0af920815ab66aca079196a588"><hr></section>
+<section id="23910a0af9208139bf3ce74ea934e9db"><h3><strong>13. Main Application Setup</strong></h3></section>
+<section id="23910a0af92080e6b70ef4c4bb3ee9c0"><blockquote><section id="23910a0af920805cbf12c17287607a1a"><p>The application bootstrap process ties everything together. This section shows how to properly initialize your Express app with all the middleware, routes, and services while ensuring proper shutdown procedures.</p></section></blockquote></section>
+<section id="23910a0af920818fba3ed0f94c48f34b"><h4><strong>App Configuration</strong></h4></section>
+<section id="23910a0af92081d78d33fe44d9dd343b"><p>Create <code>src/app.ts</code>:</p></section>
+<section id="23910a0af920815e86c9cceba142de51"><pre><code>import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import { RequestContext } from '@mikro-orm/core';
+
+import { config } from './config';
+import { DI } from './DI';
+import { initializeServices } from './services';
+import { 
+  errorHandler, 
+  authMiddleware, 
+  routeNotFoundHandler 
+} from './shared/middleware';
+
+// Import routes
+import { 
+  UserRouter, 
+  PublicUserRouter, 
+  ProductRouter 
+} from './routes';
+
+export const createApp = () =&gt; {
+  const app = express();
+
+  // Infrastructure middleware
+  app.use(morgan('combined'));
+  app.use(express.json({ limit: '10mb' }));
+  app.use(express.urlencoded({ extended: true }));
+  app.use(cors({ origin: config.clientOrigins[config.nodeEnv] }));
+  app.use(helmet());
+
+  // Database context middleware
+  app.use((req, res, next) =&gt; RequestContext.create(DI.orm.em, next));
+
+  // Apply auth middleware to all routes
+  app.use(authMiddleware);
+
+  // Public routes
+  app.use('/public/user', PublicUserRouter);
+
+  // Protected routes
+  app.use('/user', UserRouter);
+  app.use('/product', ProductRouter);
+
+  // Health check
+  app.get('/health', (req, res) =&gt; {
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  });
+
+  // Error handling
+  app.use(routeNotFoundHandler);
+  app.use(errorHandler);
+
+  return app;
+};
+</code></pre></section>
+<section id="23910a0af92081ef908df6392a05cfba"><h4><strong>Application Entry Point</strong></h4></section>
+<section id="23910a0af920811f8ab4ed1a4ad38f77"><p>Create <code>src/index.ts</code>:</p></section>
+<section id="23910a0af9208183b55ec5f7b37c8c75"><pre><code>import { MikroORM } from '@mikro-orm/core';
+import { MongoClient } from 'mongodb';
+import mikroOrmConfig from './mikro-orm.config';
+import { createApp } from './app';
+import { DI } from './DI';
+import { config } from './config';
+import { initializeServices } from './services';
+
+const bootstrap = async () =&gt; {
+  try {
+    // Initialize database
+    const client = await MongoClient.connect(config.mongoConnectionString);
+    DI.orm = await MikroORM.init(mikroOrmConfig);
+    DI.em = DI.orm.em;
+    DI.nativeClient = client.db('myapp');
+
+    // Initialize services
+    initializeServices();
+
+    // Create Express app
+    const app = createApp();
+
+    // Start server
+    DI.server = app.listen(config.port, () =&gt; {
+      console.log(`🚀 Server running on port ${config.port}`);
+      console.log(`📖 Environment: ${config.nodeEnv}`);
+    });
+
+    // Graceful shutdown
+    const shutdown = async () =&gt; {
+      console.log('🛑 Shutting down gracefully...');
+      DI.server.close(async () =&gt; {
+        await DI.orm.close();
+        process.exit(0);
+      });
+    };
+
+    process.on('SIGTERM', shutdown);
+    process.on('SIGINT', shutdown);
+
+  } catch (error) {
+    console.error('❌ Error starting application:', error);
+    process.exit(1);
+  }
+};
+
+bootstrap();
+</code></pre></section>
+<section id="23910a0af920815ba8edeec56afbda15"><hr></section>
+<section id="23910a0af92081789393c82cc71f6a91"><h3><strong>14. Environment Configuration</strong></h3></section>
+<section id="23910a0af920802e9506d8d4dc740a70"><blockquote><section id="23910a0af92080798505ea0f5422c4ec"><p>Environment-specific configuration allows your application to behave differently in development, testing, and production. This approach keeps sensitive information secure while maintaining flexibility across environments.</p></section></blockquote></section>
+
+<section id="23910a0af920810fad8ed6566d76e1bc"><p>Create environment files:</p></section>
+<section id="23910a0af92081ecb5efd97b7f52008d"><p><code>.env.development</code>:</p></section>
+<section id="23910a0af920817cb737d056922628a2"><pre><code>NODE_ENV=development
+PORT=3000
+MONGODB_URL=mongodb://localhost:27017/myapp-dev
+JWT_SECRET=your-jwt-secret-key</code></pre></section>
+<section id="23910a0af92081488d81f7db3be92a5c"><p><code>.env.test</code>:</p></section>
+<section id="23910a0af920814e820afc6045fd289b"><pre><code>NODE_ENV=test
+MONGODB_URL=mongodb://localhost:27017/myapp-test
+JWT_SECRET=test-jwt-secret</code></pre></section>
+<section id="23910a0af920811a8db5d6b6fe471d2c"><p><code>.env.production</code>:</p></section>
+<section id="23910a0af920815bb298c339b25c8dd9"><pre><code>NODE_ENV=production
+PORT=3000
+MONGODB_URL=your-production-mongodb-url
+JWT_SECRET=your-production-jwt-secret</code></pre></section>
+<section id="23910a0af92081b79ee8e30c58fff19e"><hr></section>
+<section id="23910a0af92081429b74ca96da0cf4b8"><h3><strong>🎯 Key Benefits of This Architecture</strong></h3></section>
+<section id="23910a0af92081c09a04f17a2a0feeb0"><ol><li><strong>Scalability</strong>: Domain-driven structure grows with your application</li></ol></section>
+<section id="23910a0af9208101b414ecd5347f2ace"><ol><li><strong>Maintainability</strong>: Clear separation of concerns and consistent patterns</li></ol></section>
+<section id="23910a0af92081feaeb1fb96fe0e6fa3"><ol><li><strong>Type Safety</strong>: Full TypeScript integration with proper typing</li></ol></section>
+<section id="23910a0af92081459d81c36a1cdf9ae4"><ol><li><strong>Testability</strong>: Easy to mock dependencies and test individual components</li></ol></section>
+<section id="23910a0af92081e1aaf1ca4a04009363"><ol><li><strong>Performance</strong>: Efficient database queries and proper error handling</li></ol></section>
+<section id="23910a0af920819faedbfeb65071ad2c"><ol><li><strong>Security</strong>: Built-in authentication, authorization, and input validation</li></ol></section>
+<section id="23910a0af92081798b9bc35d03f5aa9f"><ol><li><strong>Developer Experience</strong>: Hot reloading, comprehensive logging, and clear error messages</li></ol></section>
+
+<section id="23910a0af92081718cd9c2ed7c5cc512"><h3><strong>🚀 Getting Started</strong></h3></section>
+<section id="23910a0af92081bb8dccc2e8707ad347"><ol><li>Follow the setup steps in order<section id="23910a0af9208065a8bec94704da1759"><p><a href="/my-favorite-express-architecture-setup-guide">🛠️My Favorite Express Architecture Setup Guide</a> </p></section></li></ol></section>
+<section id="23910a0af9208197b60cd31041ce37bd"><ol><li>Start with the basic structure and add domains as needed</li></ol></section>
+<section id="23910a0af920814d9d0cc7edddec0558"><ol><li>Customize the middleware and services for your specific requirements</li></ol></section>
+<section id="23910a0af920812ba0ceeda84236aab1"><ol><li>Add comprehensive tests as you build features</li></ol></section>
+<section id="23910a0af92081ec81ccf87698c0db0f"><ol><li>Deploy using your preferred hosting platform</li></ol></section>
+<section id="23910a0af92081d49b5ce54fae70801a"><p>This architecture provides a solid foundation for building enterprise-level Express.js applications that can scale from MVP to production-ready systems.</p></section>
+

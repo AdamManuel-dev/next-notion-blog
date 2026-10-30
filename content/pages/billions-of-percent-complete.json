@@ -1,0 +1,17 @@
+{
+  "id": "a60f1b4ef89bd34e0cced94a48c1af35",
+  "slug": "billions-of-percent-complete",
+  "title": "How Can a Job Be Billions of Percent Complete?",
+  "source": "blog-draft",
+  "description": "What happens when two services disagree about the meaning of a number.",
+  "tags": [
+    "distributed-systems",
+    "metrics",
+    "debugging"
+  ],
+  "status": "published",
+  "sourceFile": "blog-drafts/billions-of-percent-complete.md",
+  "sourceUrl": null,
+  "cover": null,
+  "warnings": []
+}

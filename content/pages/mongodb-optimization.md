@@ -1,0 +1,262 @@
+---
+title: "MongoDB Optimization"
+id: "1bb23a48888945f5befed3ebbc173e0b"
+slug: "mongodb-optimization"
+source_url: "https://adams-blog.notion.site/MongoDB-Optimization-1bb23a48888945f5befed3ebbc173e0b"
+extracted_at: "2026-10-30T19:38:43.360Z"
+cover: null
+---
+
+# MongoDB Optimization
+
+<a id="c6ea6763a9564a1aa59aba4b06b136f4"></a>
+
+> When queries get too complex or too slow it is often an indication that there is some thing about your model that does not support your use case.
+
+<a id="1027e19389af4a24b77425c30e27f613"></a>
+
+> This is pretty disorganized, and will not be organized in the immediate future
+
+<a id="b2b3802dd79f4d4f96abeda8b08b7a7d"></a>
+
+#### Corollary Documents & Notes
+
+<a id="7cd819863c2949ea92cdc9aa6ff20f5e"></a>
+
+[MongoDB Developer Community](https://www.mongodb.com/community/forums/)
+
+<a id="f065e3522fa640e4bce8d8d3a7596f46"></a>
+
+[MongoDB Query Playground](https://mongoplayground.net/)
+
+<a id="f7cea03cb6314c4ea7e303999b2c3489"></a>
+
+[💽MongoDB Official Documentation](/mongodb-official-documentation)
+
+<a id="ccfd837bc3fe4ecbb9c02fcc58fdaa5e"></a>
+
+[📦Schema Design](/schema-design)
+
+<a id="853e4abcce7944bcb99748fd9d0368ea"></a>
+
+[🗂️MongoDB Indexes](/mongodb-indexes)
+
+<a id="7318293666354008954c9b23bad0d183"></a>
+
+[📚Choosing a shard key for MongoDB](/choosing-a-shard-key-for-mongodb)
+
+<a id="5cefc17e42e747ad974602a8a978610e"></a>
+
+[🏎️Optimize for write performance with Cosmos DB using the MongoDB API](/optimize-for-write-performance-with-cosmos-db-using-the-mongodb-api)
+
+<a id="e6fe1e00d35a44d08b2c971308d55a4f"></a>
+
+[♻️Read Concern - Write Concern - Read Preference - What does it mean?](/read-concern-write-concern-read-preference-what-does-it-mean)
+
+<a id="7df11cd0467c42a3aaadd61c8ecf7422"></a>
+
+![](/content-assets/9a3d75a6f988999ff692.png)
+
+<a id="58af67796dbc4ba185556a9ec6530575"></a>
+
+### Guarantees associated with consistency levels
+
+<a id="a5ee363ee3d14f089a009fbfd0874d64"></a>
+
+#### Strong consistency
+
+<a id="c01cdd0d1d504e99b4b45108e6ca9642"></a>
+
+<details open=""><summary>Description</summary><section id="be2a730dae3844ab9aa50c401e59bbba"><p>Strong consistency offers a linearizability guarantee. Linearizability refers to serving requests concurrently. The reads are guaranteed to return the most recent committed version of an item. A client never sees an uncommitted or partial write. Users are always guaranteed to read the latest committed write.</p></section><section id="d2923ae00f2248fb808701ab45b4c69b"><p>The following graphic illustrates the strong consistency with musical notes. After the data is written to the "West US 2" region, when you read the data from other regions, you get the most recent value:</p></section></details>
+
+<a id="84686124476b4ea680edf7b764eeea04"></a>
+
+![](/content-assets/03e41d002f24e7ef8e21.gif)
+
+<a id="1f1393f215344abf8700e8a1d241b718"></a>
+
+#### Bounded staleness consistency
+
+<a id="490fbf4c92ea4ac5b00ca63c3bc4709d"></a>
+
+<details open=""><summary>Description</summary><section id="6816020e4d174e4692ede2fa8d6cf855"><p>In bounded staleness consistency, the reads are guaranteed to honor the consistent-prefix guarantee. The reads might lag behind writes by at most&nbsp;<em>"K"</em>&nbsp;versions (that is, "updates") of an item or by&nbsp;<em>"T"</em>&nbsp;time interval, whichever is reached first. In other words, when you choose bounded staleness, the "staleness" can be configured in two ways:</p></section><section id="97034f5b54074a4aa5b5cf80fcd7cd2b"><ul><li>The number of versions (<em>K</em>) of the item</li></ul></section><section id="106067016a514884988260cb038d36ca"><ul><li>The time interval (<em>T</em>) reads might lag behind the writes</li></ul></section><section id="28ae1126ade945aca4eea20c31bffa10"><p>For a single region account, the minimum value of&nbsp;<em>K</em>&nbsp;and&nbsp;<em>T</em>&nbsp;is 10 write operations or 5 seconds. For multi-region accounts the minimum value of&nbsp;<em>K</em>&nbsp;and&nbsp;<em>T</em>&nbsp;is 100,000 write operations or 300 seconds.</p></section><section id="355a04c7965042ddba9b12c91928a693"><p>Bounded staleness offers total global order outside of the "staleness window." When a client performs read operations within a region that accepts writes, the guarantees provided by bounded staleness consistency are identical to those guarantees by the strong consistency. As the staleness window approaches for either time or updates, whichever is closer, the service will throttle new writes to allow replication to catch up and honor the consistency guarantee.</p></section><section id="35decf0fc6424bdeadec4a0dbdfb70a7"><p>Inside the staleness window, Bounded Staleness provides the following consistency guarantees:</p></section><section id="ef0d2aa3c5de4d3fbc3c77cc255ff580"><ul><li>Consistency for clients in the same region for an account with single write region = Strong</li></ul></section><section id="cd25c8be74b5440f8732e03706611d39"><ul><li>Consistency for clients in different regions for an account with single write region = Consistent Prefix</li></ul></section><section id="5d038a014f0c4dcc991d03f0cccd0499"><ul><li>Consistency for clients writing to a single region for an account with multiple write regions = Consistent Prefix</li></ul></section><section id="77e66437cb634fe5bde1afb764d4156e"><ul><li>Consistency for clients writing to different regions for an account with multiple write regions = Eventual<section id="db6a4011b4b840ac8ef85c954fc5f29e"><p>Bounded staleness is frequently chosen by globally distributed applications that expect low write latencies but require total global order guarantee. Bounded staleness is great for applications featuring group collaboration and sharing, stock ticker, publish-subscribe/queueing etc. The following graphic illustrates the bounded staleness consistency with musical notes. After the data is written to the "West US 2" region, the "East US 2" and "Australia East" regions read the written value based on the configured maximum lag time or the maximum operations:</p></section></li></ul></section></details>
+
+<a id="39996ed342ac4d749122fc6f80ca184d"></a>
+
+![](/content-assets/7c88e4da5753e971b0b3.gif)
+
+<a id="51659f4af2024c43b4b18043fa45208c"></a>
+
+#### Session consistency
+
+<a id="ea5abf3747c346b3b58cd72246b99dce"></a>
+
+<details open=""><summary>Description</summary><section id="d7dfdf720fae4d3994e6061c5c5ced71"><p>In session consistency, within a single client session reads are guaranteed to honor the consistent-prefix, monotonic reads, monotonic writes, read-your-writes, and write-follows-reads guarantees. This assumes a single "writer" session or sharing the session token for multiple writers.</p></section><section id="e2559248835e47f99cd8ec970619b739"><p>Clients outside of the session performing writes will see the following guarantees:</p></section><section id="eafde9fb5bc5427fb921fd98580970d2"><ul><li>Consistency for clients in same region for an account with single write region = Consistent Prefix</li></ul></section><section id="590f0d724c00468a9921d8e30e9510bb"><ul><li>Consistency for clients in different regions for an account with single write region = Consistent Prefix</li></ul></section><section id="e92667cd59bd43f89eedabe360749e07"><ul><li>Consistency for clients writing to a single region for an account with multiple write regions = Consistent Prefix</li></ul></section><section id="35f28668e7f246678f66aa36bb284b5c"><ul><li>Consistency for clients writing to multiple regions for an account with multiple write regions = Eventual</li></ul></section><section id="e59c1b1912014d6c85536a0a944068cc"><ul><li>Consistency for clients using the&nbsp;<a href="https://docs.microsoft.com/en-us/azure/cosmos-db/integrated-cache">Azure Cosmos DB integrated cache</a>&nbsp;= Eventual<section id="8eeb40b9c17e4a71a7c6da8318a73451"><p>Session consistency is the most widely used consistency level for both single region as well as globally distributed applications. It provides write latencies, availability, and read throughput comparable to that of eventual consistency but also provides the consistency guarantees that suit the needs of applications written to operate in the context of a user. The following graphic illustrates the session consistency with musical notes. The "West US 2 writer" and the "West US 2 reader" are using the same session (Session A) so they both read the same data at the same time. Whereas the "Australia East" region is using "Session B" so, it receives data later but in the same order as the writes.</p></section></li></ul></section></details>
+
+<a id="83230006f1a54ffab8c236250377d623"></a>
+
+![](/content-assets/64013a53f37f722f7f5d.gif)
+
+<a id="132fe3d217544f9cbe001d7365b822d0"></a>
+
+#### Consistent prefix consistency
+
+<a id="80984034401b4d07aa6ef5970573a89b"></a>
+
+<details open=""><summary>Description</summary><section id="a4e724404aef40108c4a16145046a30f"><p>In consistent prefix option, updates that are returned contain some prefix of all the updates, with no gaps. Consistent prefix consistency level guarantees that reads never see out-of-order writes.</p></section><section id="05df0edddbc6498a87c6556f0c8000fe"><p>If writes were performed in the order&nbsp;<code>A, B, C</code>, then a client sees either&nbsp;<code>A</code>,&nbsp;<code>A,B</code>, or&nbsp;<code>A,B,C</code>, but never out-of-order permutations like&nbsp;<code>A,C</code>&nbsp;or&nbsp;<code>B,A,C</code>. Consistent Prefix provides write latencies, availability, and read throughput comparable to that of eventual consistency, but also provides the order guarantees that suit the needs of scenarios where order is important.</p></section><section id="c0012101f5f544cf94dca87cdbb649b9"><p>Below are the consistency guarantees for Consistent Prefix:</p></section><section id="7a90e351f06e403d8f4c4ea5d37bcf35"><ul><li>Consistency for clients in same region for an account with single write region = Consistent Prefix</li></ul></section><section id="8f85836c434e4073919b0e4e920144be"><ul><li>Consistency for clients in different regions for an account with single write region = Consistent Prefix</li></ul></section><section id="f582a6aa13524a8b92a380e2d796fb4c"><ul><li>Consistency for clients writing to a single region for an account with multiple write region = Consistent Prefix</li></ul></section><section id="00f89d57915e4cc29373d264f7a6a00d"><ul><li>Consistency for clients writing to multiple regions for an account with multiple write region = Eventual</li></ul></section><section id="2197dfdde4854edea9bfca08410df0ec"><p>The following graphic illustrates the consistency prefix consistency with musical notes. In all the regions, the reads never see out of order writes:</p></section></details>
+
+<a id="78d43fcb4cc34a3db4bc7a143ccaa31f"></a>
+
+![](/content-assets/d3604f18f65470d38b97.gif)
+
+<a id="e628fd6751954e8caaf91cbbeb1aafa7"></a>
+
+#### Eventual consistency
+
+<a id="40958d1eb1f8428aa2139b626d4105d5"></a>
+
+<details open=""><summary>Description</summary><section id="d2d948c48c404c96a9dd14cbb0ec7e3d"><p>In eventual consistency, there's no ordering guarantee for reads. In the absence of any further writes, the replicas eventually converge.Eventual consistency is the weakest form of consistency because a client may read the values that are older than the ones it had read before. Eventual consistency is ideal where the application does not require any ordering guarantees. Examples include count of Retweets, Likes, or non-threaded comments. The following graphic illustrates the eventual consistency with musical notes.</p></section></details>
+
+<a id="1598260dfb364454908a54dec52ec604"></a>
+
+![](/content-assets/9835021287938690ba10.gif)
+
+<a id="03b3604c4a5f43d988ec95b3a27d8d5d"></a>
+
+### Multi-region Availability Concerns
+
+<a id="45ccbfc727a44da7ad332a7da4ccf95d"></a>
+
+Multi-region accounts will experience different behaviors depending on the following table.
+
+<a id="4801d99fd24e4a75b053c2eac9bbb4ce"></a>
+
+| Configuration | Outage | Availability impact | Durability impact | What to do |
+| --- | --- | --- | --- | --- |
+| Single write region | Read region outage | All clients will automatically redirect reads to other regions. No read or write availability loss for all configurations, except 2 regions with strong consistency which loses write availability until the service is restored or, if **service-managed failover** is enabled, the region is marked as failed and a failover occurs. | No data loss. | During the outage, ensure that there are enough provisioned RUs in the remaining regions to support read traffic.When the outage is over, re-adjust provisioned RUs as appropriate. |
+| Single write region | Write region outage | Clients will redirect reads to other regions.**Without service-manages failover**, clients will experience write availability loss, until write availability is restored automatically when the outage ends. **With service-managed failover** clients will experience write availability loss until the services manages a failover to a new write region selected according to your preferences. | If strong consistency level is not selected, some data may not have been replicated to the remaining active regions. This depends on the consistency level selected as described in [this section](https://docs.microsoft.com/en-us/azure/cosmos-db/consistency-levels#rto). If the affected region suffers permanent data loss, unreplicated data may be lost. | During the outage, ensure that there are enough provisioned RUs in the remaining regions to support read traffic.Do *not* trigger a manual failover during the outage, as it will not succeed. When the outage is over, re-adjust provisioned RUs as appropriate. Accounts using SQL APIs may also recover the non-replicated data in the failed region from your [conflicts feed](https://docs.microsoft.com/en-us/azure/cosmos-db/how-to-manage-conflicts#read-from-conflict-feed). |
+| Multiple write regions | Any regional outage | Possibility of temporary write availability loss, analogously to single write region with service-managed failover. The failover of the [conflict-resolution region](https://docs.microsoft.com/en-us/azure/cosmos-db/high-availability#conflict-resolution-region) may also cause a loss of write availability if a high number of conflicting writes happen at the time of the outage. | Recently updated data in the failed region may be unavailable in the remaining active regions, depending on the selected [consistency level](https://docs.microsoft.com/en-us/azure/cosmos-db/consistency-levels). If the affected region suffers permanent data loss, unreplicated data may be lost. | During the outage, ensure that there are enough provisioned RUs in the remaining regions to support additional traffic.When the outage is over, you may re-adjust provisioned RUs as appropriate. If possible, Cosmos DB will automatically recover non-replicated data in the failed region using the configured conflict resolution method for SQL API accounts, and Last Write Wins for accounts using other APIs. |
+
+<a id="eb91defc72a04ec58be3f95f352da107"></a>
+
+### Brewer's CAP Theorem
+
+<a id="851bd8316f214f05964ec5147cb571c0"></a>
+
+Eric Brewer proposed a conjecture that states that if you want consistency, availability, and partition tolerance, you have to settle for two out of three for any shared data system. This assertion as since been proven and Brewer's proposal is known as *Brewer's CAP theorem*, where *CAP* stands for Consistency, Availability, and Partitions. Partition tolerance means that all the systems will continue to work unless there is a total network failure. The inaccessibility of a few notes will not impact the system. Let's examine each of the aspects of CAP.
+
+<a id="d643b46bddfc4b2cb3462b351fcd65e6"></a>
+
+#### Consistency
+
+<a id="34eec7d560c24431ab3d71e8b751d9a8"></a>
+
+Consistency in this discussion means that everyone sees the same view of the data if it is replicated in a distributed system. This can be enforced by forcing the algorithms to wait until all participating nodes acknowledge their actions (e.g., two phase commit). Guaranteeing this impacts availability. Alternatively, if we want to offer availability, we need to ensure that all live nodes can get updated and we have to give up on partition tolerance.
+
+<a id="b8f0bece745246678c4be03ce7e65f7d"></a>
+
+#### Availability
+
+<a id="55dd306de02145c4baaa3ad541c28ccf"></a>
+
+Availability refers to the system being highly available. Since commodity-built individual systems are not highly available, we achieve availability through redundancy, which means replication. If one system is down, a request can be fulfilled by another. In an environment with multiple systems connected on a network we have to be concerned about network partitioning. If we have partition tolerance, then we lose consistency: some systems are disconnected from the network segment where updates are being issued. Conversely, to keep consistency, we have to ensure that the network remains fully connected so that all live nodes can get updates. This means giving up on partition tolerance.
+
+<a id="6319a165357d412e99d8bc2d3c6c9ec7"></a>
+
+#### Partition Tolerance
+
+<a id="c724a6feac7444b8bcc6e2dfa5e00f99"></a>
+
+Partition tolerance means that the system performs correctly even if the network gets segmented. This can be enforced by using a non-distributed system (in which case partitioning is meaningless) or by forcing the algorithms to wait until network partitioning no longer exists (e.g., two phase commit). Guaranteeing this impacts availability. Alternatively, the system can continue running, but partitioned nodes will not participate in the computation (e.g., commits, updates) and will hence have different values of data, impacting consistency. Giving up on consistency allows us to use optimistic concurrency control techniques as well as leases instead of locks. Examples of this are web caches and the Domain Name System (DNS). ​
+
+<a id="c10e1bf10262461d93deff87947c1f52"></a>
+
+### BASE: Giving up on ACID
+
+<a id="ee8c79eecbe14b0f87667f4e017d6c37"></a>
+
+Availability and partition tolerance are not part of the **ACID** guarantees of a transaction, so we may be willing to give those up to preserve database integrity. However, that may not be the best choice in all environments since it limits a system's ability to scale and be highly available. In fact, in a lot of environments, availability and partition tolerance are *more* important than consistency (so what if you get stale data?).
+
+<a id="f21ca21202fc448b9a22e3c91fd6ec20"></a>
+
+In order to guarantee **ACID** behavior in transactions, objects (e.g., parts of the database) have to be locked so that everyone will see consistent data, which involves other entities having to wait until that data is consistent and unlocked. Locking works well on a small scale but is difficult to do efficiently on a huge scale. Instead, it is attractive to consider using cached data. The risk is that we violate the "C" and "I" in **ACID** (Consistent & Isolated): two separate transactions might see different views of the same data. An example might me that you just purchased the last copy of a book on Amazon.com but I still see one copy remaining.
+
+<a id="0a6cf36fd80e4c6590cc3dabdf6e0ce0"></a>
+
+An alternative to the strict requirements of **ACID** is ***BASE***, which stands for Basic Availability, Soft-state, Eventual consistency. Instead of requiring consistency after every transaction, it is enough for a database to eventually be in a consistent state. In these environments, accessing stale data is acceptable. This leniency makes it easy to cache copies of data throughout multiple nodes, never have to lock access to all those copies for any extensive time (e.g., a transaction operating on data will not lock all copies of that data), and update that data asynchronously (eventually). With a **BASE** model, extremely high scalability is obtainable through caching (replication), no central point of congestion, and no need for excessive messages to coordinate activity and access to data.
+
+<a id="806b48be74dd411eb150962f51f019d2"></a>
+
+## PACELC Theorem
+
+<a id="9182880a674440aba28dc8a672c4cb7f"></a>
+
+![](/content-assets/ce92e28fb9841ac92447.jpg)
+
+<a id="54da14e57516414dbd817c9cd3b28d21"></a>
+
+Daniel Abadi, author of the [PACELC Theorem](https://en.wikipedia.org/wiki/PACELC_theorem), describes PACELC in his [original paper](http://cs-www.cs.yale.edu/homes/dna/papers/abadi-pacelc.pdf) as
+
+<a id="8ef2c2a4f2604b0ab96aea6018743ac1"></a>
+
+*if there is a partition (****P****), how does the system trade off availability and consistency (****A*** *and* ***C****); else (****E****), when the system is running normally in the absence of partitions, how does the system trade off latency (****L****) and consistency (****C****)?*
+
+<a id="bc42fbf357654406845f5e55e1ce1027"></a>
+
+PACELC extends CAP to normal conditions (i.e. when the system has no partitions) where the tradeoff is between latency and consistency. Systems that allow lower latency along with relaxed consistency are classified as **EL** while systems that have higher latency along with linearizable consistency are classified as **EC.**
+
+<a id="46033206d3a849578b60c5eb962f27ae"></a>
+
+#### Practical Implications
+
+<a id="51e014c072de46b6914e2b637b9aac17"></a>
+
+PACELC gives distributed database designers a more complete framework to reason about the essential tradeoffs and therefore avoid building a more limiting system than necessary in practice.
+
+<a id="4331c4538f8140f18477c6f8f6c2e87c"></a>
+
+### Comparisons
+
+<a id="7ba5065d84bc4b5aa966d5589a7266f4"></a>
+
+Note that both CAP and PACELC theorems help us better understand single-row linearizability guarantees in distributed databases. Multi-row operations come under the purview of ACID guarantees (with the Isolation level playing a big role in how to handle conflicting operations) that are not covered by CAP and PACELC.
+
+<a id="08c3190d0aff4502bdbfb47f8db3c7b9"></a>
+
+## The Eight Fallacies of Distributed Computing
+
+<a id="d180d2238d34463fa11a7205a94b7ae6"></a>
+
+Essentially everyone, when they first build a distributed application, makes the following eight assumptions. All prove to be false in the long run and all cause *big* trouble and *painful* learning experiences.
+
+<a id="680f0650960f428b8ab63d68c478d854"></a>
+
+1. The network is reliable
+
+<a id="3443b8f240d44970a5f0287920486a18"></a>
+
+1. Latency is zero
+
+<a id="424d6e8748834d45b9208e4163f33dd3"></a>
+
+1. Bandwidth is infinite
+
+<a id="798401461ca3498fb7e69edb453379b9"></a>
+
+1. The network is secure
+
+<a id="ccd12d10be8e4c05a74d0b5052dc713a"></a>
+
+1. Topology doesn't change
+
+<a id="802a6d73d75b4bb982249a5df7057100"></a>
+
+1. There is one administrator
+
+<a id="59acfbbf4a6345288b2abd454de0dc3a"></a>
+
+1. Transport cost is zero
+
+<a id="ac1f32b440d14dc1b706c19fd52b6a09"></a>
+
+1. The network is homogeneous

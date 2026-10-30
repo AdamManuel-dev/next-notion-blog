@@ -1,0 +1,16 @@
+{
+  "id": "1bb23a48888945f5befed3ebbc173e0b",
+  "slug": "mongodb-optimization",
+  "title": "MongoDB Optimization",
+  "sourceUrl": "https://adams-blog.notion.site/MongoDB-Optimization-1bb23a48888945f5befed3ebbc173e0b",
+  "extractedAt": "2026-10-30T19:38:43.360Z",
+  "blockCount": 71,
+  "cover": null,
+  "warnings": [
+    {
+      "id": "4801d99fd24e4a75b053c2eac9bbb4ce",
+      "type": "notion-collection_view-block",
+      "reason": "Only browser-visible database rows are archived; standalone database navigation failed"
+    }
+  ]
+}

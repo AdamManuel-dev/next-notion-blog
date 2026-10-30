@@ -1,0 +1,174 @@
+---
+title: "Read Concern - Write Concern - Read Preference - What does it mean?"
+id: "e6fe1e00d35a44d08b2c971308d55a4f"
+slug: "read-concern-write-concern-read-preference-what-does-it-mean"
+source_url: "https://adams-blog.notion.site/Read-Concern-Write-Concern-Read-Preference-What-does-it-mean-e6fe1e00d35a44d08b2c971308d55a4f"
+extracted_at: "2026-10-30T19:39:58.229Z"
+cover: null
+---
+
+# Read Concern - Write Concern - Read Preference - What does it mean?
+
+<a id="357c7c6f870f4524a93978913f7628fe"></a>
+
+## Transactions and Read Preference
+
+<a id="c6a2c1fde7c74ac9b6560552df5578f9"></a>
+
+Operations in a transaction use the transaction-level [read preference](https://docs.mongodb.com/v4.2/core/read-preference/#replica-set-read-preference).
+
+<a id="40a19a7aa62645a3b50cf1e69ceace9b"></a>
+
+Using the drivers, you can set the transaction-level [read preference](https://docs.mongodb.com/v4.2/core/read-preference/#replica-set-read-preference) at the transaction start:
+
+<a id="c32b044e692a4c4da048737bc0a0c818"></a>
+
+- If the transaction-level read preference is unset, the transaction uses the session-level read preference.
+
+<a id="8825a5aa387049b699a075a406668066"></a>
+
+- If transaction-level and the session-level read preference are unset, the transaction uses the client-level read preference. By default, the client-level read preference is [primary](https://docs.mongodb.com/v4.2/core/read-preference/#primary).
+
+<a id="d1ef08c490334ca1ae6fe00409a1ea69"></a>
+
+[Multi-document transactions](https://docs.mongodb.com/v4.2/core/transactions/#) that contain read operations must use read preference [primary](https://docs.mongodb.com/v4.2/core/read-preference/#primary). All operations in a given transaction must route to the same member.
+
+<a id="694a0dc01f50458cad8161cc9611d592"></a>
+
+Operations in a transaction use the transaction-level [read concern](https://docs.mongodb.com/v4.2/reference/read-concern/). That is, any read concern set at the collection and database level is ignored inside the transaction.
+
+<a id="fd7f919afc614e9d9aa235cb49d2af0a"></a>
+
+You can set the transaction-level [read concern](https://docs.mongodb.com/v4.2/reference/read-concern/) at the transaction start.
+
+<a id="b9a921054e064794ba7123f57005e349"></a>
+
+- If the transaction-level read concern is unset, the transaction-level read concern defaults to the session-level read concern.
+
+<a id="8b36396110064a72a5c6b44f05a83200"></a>
+
+- If transaction-level and the session-level read concern are unset, the transaction-level read concern defaults to the client-level read concern. By default, client-level read concern is ["local"](https://docs.mongodb.com/v4.2/reference/read-concern-local/#readconcern.%22local%22) for reads against the primary. See also:
+  
+  <a id="4a62ae2f033a45709027715fac273e7d"></a>
+  
+  - [Transactions and Read Preference](https://docs.mongodb.com/v4.2/core/transactions/#transactions-read-preference)
+  
+  <a id="eb6644f76b1f4948b617bbec598cfab4"></a>
+  
+  - [Default MongoDB Read Concerns/Write Concerns](https://docs.mongodb.com/v4.2/reference/mongodb-defaults/)
+
+<a id="ecda2c0b8f484779a150e6b0d4f7f647"></a>
+
+Transactions support the following read concern levels:
+
+<a id="21de3123695d498b899d7bdd7bbb6969"></a>
+
+### `"local"`
+
+<a id="b10499aafafe4a769588be478a4ad694"></a>
+
+- Read concern ["local"](https://docs.mongodb.com/v4.2/reference/read-concern-local/#readconcern.%22local%22) returns the most recent data available from the node but can be rolled back.
+
+<a id="89ce529f8d9f489292c9f31e54f4e733"></a>
+
+- For transactions on sharded cluster, ["local"](https://docs.mongodb.com/v4.2/reference/read-concern-local/#readconcern.%22local%22) read concern cannot guarantee that the data is from the same snapshot view across the shards. If snapshot isolation is required, use ["snapshot"](https://docs.mongodb.com/v4.2/core/transactions/#transactions-read-concern-snapshot) read concern.
+
+<a id="51b63e7c552047d7a74942f4b1edfb5e"></a>
+
+### `"majority"`
+
+<a id="1bb1570a5688413084af1d3e627912da"></a>
+
+- Read concern ["majority"](https://docs.mongodb.com/v4.2/reference/read-concern-majority/#readconcern.%22majority%22) returns data that has been acknowledged by a majority of the replica set members (i.e. data cannot be rolled back) **if** the transaction commits with [write concern “majority”](https://docs.mongodb.com/v4.2/core/transactions/#transactions-write-concern).
+
+<a id="6eae5ea2eb6b424e805ad6e85b3434f9"></a>
+
+- If the transaction does not use [write concern “majority”](https://docs.mongodb.com/v4.2/core/transactions/#transactions-write-concern) for the commit, the ["majority"](https://docs.mongodb.com/v4.2/reference/read-concern-majority/#readconcern.%22majority%22) read concern provides **no** guarantees that read operations read majority-committed data.
+
+<a id="441ee611a5424456a71a6e3dcddf801c"></a>
+
+- For transactions on sharded cluster, ["majority"](https://docs.mongodb.com/v4.2/reference/read-concern-majority/#readconcern.%22majority%22) read concern cannot guarantee that the data is from the same snapshot view across the shards. If snapshot isolation is required, use ["snapshot"](https://docs.mongodb.com/v4.2/core/transactions/#transactions-read-concern-snapshot) read concern.
+
+<a id="799c64ac399647fd93703cdc464c821f"></a>
+
+### `"snapshot"`
+
+<a id="72ac120fc189408bb0797f6a2af50a61"></a>
+
+- Read concern ["snapshot"](https://docs.mongodb.com/v4.2/reference/read-concern-snapshot/#readconcern.%22snapshot%22) returns data from a snapshot of majority committed data **if** the transaction commits with [write concern “majority”](https://docs.mongodb.com/v4.2/core/transactions/#transactions-write-concern).
+
+<a id="284cf7b050c84a9ea7de38d8927b9f11"></a>
+
+- If the transaction does not use [write concern “majority”](https://docs.mongodb.com/v4.2/core/transactions/#transactions-write-concern) for the commit, the ["snapshot"](https://docs.mongodb.com/v4.2/reference/read-concern-snapshot/#readconcern.%22snapshot%22) read concern provides **no** guarantee that read operations used a snapshot of majority-committed data.
+
+<a id="3f18456fc5a3411a8ea266a8a864728d"></a>
+
+- For transactions on sharded clusters, the ["snapshot"](https://docs.mongodb.com/v4.2/reference/read-concern-snapshot/#readconcern.%22snapshot%22) view of the data **is** synchronized across shards.
+
+<a id="9209729b20b64105bb93eab1d3501fa5"></a>
+
+## Transactions and Write Concern
+
+<a id="b7e8956aa0bd4ae2a610225954d05b1f"></a>
+
+Transactions use the transaction-level [write concern](https://docs.mongodb.com/v4.2/reference/write-concern/) to commit the write operations. Write operations inside transactions must be issued without explicit write concern specification and use the default write concern. At commit time, the writes are then commited using the transaction-level write concern.
+
+<a id="424d8809cc3d4d3189794fb9284bdfa2"></a>
+
+> **TIP** Do not explicitly set the write concern for the individual write operations inside a transaction. Setting write concerns for the individual write operations inside a transaction results in an error.
+
+<a id="24b23913b215411fbabf81035ad40597"></a>
+
+You can set the transaction-level [write concern](https://docs.mongodb.com/v4.2/reference/write-concern/) at the transaction start:
+
+<a id="d6541b1f085441f1848e7e084bb39717"></a>
+
+- If the transaction-level write concern is unset, the transaction-level write concern defaults to the session-level write concern for the commit.
+
+<a id="d353e2b043b64902a5bb52145dc47418"></a>
+
+- If the transaction-level write concern and the session-level write concern are unset, transaction-level write concern defaults to the client-level write concern. By default, client-level write concern is [w: 1](https://docs.mongodb.com/v4.2/reference/write-concern/#writeconcern.%3Cnumber%3E). See also [Default MongoDB Read Concerns/Write Concerns](https://docs.mongodb.com/v4.2/reference/mongodb-defaults/).
+
+<a id="49e1a314343d44c6a7cab6bb73f2b06c"></a>
+
+Transactions support all write concern [w](https://docs.mongodb.com/v4.2/reference/write-concern/#wc-w) values, including:
+
+<a id="0c58131b8d084413900d9861cad760e9"></a>
+
+### `w: 1`
+
+<a id="1a2cd35dd7734050ab808792bf4b1983"></a>
+
+- Write concern [w: 1](https://docs.mongodb.com/v4.2/reference/write-concern/#writeconcern.%3Cnumber%3E) returns acknowledgement after the commit has been applied to the primary.
+  
+  <a id="7ebe934ea04147ca837ccaf027ac5685"></a>
+  
+  > **IMPORTANT** When you commit with [w: 1](https://docs.mongodb.com/v4.2/reference/write-concern/#writeconcern.%3Cnumber%3E), your transaction can be [rolled back if there is a failover](https://docs.mongodb.com/v4.2/core/replica-set-rollbacks/).
+
+<a id="ef7a8a71e6b94eecaa4c8ce74d971b8f"></a>
+
+- When you commit with [w: 1](https://docs.mongodb.com/v4.2/reference/write-concern/#writeconcern.%3Cnumber%3E) write concern, transaction-level ["majority"](https://docs.mongodb.com/v4.2/reference/read-concern-majority/#readconcern.%22majority%22) read concern provides **no** guarantees that read operations in the transaction read majority-committed data.
+
+<a id="4848725f57204f5587d4b37b83c62a7d"></a>
+
+- When you commit with [w: 1](https://docs.mongodb.com/v4.2/reference/write-concern/#writeconcern.%3Cnumber%3E) write concern, transaction-level ["snapshot"](https://docs.mongodb.com/v4.2/reference/read-concern-snapshot/#readconcern.%22snapshot%22) read concern provides **no** guarantee that read operations in the transaction used a snapshot of majority-committed data.
+
+<a id="3de2294cdf6d477d9207b3470dabe4d7"></a>
+
+### `w: "majority"`
+
+<a id="d2f77620ccb84ff089cff0aafe63f5de"></a>
+
+- Write concern [w: "majority"](https://docs.mongodb.com/v4.2/reference/write-concern/#writeconcern.%22majority%22) returns acknowledgement after the commit has been applied to a majority (M) of voting members; i.e. the commit has been applied to the primary and (M-1) voting secondaries.
+
+<a id="1c248268a539447ba2be42ef3d79dcc7"></a>
+
+- When you commit with [w: "majority"](https://docs.mongodb.com/v4.2/reference/write-concern/#writeconcern.%22majority%22) write concern, transaction-level ["majority"](https://docs.mongodb.com/v4.2/reference/read-concern-majority/#readconcern.%22majority%22) read concern guarantees that operations have read majority-committed data. For transactions on sharded clusters, this view of the majority-committed data is not synchronized across shards.
+
+<a id="c1df8fa0239045c3a3847cf606631a59"></a>
+
+- When you commit with [w: "majority"](https://docs.mongodb.com/v4.2/reference/write-concern/#writeconcern.%22majority%22) write concern, transaction-level ["snapshot"](https://docs.mongodb.com/v4.2/reference/read-concern-snapshot/#readconcern.%22snapshot%22) read concern guarantees that operations have from a synchronized snapshot of majority-committed data.
+
+<a id="ab03acbd503e4e88873bac51df78c22f"></a>
+
+> **NOTE** Regardless of the [write concern specified for the transaction](https://docs.mongodb.com/v4.2/core/transactions/#transactions-write-concern), the commit operation for a sharded cluster transaction includes some parts that use `{w: "majority", j: true}` write concern.

@@ -1,0 +1,17 @@
+{
+  "id": "698d98b33862168673076ced7c1c5b93",
+  "slug": "when-ai-code-and-tests-share-a-mistake",
+  "title": "The Same AI Can Write the Code, the Tests, and the Same Mistake Three Times",
+  "source": "blog-draft",
+  "description": "Why passing tests still need an independent definition of correct behavior.",
+  "tags": [
+    "ai",
+    "testing",
+    "code-review"
+  ],
+  "status": "published",
+  "sourceFile": "blog-drafts/when-ai-code-and-tests-share-a-mistake.md",
+  "sourceUrl": null,
+  "cover": null,
+  "warnings": []
+}

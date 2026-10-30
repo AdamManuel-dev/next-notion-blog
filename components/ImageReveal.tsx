@@ -4,9 +4,12 @@ function reveal(image: HTMLImageElement) {
   if (
     image.naturalWidth > 0 &&
     !image.classList.contains('lazy-image-preview') &&
-    image.closest(
-      '.notion-asset-wrapper-image, .notion-bookmark-image, .notion-page-cover'
-    )
+    (image.matches(
+      '.local-reader main > img:not([aria-hidden]), .lr-article img'
+    ) ||
+      image.closest(
+        '.notion-asset-wrapper-image, .notion-bookmark-image, .notion-page-cover'
+      ))
   )
     image.classList.add('blog-image-ready')
 }

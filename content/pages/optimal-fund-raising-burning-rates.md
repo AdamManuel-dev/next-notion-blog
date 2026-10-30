@@ -1,0 +1,146 @@
+---
+title: "Optimal Fund Raising & Burning Rates"
+id: "404f999ea16842dda21b08373b017ed3"
+slug: "optimal-fund-raising-burning-rates"
+source_url: "https://adams-blog.notion.site/Optimal-Fund-Raising-Burning-Rates-404f999ea16842dda21b08373b017ed3"
+extracted_at: "2026-10-30T19:39:10.227Z"
+cover: null
+---
+
+# Optimal Fund Raising & Burning Rates
+
+<a id="0bf23a1f97564c5495b02a99d3418689"></a>
+
+![](/content-assets/1667328ee7be7732a009.png)
+
+<a id="19510a0af920807898f2c2cd68e48038"></a>
+
+### Funding Stages and Burn Rate Goals
+
+<a id="19510a0af92080809bacecc353fe6ae8"></a>
+
+#### Angel
+
+<a id="19510a0af92080338c80e6d91a61d4c2"></a>
+
+- **Burn Rate:** -$320K
+
+<a id="19510a0af92080a2a889c54cd2a39788"></a>
+
+- **Goal:** 10% (10%)
+
+<a id="19510a0af92080f59d0be52391a5cd85"></a>
+
+#### Pre-Seed
+
+<a id="19510a0af9208013bd48f6d362b9d403"></a>
+
+- **Burn Rate:** -$100K
+
+<a id="19510a0af9208047b2baea8357252e4f"></a>
+
+- **Goal:** 8% (18%)
+
+<a id="19510a0af920805182e8ea85383fab39"></a>
+
+#### Seed
+
+<a id="19510a0af92080df8ddbf69d6bb92aea"></a>
+
+- **Burn Rate:** -$325K
+
+<a id="19510a0af92080c3893ed9f88f49ede9"></a>
+
+- **Goal:** 10% (28%)
+
+<a id="19510a0af92080469706cc0b4ed81d3e"></a>
+
+#### Series A (12–18 months)
+
+<a id="19510a0af920809490dfc7a6c642f785"></a>
+
+- **Burn Rate:** -$5MM
+
+<a id="19510a0af9208040a457e3803a732088"></a>
+
+- **Goal:** 20% (48%)
+
+<a id="19510a0af92080c68839cfcb6f94b8de"></a>
+
+#### Series B (14–20 months)
+
+<a id="19510a0af92080b08045cb48f0158582"></a>
+
+- **Burn Rate:** -$12MM
+
+<a id="19510a0af92080bb8a5dd59ceb74d5cf"></a>
+
+- **Goal:** 16% (64%)
+
+<a id="19510a0af9208012ace7cef7e4240055"></a>
+
+#### Series C (16–22 months)
+
+<a id="19510a0af920805e8af6f06db27da2d0"></a>
+
+- **Burn Rate:** -$20MM
+
+<a id="19510a0af92080169778c88281ae7cbd"></a>
+
+- **Goal:** 13% (77%)
+
+<a id="19510a0af92080228349e33fb3e9346c"></a>
+
+#### Series D (16–22 months)
+
+<a id="19510a0af92080948e68f51cc3c1fd87"></a>
+
+- **Burn Rate:** -$27MM
+
+<a id="19510a0af92080eb9e5def05422fac67"></a>
+
+- **Goal:** 12% (89%)
+
+<a id="19510a0af920802baf24e6e0387c13fb"></a>
+
+#### Series E (15–21 months)
+
+<a id="19510a0af92080e0909cfb6bc0f81c76"></a>
+
+- **Burn Rate:** -$34MM
+
+<a id="19510a0af9208075b105c845d1e113ca"></a>
+
+- **Goal:** 10% (99%)
+
+<a id="19510a0af920806abb83ceb1984740b0"></a>
+
+### Growth Timeline
+
+<a id="19510a0af920807a968ce61735fd6da4"></a>
+
+The funding and burn rate progression spans approximately **6 years**, with each funding round leading to increased investment and a targeted percentage goal.
+
+<a id="19510a0af920808f92d2e7ad7acff3a3"></a>
+
+#### Visual Representation
+
+<a id="19510a0af92080dbbee4e6bfa51ab223"></a>
+
+The funding progression follows this structured hierarchy:
+
+<a id="19510a0af92080679bd6c592d02dfbd1"></a>
+
+1. **Angel** → **Pre-Seed** → **Seed**
+
+<a id="19510a0af9208056bf9cfc2fe1b8e91c"></a>
+
+1. **Seed** → **Series A** → **Series B**
+
+<a id="19510a0af92080fcb634d00ce4408374"></a>
+
+1. **Series B** → **Series C** → **Series D** → **Series E**
+
+<a id="19510a0af92080078404eaab04edb7de"></a>
+
+By following this structured funding and burn rate approach, companies can optimize financial planning while scaling efficiently.

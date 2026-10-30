@@ -1,16 +1,22 @@
 import * as React from 'react'
 import { useDialogViewport } from 'lib/use-dialog-viewport'
 import { ReadingControls } from './ReadingControls'
+import { ArticleTools } from './ArticleTools'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { Block, ExtendedRecordMap } from 'notion-types'
 import { Breadcrumbs, useNotionContext } from 'react-notion-x'
 import { getBlockValue, getBlockTitle, getBlockParentPage } from 'notion-utils'
 
 type Result = { id: string; title: string; href: string }
 
+/** Scroll distance after which the header settles into its compact shape. */
+const compactScrollThreshold = 72
+
 export function BlogHeader({ block }: { block: Block }) {
   useDialogViewport()
-  const { searchNotion, rootPageId, mapPageUrl } = useNotionContext()
+  const router = useRouter()
+  const { searchNotion, rootPageId, mapPageUrl, recordMap } = useNotionContext()
   const dialog = React.useRef<HTMLDialogElement>(null)
   const input = React.useRef<HTMLInputElement>(null)
   const trigger = React.useRef<HTMLButtonElement>(null)
@@ -21,6 +27,40 @@ export function BlogHeader({ block }: { block: Block }) {
     'idle' | 'loading' | 'ready' | 'error'
   >('idle')
   const [retry, setRetry] = React.useState(0)
+  const [compact, setCompact] = React.useState(false)
+  const [shareUrl, setShareUrl] = React.useState('')
+
+  const isRootPage =
+    !!rootPageId && block.id.replace(/-/g, '') === rootPageId.replace(/-/g, '')
+  const title = getBlockTitle(block, recordMap)
+
+  React.useEffect(() => {
+    const canonical = document.querySelector<HTMLLinkElement>(
+      'link[rel="canonical"]'
+    )
+    setShareUrl(
+      canonical?.href || window.location.origin + window.location.pathname
+    )
+  }, [router.asPath])
+
+  // Header shape follows scroll position; booleans only, so React re-renders
+  // at most twice per crossing of the threshold.
+  React.useEffect(() => {
+    let frame = 0
+    const update = () => {
+      frame = 0
+      setCompact(window.scrollY > compactScrollThreshold)
+    }
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update)
+    }
+    window.addEventListener('scroll', schedule, { passive: true })
+    update()
+    return () => {
+      if (frame) cancelAnimationFrame(frame)
+      window.removeEventListener('scroll', schedule)
+    }
+  }, [router.asPath])
 
   React.useEffect(() => {
     const shortcut = (event: KeyboardEvent) => {
@@ -106,18 +146,39 @@ export function BlogHeader({ block }: { block: Block }) {
     input.current?.focus()
   }
   return (
-    <header className='notion-header'>
+    <header
+      className={`notion-header blog-header${
+        compact ? ' blog-header-compact' : ''
+      }`}
+    >
       <div className='notion-nav-header'>
         <Breadcrumbs block={block} />
         <div className='blog-header-actions'>
-          <ReadingControls />
+          {isRootPage ? (
+            <ReadingControls />
+          ) : (
+            <ArticleTools title={title} url={shareUrl} />
+          )}
           <button
             ref={trigger}
             type='button'
-            className='blog-search-trigger'
+            className='blog-search-trigger blog-fill-button'
             onClick={() => setOpen(true)}
           >
-            ⌕ <span>Search</span>
+            <svg
+              aria-hidden='true'
+              width='18'
+              height='18'
+              viewBox='0 0 24 24'
+              fill='none'
+              stroke='currentColor'
+              strokeWidth='2'
+              strokeLinecap='round'
+            >
+              <circle cx='10.5' cy='10.5' r='6.5' />
+              <path d='m16 16 4 4' />
+            </svg>
+            <span>Search</span>
           </button>
         </div>
       </div>

@@ -1,5 +1,9 @@
 import * as React from 'react'
-import { parseReadingPosition, ReadingPosition } from 'lib/reading-storage'
+import {
+  isReadingAnchor,
+  parseReadingPosition,
+  ReadingPosition
+} from 'lib/reading-storage'
 
 export function ReadingResume({ pageId }: { pageId: string }) {
   const [saved, setSaved] = React.useState<ReadingPosition | null>(null)
@@ -13,7 +17,9 @@ export function ReadingResume({ pageId }: { pageId: string }) {
         pending.current = true
         setSaved(position)
       }
-    } catch {}
+    } catch {
+      // Storage is optional; a blocked store must not interrupt reading.
+    }
     let timer: ReturnType<typeof setTimeout>
     let dirty = false
     const save = () => {
@@ -28,22 +34,32 @@ export function ReadingResume({ pageId }: { pageId: string }) {
           return
         }
         const blocks = document.querySelectorAll<HTMLElement>(
-          'article [class*="notion-block-"]'
+          'article [id], article [class*="notion-block-"]'
         )
         const anchor = [...blocks].find(
-          (block) => block.getBoundingClientRect().bottom > 80
+          (block) =>
+            block.getBoundingClientRect().bottom > 80 &&
+            ((!!block.id && isReadingAnchor(block.id)) ||
+              [...block.classList].some((name) =>
+                /^notion-block-[a-f0-9]{32}$/.test(name)
+              ))
         )
+        const anchorId =
+          anchor?.id && isReadingAnchor(anchor.id)
+            ? anchor.id
+            : [...(anchor?.classList || [])].find((name) =>
+                /^notion-block-[a-f0-9]{32}$/.test(name)
+              ) || ''
         const value: ReadingPosition = {
           y: window.scrollY,
-          anchor:
-            [...(anchor?.classList || [])].find((name) =>
-              /^notion-block-[a-f0-9]{32}$/.test(name)
-            ) || '',
+          anchor: anchorId,
           offset: anchor?.getBoundingClientRect().top || 0,
           updated: Date.now()
         }
         localStorage.setItem(key, JSON.stringify(value))
-      } catch {}
+      } catch {
+        // Quotas and privacy settings can prevent position persistence.
+      }
     }
     const scroll = () => {
       dirty = true
@@ -75,9 +91,15 @@ export function ReadingResume({ pageId }: { pageId: string }) {
           pending.current = false
           setSaved(null)
           requestAnimationFrame(() => {
-            const anchor = position.anchor
-              ? document.querySelector<HTMLElement>(`.${position.anchor}`)
+            const candidate = position.anchor
+              ? document.getElementById(position.anchor) ||
+                (/^notion-block-[a-f0-9]{32}$/.test(position.anchor)
+                  ? document.querySelector<HTMLElement>(
+                      `article .${position.anchor}`
+                    )
+                  : null)
               : null
+            const anchor = candidate?.closest('article') ? candidate : null
             const top = anchor
               ? window.scrollY +
                 anchor.getBoundingClientRect().top -
@@ -100,7 +122,9 @@ export function ReadingResume({ pageId }: { pageId: string }) {
           setSaved(null)
           try {
             localStorage.removeItem(key)
-          } catch {}
+          } catch {
+            // Dismissing the banner still works when storage is unavailable.
+          }
         }}
       >
         Start fresh

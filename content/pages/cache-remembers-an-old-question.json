@@ -1,0 +1,17 @@
+{
+  "id": "af34b4d69d4fe6bc348ead9e63a779b4",
+  "slug": "cache-remembers-an-old-question",
+  "title": "Your Cache May Be Answering Yesterday's Question",
+  "source": "blog-draft",
+  "description": "Why cached AI results need to remember the inputs and rules that produced them.",
+  "tags": [
+    "architecture",
+    "ai",
+    "data-correctness"
+  ],
+  "status": "published",
+  "sourceFile": "blog-drafts/cache-remembers-an-old-question.md",
+  "sourceUrl": null,
+  "cover": null,
+  "warnings": []
+}

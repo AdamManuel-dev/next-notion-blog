@@ -1,0 +1,17 @@
+{
+  "id": "58abfbfd79a014960198b37e75bde075",
+  "slug": "table-looks-right-reads-wrong",
+  "title": "A Table Can Look Right and Read Wrong",
+  "source": "blog-draft",
+  "description": "Why document accessibility requires checking reading order as well as appearance.",
+  "tags": [
+    "accessibility",
+    "documents",
+    "testing"
+  ],
+  "status": "published",
+  "sourceFile": "blog-drafts/table-looks-right-reads-wrong.md",
+  "sourceUrl": null,
+  "cover": null,
+  "warnings": []
+}

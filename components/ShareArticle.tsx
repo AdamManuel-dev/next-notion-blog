@@ -1,8 +1,23 @@
 import * as React from 'react'
 
-export function ShareArticle({ title, url }: { title: string; url: string }) {
+export function ShareArticle({
+  title,
+  url,
+  idPrefix = 'article-share',
+  compact = false,
+  label = 'Worth passing along?'
+}: {
+  title: string
+  url: string
+  /** Keeps ids unique when the component is rendered more than once. */
+  idPrefix?: string
+  /** Denser layout for the header tools popover. */
+  compact?: boolean
+  label?: string
+}) {
   const [copied, setCopied] = React.useState(false)
   const [error, setError] = React.useState(false)
+  const fallbackId = `${idPrefix}-url`
   const timer = React.useRef<ReturnType<typeof setTimeout>>()
   React.useEffect(() => () => clearTimeout(timer.current), [])
   const copy = async () => {
@@ -18,10 +33,13 @@ export function ShareArticle({ title, url }: { title: string; url: string }) {
     }
   }
   return (
-    <section className='article-share' aria-label='Share this article'>
-      <p>Worth passing along?</p>
+    <section
+      className={`article-share${compact ? ' article-share-compact' : ''}`}
+      aria-label='Share this article'
+    >
+      {label ? <p>{label}</p> : null}
       <div className='article-share-actions'>
-        <button type='button' onClick={copy}>
+        <button type='button' className='blog-fill-button' onClick={copy}>
           <span aria-hidden='true'>{copied ? '✓' : '⧉'}</span>{' '}
           {copied ? 'Link copied!' : 'Copy link'}
         </button>
@@ -60,9 +78,9 @@ export function ShareArticle({ title, url }: { title: string; url: string }) {
       </span>
       {error && (
         <div className='share-copy-fallback'>
-          <label htmlFor='article-share-url'>Copy this link manually:</label>
+          <label htmlFor={fallbackId}>Copy this link manually:</label>
           <input
-            id='article-share-url'
+            id={fallbackId}
             readOnly
             value={url}
             onFocus={(event) => event.target.select()}

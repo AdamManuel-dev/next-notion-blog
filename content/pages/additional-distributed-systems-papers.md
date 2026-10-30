@@ -1,0 +1,194 @@
+---
+title: "Additional Distributed Systems Papers"
+id: "534a3259a8f14094af182384ce380f15"
+slug: "additional-distributed-systems-papers"
+source_url: "https://adams-blog.notion.site/Additional-Distributed-Systems-Papers-534a3259a8f14094af182384ce380f15"
+extracted_at: "2026-10-30T19:39:00.841Z"
+cover: null
+---
+
+# Additional Distributed Systems Papers
+
+<a id="1101986b279d49f3b1645e86edeb9b61"></a>
+
+<details open=""><summary>Original Source</summary><section id="459dfd1678b24ac3a13bb891d8011bbd"><p><a href="http://dsrg.pdos.csail.mit.edu/papers/">http://dsrg.pdos.csail.mit.edu/papers/</a></p></section></details>
+
+<a id="24186f189a9c48a68199b84a82e18aa3"></a>
+
+* * *
+
+<a id="dc8598eb12464a7196c5ea5319670fd4"></a>
+
+* * *
+
+<a id="6930ed20a802492fad69f03b7fe5f345"></a>
+
+[🌏Making CRDTs Byzantine Fault Tolerant](/making-crdts-byzantine-fault-tolerant)
+
+<a id="30fa4a11fc1a4f559c20e2c094d9ab8f"></a>
+
+## Consensus
+
+<a id="529ed568f7c04507b5a5b6bd4577bd9c"></a>
+
+[In Search of an Understandable Consensus Algorithm (Raft)](https://ramcloud.stanford.edu/wiki/download/attachments/11370504/raft.pdf)
+
+<a id="4dbf80268db245778742f7de8b4c4c1e"></a>
+
+[Paxos Made Simple](http://research.microsoft.com/en-us/um/people/lamport/pubs/paxos-simple.pdf)
+
+<a id="747682fa0af14ce69b4fb6b0dc7842ab"></a>
+
+[ZooKeeper: Wait-free coordination for Internet-scale systems](http://static.usenix.org/event/usenix10/tech/full_papers/Hunt.pdf)
+
+<a id="ff710d9da53d4761bef68e0e17358d3c"></a>
+
+[Using Paxos to Build a Scalable, Consistent, and Highly Available Datastore](http://goo.gl/N5fPj)
+
+<a id="fd36d561b94349e49ff53cbdb3d65652"></a>
+
+[Impossibility of Distributed Consensus With One Faulty Process](http://macs.citadel.edu/rudolphg/csci604/ImpossibilityofConsensus.pdf)
+
+<a id="592ed7f4df4c4f46b148549d690b7755"></a>
+
+[Consensus in the presence of partial synchrony](http://doi.acm.org/10.1145/42282.42283)
+
+<a id="7e8bca2490cd4c299297dfc4ddebedb2"></a>
+
+[Viewstamped Replication Revisited](http://pmg.csail.mit.edu/papers/vr-revisited.pdf)
+
+<a id="2733fc7ecbec49c895e15946027dd1ae"></a>
+
+## Replication
+
+<a id="8204b87bef644675af25783537ee80b4"></a>
+
+[Don’t be lazy, be consistent: Postgres-R, a new way to implement Database Replication](http://pdf.aminer.org/000/642/954/don_t_be_lazy_be_consistent_postgres_r_a_new.pdf)
+
+<a id="9aa6f9edb8e04a74ab2cd15b44d87308"></a>
+
+[PacificA: Replication in Log-Based Distributed Storage Systems](http://research.microsoft.com/apps/mobile/Publication.aspx?id=66814)
+
+<a id="ab425f2ed3bc43738844890136aaee5c"></a>
+
+[Chain Replication for Supporting High Throughput and Availability](https://www.usenix.org/legacy/event/osdi04/tech/full_papers/renesse/renesse.pdf)
+
+<a id="e7d3d18752e04d70915e342081cb28b9"></a>
+
+[Byzantine Chain Replication](http://www.cs.cornell.edu/home/rvr/newpapers/opodis2012.pdf)
+
+<a id="839e1c0fd5d44d638644e9609751b67e"></a>
+
+[A Comprehensive Study of Convergent and Commutative Replicated Data Types](http://hal.upmc.fr/docs/00/55/55/88/PDF/techreport.pdf)
+
+<a id="2a49cebb3e9d4e02a8750e9b6a772b29"></a>
+
+[Optimistic Replication](http://www.ysaito.com/survey.pdf)
+
+<a id="86e0c45e20fc4425bb0b9c2d9a4cc5c7"></a>
+
+## Causality/Transactions
+
+<a id="8bfd27d1967947a1a73687564c0e25b8"></a>
+
+[Stronger Semantics for Low-Latency Geo-Replicated Storage (Eiger)](http://www.cs.cmu.edu/~dga/papers/eiger-nsdi2013.pdf)
+
+<a id="e6b969bcecfc4510aa627d69e27d4148"></a>
+
+[Calvin: Fast Distributed Transactions for Partitioned Database Systems](http://cs-www.cs.yale.edu/homes/dna/papers/calvin-sigmod12.pdf)
+
+<a id="4eb50f774412498696377dcb1b2d9308"></a>
+
+[Sinfonia: a new paradigm for building scalable distributed systems](http://www.cs.princeton.edu/courses/archive/fall08/cos597B/papers/sinfonia.pdf)
+
+<a id="0068eacdac4743d2bb0be48c09d59dd3"></a>
+
+[Understanding the Limitations of Causally and Totally Ordered Communication](http://cs3.ist.unomaha.edu/~stanw/papers/93-catocs.pdf)
+
+<a id="3545aa3723df4254b5a655600182b3d8"></a>
+
+[A Response to Cheriton and Skeen’s Criticism of Causal and Totally Ordered Communication](http://www.csie.fju.edu.tw/~yeh/research/papers/os-reading-list/birman93response-to-cheriton.pdf)
+
+<a id="5c2b29da8e894c24a29f458cdf812273"></a>
+
+[MDCC: Multi-Datacenter Consistency](https://amplab.cs.berkeley.edu/wp-content/uploads/2013/03/mdcc-eurosys13.pdf)
+
+<a id="ead4c47e58514db089e42cc988fc7a30"></a>
+
+[Spanner: Google’s globally distributed database](https://www.usenix.org/system/files/conference/osdi12/osdi12-final-16.pdf)
+
+<a id="f05f3f4553754cb88241f892d2ff3a36"></a>
+
+## Concurrency
+
+<a id="e01b753e4c91429cbbc29cb4d2795458"></a>
+
+[Transactional Memory: Architectural Support for Lock-Free Data Structures](http://dl.acm.org/citation.cfm?id=165164)
+
+<a id="76c4ce3bab0d404c95e2526223556a3e"></a>
+
+[Software Transactional Memory](http://www.springerlink.com/content/f0m4j542v48avwtt)
+
+<a id="cf08af113a6445eaa07d12b4c361652c"></a>
+
+[Sharing Memory Robustly in Message-Passing Systems](http://dl.acm.org/citation.cfm?id=200869)
+
+<a id="afd6d48f467647b49b9e090464d904d1"></a>
+
+[Wait-free Synchronization](http://doi.acm.org/10.1145/114005.102808)
+
+<a id="8d3f247a51a34b1cb56b01103e48dcf4"></a>
+
+## Industry
+
+<a id="023a8a50d23f4a658db207671f849696"></a>
+
+[ZooKeeper’s atomic broadcast protocol: Theory and practice](http://www.tcs.hut.fi/Studies/T-79.5001/reports/2012-deSouzaMedeiros.pdf)
+
+<a id="cd72d5262a9c4ea4addb8188c515ce92"></a>
+
+[Kafka (LinkedIn)](http://research.microsoft.com/en-us/UM/people/srikanth/netdb11/netdb11papers/netdb11-final12.pdf)
+
+<a id="1aded3b4d7a94486b5662b599491ed84"></a>
+
+[Omega: ﬂexible, scalable schedulers for large compute clusters](http://eurosys2013.tudos.org/wp-content/uploads/2013/paper/Schwarzkopf.pdf)
+
+<a id="3e9e04a68f6b48deb90b5633f018f921"></a>
+
+[Thialfi: A Client Notification Service for Internet-Scale Applications](http://www.cs.columbia.edu/~lierranli/coms6998-11Fall2012/papers/thia_sosp2011.pdf)
+
+<a id="a3a126f802c541f19b0a21597f7c2430"></a>
+
+[Large-scale Incremental Processing Using Distributed Transactions and Notifications](http://research.google.com/pubs/pub36726.html)
+
+<a id="7c5dc97dcbc54b508eb07df8614df92f"></a>
+
+## Other
+
+<a id="9969047019e8435bb43db133bdbcf214"></a>
+
+Note: We haven’t included anything already covered in [6.824](http://pdos.csail.mit.edu/6.824/schedule.html), but you should read those papers too.
+
+<a id="b29fd717adf348f49cf59074d7374302"></a>
+
+[Paxos Made Live: An Engineering Perspective](http://ece842.com/S13/readings/chandra2007.pdf)
+
+<a id="dc2358f99bdd431abfab65629f955884"></a>
+
+[Viewstamped Replication: A new primary copy method to support highly-available distributed systems](http://www.cs.princeton.edu/courses/archive/fall11/cos518/papers/viewstamped.pdf)
+
+<a id="49633493b0a847ee8444a6034ad4e775"></a>
+
+[Time, Clocks, and the Ordering of Events in a Distributed System](http://research.microsoft.com/en-us/um/people/lamport/pubs/time-clocks.pdf)
+
+<a id="27bedb06738745c3a5c387974e5ede6d"></a>
+
+[The Part-Time Parliament](http://research.microsoft.com/en-us/um/people/lamport/pubs/lamport-paxos.pdf)
+
+<a id="bde3ffe278fd41e8942c8123bf314738"></a>
+
+[Paxos Made Practical](http://www.scs.stanford.edu/~dm/home/papers/paxos.pdf)
+
+<a id="1575cf9e9b324616995af081058a1069"></a>
+
+The papers from [SOSP 2013](http://sigops.org/sosp/sosp13/program.html)

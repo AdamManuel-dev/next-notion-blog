@@ -1,0 +1,272 @@
+{
+  "root": "a044322d56d1482da8b521736d56284c",
+  "pages": [
+    {
+      "id": "a044322d56d1482da8b521736d56284c",
+      "title": "Adam Manuel’s “Dev Blog”",
+      "blocks": 68
+    },
+    {
+      "id": "23910a0af920815e9d20f04397d7b13c",
+      "title": "My Favorite Express Architecture",
+      "blocks": 170
+    },
+    {
+      "id": "22310a0af92080d5bcc2c1c966d12fdc",
+      "title": "Guide to Building Autonomous AI Agents",
+      "blocks": 261
+    },
+    {
+      "id": "19710a0af920805eb11cfe48e3d2a143",
+      "title": "Let ChatGPT Be Your Research Asst.",
+      "blocks": 31
+    },
+    {
+      "id": "19710a0af920808390b4ef01c8051a8b",
+      "title": "Addressing Data Sparsity and Cold Start in Deep Learning Recommenders",
+      "blocks": 40
+    },
+    {
+      "id": "19710a0af9208034a6ebf301891c4b61",
+      "title": "Recommendation Engines Academic  Paper Sources",
+      "blocks": 18
+    },
+    {
+      "id": "19510a0af920809da8ecefcdc5c505cd",
+      "title": "Refining Testing Strategies and PR Workflows for Scalable Development",
+      "blocks": 65
+    },
+    {
+      "id": "cb38d3b3b1a34e4693deefb06f0b78f5",
+      "title": "Speed Up Your Job Hunt With This LinkedIn Scraper and Your System Notifications",
+      "blocks": 35
+    },
+    {
+      "id": "28b565ae7ac34e3e892607ee3bb94818",
+      "title": "CommonJS →  Typescript Migration Tips",
+      "blocks": 37
+    },
+    {
+      "id": "b47979352a204bf3b8c70925ec5082f9",
+      "title": "Project Manag. Research Topics",
+      "blocks": 10
+    },
+    {
+      "id": "2194b1be9ae14fd1b378cdbb8a9e1af4",
+      "title": "Laws of UX",
+      "blocks": 49
+    },
+    {
+      "id": "8ffc7a8d4248416a96d24e779d8a2dc3",
+      "title": "Creating SVG React Component with a single terminal command",
+      "blocks": 17
+    },
+    {
+      "id": "9489cdd63f794fcda076c3f80d6e8be9",
+      "title": "package.json “—help” CLI",
+      "blocks": 20
+    },
+    {
+      "id": "1bb23a48888945f5befed3ebbc173e0b",
+      "title": "MongoDB Optimization",
+      "blocks": 71
+    },
+    {
+      "id": "5411ae772ed1491d854991b4b464d33b",
+      "title": "12 Factor Application",
+      "blocks": 120
+    },
+    {
+      "id": "aa2f3a375ce644e3893a51e608f459cb",
+      "title": "Domain-Oriented Microservice Architecture ",
+      "blocks": 101
+    },
+    {
+      "id": "d1087b507c7c40ae90ab51c7a65fa7b3",
+      "title": "Foundational Distributed Systems Papers",
+      "blocks": 75
+    },
+    {
+      "id": "534a3259a8f14094af182384ce380f15",
+      "title": "Additional Distributed Systems Papers",
+      "blocks": 48
+    },
+    {
+      "id": "4edd62c571fb4b939946d7725fb25217",
+      "title": "Open Information Extraction and Open Relation Extraction Papers",
+      "blocks": 42
+    },
+    {
+      "id": "66d3b74cedcb4c5482fdf41cf4bd6211",
+      "title": "Knowledge Graph Tools",
+      "blocks": 51
+    },
+    {
+      "id": "404f999ea16842dda21b08373b017ed3",
+      "title": "Optimal Fund Raising & Burning Rates",
+      "blocks": 34
+    },
+    {
+      "id": "56ce1e358bf243b584ecba6282720f95",
+      "title": "Optimizing Performance",
+      "blocks": 72
+    },
+    {
+      "id": "ab73f12eae0e41d09a2f7e13a79d53a6",
+      "title": "Building Engineering Organizations",
+      "blocks": 29
+    },
+    {
+      "id": "619ef6dfea0249a7abc78630584b9c64",
+      "title": "Big Data",
+      "blocks": 51
+    },
+    {
+      "id": "3e95c7631ba944c8a666e08abe735766",
+      "title": "Distributed Machine Learning",
+      "blocks": 75
+    },
+    {
+      "id": "807b3b4e46dd4ad7b345e3a01e39f4c0",
+      "title": "Distributed Locking",
+      "blocks": 8
+    },
+    {
+      "id": "b755e59712db40f8ae13cde78781a6ff",
+      "title": "Stabilizing Systems",
+      "blocks": 9
+    },
+    {
+      "id": "30510a0af92080c8acb0cd5968a8cc2f",
+      "title": "Help Center",
+      "blocks": 107
+    },
+    {
+      "id": "23910a0af92081dcb9a2f6480f55a33d",
+      "title": "My Favorite Express Architecture Setup Guide",
+      "blocks": 179
+    },
+    {
+      "id": "f7cea03cb6314c4ea7e303999b2c3489",
+      "title": "MongoDB Official Documentation",
+      "blocks": 66
+    },
+    {
+      "id": "ccfd837bc3fe4ecbb9c02fcc58fdaa5e",
+      "title": "Schema Design",
+      "blocks": 46
+    },
+    {
+      "id": "853e4abcce7944bcb99748fd9d0368ea",
+      "title": "MongoDB Indexes",
+      "blocks": 37
+    },
+    {
+      "id": "7318293666354008954c9b23bad0d183",
+      "title": "Choosing a shard key for MongoDB",
+      "blocks": 30
+    },
+    {
+      "id": "5cefc17e42e747ad974602a8a978610e",
+      "title": "Optimize for write performance with Cosmos DB using the MongoDB API",
+      "blocks": 19
+    },
+    {
+      "id": "e6fe1e00d35a44d08b2c971308d55a4f",
+      "title": "Read Concern - Write Concern - Read Preference - What does it mean?",
+      "blocks": 40
+    },
+    {
+      "id": "ac388905d9cb480c99b7b0e1e588bc07",
+      "title": "Challenges and solutions for distributed data management",
+      "blocks": 46
+    },
+    {
+      "id": "e32353ed82444a5cbffc0cb0aea02985",
+      "title": "Domain Driven Design Models",
+      "blocks": 53
+    },
+    {
+      "id": "97a7cff0613b4651a53a2c126850b755",
+      "title": "Identifying domain-model boundaries for each microservice",
+      "blocks": 21
+    },
+    {
+      "id": "6930ed20a802492fad69f03b7fe5f345",
+      "title": "Making CRDTs Byzantine Fault Tolerant",
+      "blocks": 5
+    },
+    {
+      "id": "30510a0af920803fae11de2407e638ad",
+      "title": "More Details Sage Agent",
+      "blocks": 26
+    },
+    {
+      "id": "30510a0af9208012abdef6009c47d0c0",
+      "title": "More Details ATLAS Agent",
+      "blocks": 34
+    },
+    {
+      "id": "30510a0af920801386dadde63194c65f",
+      "title": "More Details Aria Agent",
+      "blocks": 37
+    },
+    {
+      "id": "30510a0af9208054a245fc6f75d58bb8",
+      "title": "More Details Zephyr Agent",
+      "blocks": 29
+    },
+    {
+      "id": "30510a0af9208040b29adfd07221374e",
+      "title": "More Details Pace Agent",
+      "blocks": 22
+    },
+    {
+      "id": "30510a0af920803c9a7cf54a74197f69",
+      "title": "More Details Kulshan Agent",
+      "blocks": 23
+    },
+    {
+      "id": "12ee32a0976b44ad873a96476e2bc680",
+      "title": "Best Practices",
+      "blocks": 8
+    },
+    {
+      "id": "e088dfc08186405ca0c24762b84c46f5",
+      "title": "Full Courses from Atlas",
+      "blocks": 8
+    },
+    {
+      "id": "c6401efd6c1846c1b48e7dd247463a6e",
+      "title": "Schema Patterns",
+      "blocks": 7
+    },
+    {
+      "id": "12d5596acde94df5856646290b526e24",
+      "title": "Transactions Background",
+      "blocks": 7
+    },
+    {
+      "id": "27860b34d548476d9319a215fd67177d",
+      "title": "Videos Tutorials",
+      "blocks": 25
+    },
+    {
+      "id": "8e70680dd79a46aab88ec925d311fcca",
+      "title": "Big Data Pipeline",
+      "blocks": 6
+    },
+    {
+      "id": "27e8e689fbe8401cbd9569bca772fbdc",
+      "title": "Sharding Details",
+      "blocks": 29
+    }
+  ],
+  "failures": [
+    {
+      "id": "4801d99fd24e4a75b053c2eac9bbb4ce",
+      "url": "https://adams-blog.notion.site/4801d99fd24e4a75b053c2eac9bbb4ce",
+      "error": "locator.waitFor: Timeout 45000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.notion-page-content') to be visible\u001b[22m\n"
+    }
+  ]
+}

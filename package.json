@@ -2,7 +2,7 @@
   "name": "nextjs-notion-starter-kit",
   "version": "0.1.0",
   "private": true,
-  "description": "The perfect starter kit for building beautiful websites with Next.js and Notion.",
+  "description": "Adam Manuel's statically exported Next.js blog with filesystem content.",
   "author": "Travis Fischer <travis@transitivebullsh.it>",
   "repository": "transitive-bullshit/nextjs-notion-starter-kit",
   "license": "MIT",
@@ -11,8 +11,13 @@
   },
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/generate-static-metadata.mjs",
     "build": "next build",
-    "start": "next start",
+    "start": "node scripts/serve-static.mjs",
+    "content:import": "node scripts/import-notion.mjs",
+    "content:convert": "node scripts/convert-notion.mjs && npm run content:publish-drafts",
+    "content:publish-drafts": "node scripts/publish-drafts.mjs && npm run content:markdown",
+    "content:markdown": "node scripts/generate-markdown.mjs",
     "deploy": "vercel --prod",
     "deps": "run-s deps:*",
     "deps:update": "npm install notion-client@latest notion-types@latest notion-utils@latest react-notion-x@latest",
@@ -67,9 +72,15 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-promise": "^6.6.0",
     "eslint-plugin-react": "^7.26.1",
+    "marked": "^18.1.2",
     "npm-run-all": "^4.1.5",
+    "playwright": "^1.64.1",
     "prettier": "^2.4.1",
-    "typescript": "^5.9.0"
+    "sanitize-html": "^2.18.1",
+    "turndown": "^7.2.4",
+    "turndown-plugin-gfm": "^1.0.2",
+    "typescript": "^5.9.0",
+    "yaml": "^2.9.1"
   },
   "packageManager": "npm@11.6.2"
 }

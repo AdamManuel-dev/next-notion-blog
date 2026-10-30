@@ -1,0 +1,602 @@
+/**
+ * Scoped bridge between the static local reader and the shared Details.so
+ * interactions. Everything lives under `.local-reader`, so the Notion pages and
+ * `styles/details.css` stay untouched and this file can be dropped wholesale if
+ * the migration is reverted.
+ *
+ * The reader has no palette of its own. `--blog-*` comes from `styles/theme.css`
+ * and follows `body.dark-mode`; the `--lp-*` aliases in `LocalPage.module.css`
+ * point back at those tokens. Nothing is mapped in the other direction here,
+ * so there are no variable cycles.
+ */
+
+.local-reader > a[href='#main'] {
+  z-index: 100;
+}
+.local-reader :is(button, input):focus-visible {
+  outline: 3px solid var(--blog-focus);
+  outline-offset: 3px;
+}
+
+/* ---------------------------------------------------------------------------
+ * 1. Arrows shift on hover and keyboard focus
+ * ------------------------------------------------------------------------ */
+.local-reader .lr-arrow {
+  display: inline-block;
+  margin-left: 0.35em;
+}
+.local-reader a:is(:hover, :focus-visible) .lr-arrow {
+  transform: translateX(3px);
+}
+
+/* ---------------------------------------------------------------------------
+ * 2 + 5. Flat, full-width sticky header at the original 54px height
+ * ------------------------------------------------------------------------ */
+.local-reader .lr-header {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+}
+.local-reader .lr-bar {
+  /* `.article-tools` falls back to `position: static` on narrow screens, so
+     this bar is the positioned ancestor its popover anchors to. */
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  /* Fixed height: the compact state only tightens padding. */
+  height: 54px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+/* 5. Barely perceptible compact state: inner padding and a hairline shadow. */
+.local-reader .lr-bar-compact {
+  padding: 0 12px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.local-reader .lr-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex-shrink: 0;
+  color: var(--blog-text);
+  text-decoration: none;
+}
+.local-reader .lr-brand-mark {
+  font-size: 18px;
+  line-height: 1;
+}
+.local-reader .lr-brand-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.local-reader .lr-brand:is(:hover, :focus-visible) {
+  color: var(--blog-focus);
+}
+.local-reader .lr-crumb-sep {
+  flex-shrink: 0;
+  color: var(--blog-muted);
+}
+/* The breadcrumb is the only element allowed to shrink, so the brand and the
+   44px tools target never overlap. */
+.local-reader .lr-crumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 0 1 auto;
+  font-size: 15px;
+}
+.local-reader .lr-crumb-icon {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  font-size: 16px;
+  line-height: 1;
+  object-fit: contain;
+}
+.local-reader .lr-crumb-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.local-reader .lr-header-actions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  /* Pushed to the trailing edge whether or not a breadcrumb is present. */
+  margin-left: auto;
+}
+.local-reader .reading-control-trigger,
+.local-reader .article-tools-trigger {
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 8px;
+  color: inherit;
+  cursor: pointer;
+}
+.local-reader .reading-control-trigger {
+  border: 1px solid transparent;
+  background: transparent;
+  font: inherit;
+}
+
+@media only screen and (max-width: 600px) {
+  .local-reader .lr-brand-name {
+    /* Keep the mark and breadcrumb; drop the long wordmark. */
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * 2. Tools popover: opaque, shared palette, modest radius
+ * ------------------------------------------------------------------------ */
+.local-reader .article-tools-panel {
+  border-radius: 8px;
+  border-color: var(--blog-control-border);
+  background: var(--blog-surface);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+/* Keep the popover inside a 320px viewport. */
+@media (max-width: 520px) {
+  .local-reader .article-tools-panel {
+    right: 4px;
+    width: min(320px, calc(100vw - 40px));
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * 3. Outline above the article, flat and quiet
+ * ------------------------------------------------------------------------ */
+.local-reader .article-toc {
+  display: block;
+  margin: 0 0 2rem;
+  border: 0;
+  border-top: 1px solid
+    color-mix(in srgb, var(--blog-control-border) 38%, var(--blog-surface));
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--blog-control-border) 38%, var(--blog-surface));
+  border-radius: 0;
+  background: transparent;
+}
+.local-reader .article-toc > summary {
+  min-height: 44px;
+  padding: 10px 2px;
+  border-radius: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--blog-muted);
+}
+.local-reader .article-toc-count {
+  background: var(--blog-panel);
+}
+.local-reader .article-toc nav {
+  padding: 0 2px 10px;
+}
+.local-reader .article-toc a {
+  min-height: 36px;
+  padding: 7px 6px;
+  border-radius: 4px;
+}
+.local-reader .article-toc a:hover {
+  background: var(--blog-panel);
+}
+/* Active section in the inline list: a weight + rule change, not color alone. */
+.article-toc a[aria-current='location'] {
+  font-weight: 600;
+  box-shadow: inset 2px 0 0 var(--blog-focus);
+}
+.local-reader .article-toc a[aria-current='location'] {
+  background: var(--blog-panel);
+}
+
+/* ---------------------------------------------------------------------------
+ * 3b. Desktop outline rail (Confluence-style)
+ *
+ * The rail is markup-only everywhere else: it is `display: none` by default,
+ * so the Notion wrapper and narrow local-reader viewports keep the inline
+ * `<details>` and gain no extra tab stops. From 1280px the local reader swaps
+ * presentations — the rail is fixed, so the 720px article never shifts.
+ * ------------------------------------------------------------------------ */
+.article-outline-rail {
+  display: none;
+}
+
+@media (min-width: 1280px) {
+  .local-reader .article-toc {
+    /* Replaced by the rail; hidden, so its links leave the tab order. */
+    display: none;
+  }
+
+  .local-reader .article-outline-rail {
+    position: fixed;
+    top: 54px; /* below the sticky header */
+    right: 0;
+    bottom: 0;
+    z-index: 50; /* under the header (60) and the progress track (120) */
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 56px;
+    /* Only the controls are hit targets; the strip itself never blocks the
+       article or the scrollbar. Pointer enter/leave still fire via children. */
+    pointer-events: none;
+  }
+  /* Open: the box grows to enclose the panel, so moving the pointer from the
+     ticks to a link never leaves the rail and closes it. */
+  .local-reader .article-outline-rail[data-open='true'] {
+    width: 296px;
+  }
+
+  .local-reader .article-outline-rail-toggle {
+    pointer-events: auto;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: min(calc(var(--outline-count) * 6px + 24px), calc(100vh - 110px));
+    min-height: 44px;
+    max-height: 100%;
+    padding: 12px 8px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+  }
+  .local-reader
+    .article-outline-rail[data-open='true']
+    .article-outline-rail-toggle {
+    /* The panel covers the ticks while open; keep the button for the toggle
+       semantics but stop it from showing through. */
+    opacity: 0;
+  }
+
+  .local-reader .article-outline-ticks {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 0;
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    /* Backstop: a very long outline compresses rather than overflowing. */
+    overflow: hidden;
+  }
+  .local-reader .article-outline-tick {
+    flex: 1 1 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+    min-height: 0;
+    max-height: 6px;
+  }
+  .local-reader .article-outline-tick::before {
+    content: '';
+    display: block;
+    width: 12px;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--blog-control-border);
+  }
+  /* Current section: longer and thicker as well as tinted, so the state does
+     not depend on color alone. */
+  .local-reader .article-outline-tick[data-outline-active='true']::before {
+    width: 26px;
+    height: 3px;
+    background: var(--blog-focus);
+  }
+  .local-reader
+    .article-outline-rail-toggle:hover
+    .article-outline-tick::before {
+    background: var(--blog-muted);
+  }
+  .local-reader
+    .article-outline-rail-toggle:hover
+    .article-outline-tick[data-outline-active='true']::before {
+    background: var(--blog-focus);
+  }
+
+  .local-reader .article-outline-panel {
+    pointer-events: auto;
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    transform: translateY(-50%);
+    box-sizing: border-box;
+    /* 1280 − 16 − 264 = 1000, clear of the 984px content edge. */
+    width: 264px;
+    max-height: min(70vh, calc(100vh - 120px));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 10px 8px 12px;
+    border: 1px solid var(--blog-control-border);
+    border-radius: 8px;
+    /* Flat and opaque: no glass, no pill. */
+    background: var(--blog-surface);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    font-size: 14px;
+  }
+  /* `hidden` must win over the rule above, or the panel stays tabbable. */
+  .local-reader .article-outline-panel[hidden] {
+    display: none;
+  }
+  .local-reader .article-outline-panel-heading {
+    position: sticky;
+    top: -10px;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin: -10px -8px 6px;
+    padding: 4px 8px;
+    background: var(--blog-surface);
+    border-bottom: 1px solid var(--blog-control-border);
+  }
+  .local-reader .article-outline-close {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--blog-muted);
+    font: inherit;
+    font-size: 22px;
+    cursor: pointer;
+  }
+  .local-reader .article-outline-close:hover {
+    background: var(--blog-panel);
+    color: var(--blog-text);
+  }
+  .local-reader .article-outline-panel-title {
+    margin: 0;
+    padding: 0 6px;
+    color: var(--blog-muted);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .local-reader .article-outline-panel ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .local-reader .article-outline-panel li {
+    padding-left: var(--toc-indent, 0px);
+  }
+  .local-reader .article-outline-panel a {
+    display: block;
+    padding: 6px 6px;
+    border-radius: 4px;
+    border-left: 2px solid transparent;
+    color: var(--blog-muted);
+    line-height: 1.35;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+  .local-reader .article-outline-panel a:hover {
+    background: var(--blog-panel);
+    color: var(--blog-text);
+  }
+  .local-reader .article-outline-panel a:focus-visible {
+    outline: 3px solid var(--blog-focus);
+    outline-offset: 2px;
+  }
+  .local-reader .article-outline-panel a[aria-current='location'] {
+    border-left-color: var(--blog-focus);
+    background: var(--blog-panel);
+    color: var(--blog-text);
+    font-weight: 600;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * 4. Title fade, once per page (keyed on the page id). Opacity only: the
+ *    centered title must not slide.
+ * ------------------------------------------------------------------------ */
+@media (prefers-reduced-motion: no-preference) {
+  .local-reader .lr-title {
+    animation: lr-title-fade 200ms ease-out both;
+  }
+}
+@keyframes lr-title-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * 6. Restrained color fill on the primary actions
+ * ------------------------------------------------------------------------ */
+.local-reader .blog-fill-button::before {
+  background: color-mix(in srgb, var(--blog-focus) 12%, transparent);
+}
+.local-reader .blog-fill-button:is(:hover, :focus-visible) {
+  /* The sweep is a tint, so the label keeps the body text color. */
+  color: var(--blog-text);
+  border-color: var(--blog-control-border);
+}
+
+/* ---------------------------------------------------------------------------
+ * Reading preferences apply to the migrated article body
+ * ------------------------------------------------------------------------ */
+.local-reader .lr-article {
+  font-size: var(--reading-font-size, 16px);
+  line-height: var(--reading-line-height, 1.65);
+}
+.local-reader .lr-article :is(h1, h2, h3, h4, h5, h6) {
+  /* Clear the sticky bar when an outline link jumps to a heading. The outline
+     indexes all six levels, so all six need the margin. */
+  scroll-margin-top: 76px;
+}
+.local-reader .lr-article :is(h1, h2, h3, h4, h5, h6):focus-visible {
+  /* Headings receive focus after an outline jump via `tabindex="-1"`. */
+  outline: 3px solid var(--blog-focus);
+  outline-offset: 4px;
+}
+
+/* ---------------------------------------------------------------------------
+ * Reading preferences dialog follows the shared palette
+ * ------------------------------------------------------------------------ */
+.local-reader .reading-dialog {
+  border-color: var(--blog-control-border);
+  background: var(--blog-surface);
+  color: var(--blog-text);
+}
+
+/* ---------------------------------------------------------------------------
+ * Motion: opt-in only, subtle, and never required to understand state
+ * ------------------------------------------------------------------------ */
+@media (prefers-reduced-motion: no-preference) {
+  .local-reader .lr-arrow {
+    transition: transform 160ms ease-out;
+  }
+  .local-reader .lr-bar {
+    transition: padding 160ms ease, box-shadow 160ms ease;
+  }
+  .local-reader .article-tools-panel-open {
+    /* Fade only: no spring, scale or blur. */
+    animation: lr-popover-fade 160ms ease-out both;
+  }
+  .local-reader .article-outline-tick::before {
+    transition: width 140ms ease-out, background-color 140ms ease-out;
+  }
+}
+@keyframes lr-popover-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .local-reader .lr-title,
+  .local-reader .article-tools-panel-open {
+    animation: none;
+  }
+  .local-reader .lr-arrow,
+  .local-reader .lr-bar,
+  .local-reader .article-outline-tick::before {
+    transition: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * 7. Search lives directly in the header, beside the reading tools
+ *
+ * The dialog itself reuses the shared `.blog-search-*` rules in `theme.css`
+ * and `whimsy.css`, so light and dark mode need no overrides here. Only the
+ * trigger needs scoping: `details.css` styles it under `.blog-header`, which
+ * the local reader never renders.
+ * ------------------------------------------------------------------------ */
+.local-reader .lr-search-trigger {
+  min-width: 44px;
+  min-height: 44px;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: 8px;
+}
+.local-reader .lr-search-trigger:hover {
+  background: var(--blog-panel);
+}
+.local-reader .lr-search-label {
+  white-space: nowrap;
+}
+
+@media only screen and (max-width: 600px) {
+  /* Icon-only on narrow screens; the button keeps its `aria-label`, so the
+     accessible name survives. */
+  .local-reader .lr-search-label {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * 8. Reading progress sits above the sticky bar, in the muted theme color
+ * ------------------------------------------------------------------------ */
+.local-reader .reading-track {
+  /* Above `.lr-header` (z-index 60) in both themes. */
+  z-index: 120;
+}
+
+/* ---------------------------------------------------------------------------
+ * 9. Resume, end-of-article and related reading stay calm
+ * ------------------------------------------------------------------------ */
+.local-reader .reading-resume {
+  border-radius: 8px;
+}
+.local-reader .article-end {
+  margin: 40px 0 8px;
+  padding: 18px 12px 0;
+  border-top: 1px solid
+    color-mix(in srgb, var(--blog-control-border) 38%, var(--blog-surface));
+  color: var(--blog-muted);
+}
+.local-reader .article-end-mark {
+  font-size: 18px;
+}
+.local-reader .related-articles {
+  margin: 24px 0 8px;
+}
+.local-reader .related-grid a {
+  border-radius: 8px;
+  min-height: 108px;
+}
+
+/* ---------------------------------------------------------------------------
+ * 10. Local dialogs are flat and opaque
+ *
+ * `whimsy.css` gives the shared dialogs a frosted-glass surface (blur, inner
+ * highlight, deep shadow). The restored reader is flat, so both dialogs are
+ * pinned back to the shared palette here. The dialogs are descendants of
+ * `.local-reader` in the DOM, so these rules still win in the top layer.
+ * ------------------------------------------------------------------------ */
+.local-reader :is(.blog-search-dialog, .reading-dialog) {
+  border: 1px solid var(--blog-control-border);
+  border-radius: 8px;
+  background: var(--blog-surface);
+  color: var(--blog-text);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+}
+.local-reader :is(.blog-search-dialog, .reading-dialog)::backdrop {
+  /* A plain scrim: no blur behind the modal. */
+  background: rgba(23, 35, 29, 0.32);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.local-reader .blog-search-field {
+  border-radius: 8px;
+  border-color: var(--blog-control-border);
+  background: var(--blog-surface);
+}
+/* The field's :focus-within ring already encloses its input and clear button. */
+.local-reader .blog-search-field input:focus-visible {
+  outline: none;
+}
+.local-reader .blog-search-results a,
+.local-reader .blog-search-dialog button {
+  border-radius: 8px;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+}

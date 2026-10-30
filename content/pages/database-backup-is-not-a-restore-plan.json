@@ -1,0 +1,17 @@
+{
+  "id": "a00cd624975bceed4b4aec9f5cd80774",
+  "slug": "database-backup-is-not-a-restore-plan",
+  "title": "A Database Backup Is Not Yet a Recovery Plan",
+  "source": "blog-draft",
+  "description": "Design and test restoration around active writers, related files, crash points, and evidence that the recovered product works.",
+  "tags": [
+    "reliability",
+    "data",
+    "architecture"
+  ],
+  "status": "published",
+  "sourceFile": "blog-drafts/database-backup-is-not-a-restore-plan.md",
+  "sourceUrl": null,
+  "cover": null,
+  "warnings": []
+}

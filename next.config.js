@@ -5,8 +5,10 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 })
 
 module.exports = withBundleAnalyzer({
+  output: 'export',
   transpilePackages: ['react-tweet'],
   images: {
+    unoptimized: true,
     domains: ['pbs.twimg.com']
   }
 })

@@ -1,0 +1,188 @@
+---
+title: "What Does Your Success Rate Actually Count?"
+id: "d49d07b9db74d3ed06bd222788fc2581"
+slug: "success-rate-needs-a-definition"
+source_url: null
+description: "A reassuring dashboard number can answer the wrong question."
+tags: ["metrics","dashboards","reliability"]
+status: "published"
+source_file: "blog-drafts/success-rate-needs-a-definition.md"
+cover: null
+---
+
+# What Does Your Success Rate Actually Count?
+
+**Reading paths:** Start below for the plain-language explanation, or jump to the [technical deep dive](#technical-deep-dive) for implementation details and verification.
+
+A dashboard label can sound clearer than the calculation behind it.
+
+In a historical dashboard review, the displayed success rate was calculated from the rate of unknown errors. That is a different question from how many jobs actually succeeded.
+
+The review described the code at that time; this article does not claim the dashboard still behaves that way today.
+
+## No unknown error does not mean success
+
+Imagine ten jobs:
+
+| Outcome | Count |
+| --- | --- |
+| Completed successfully | 6 |
+| Failed for a known reason | 3 |
+| Failed for an unknown reason | 1 |
+
+The successful-job percentage is 60%.
+
+The percentage without an unknown error is 90%.
+
+Both numbers can be useful, but putting "Success rate" above the second one creates a misleading impression. A known failure remains a failure to deliver the requested result.
+
+## Averaging percentages adds another choice
+
+Suppose one workflow succeeds once out of one run. Another succeeds 50 times out of 100 runs.
+
+The average of their percentages is 75%: halfway between 100% and 50%.
+
+The overall successful-run percentage is about 50.5%: 51 successful runs out of 101.
+
+The first calculation gives each workflow equal weight. The second gives each run equal weight. Choose based on the question, then name it accurately.
+
+## Put the definition beside the number
+
+A metric needs more than a formula. It needs a scope:
+
+- Which outcomes count as success?
+- Are queued or running jobs excluded?
+- What time period is included?
+- Which time zone defines a day?
+- Are retries separate attempts or part of one user request?
+
+Without those rules, two engineers can produce different correct-looking answers.
+
+## Define the unit before the percentage
+
+Suppose a person asks the system to process one document. The system tries three times, with two failures followed by a successful result. How many things happened?
+
+There was one user request, three execution attempts, and one completed outcome. Each can be a valid unit for a metric, but they describe different experiences.
+
+An attempt success rate of one in three tells you about execution quality and wasted work. A request completion rate of one in one tells you that the person eventually received the result. Neither says how long they waited or whether they had to intervene.
+
+Before building the dashboard, write a sentence beginning, "One item in this calculation means..." If the team cannot finish that sentence consistently, the percentage is not ready to be trusted.
+
+## Waiting work can vanish from the story
+
+Imagine 100 requests. Ten have finished successfully, and 90 have been stuck all afternoon. If the denominator includes only finished requests, the success rate is 100%.
+
+That might accurately describe finished work, but it gives a poor picture of the service as a whole. The missing context is the large unfinished backlog.
+
+Show waiting counts and age alongside completion metrics. A request waiting one second and a request waiting six hours should not be equally invisible.
+
+For time-bounded completion, define a window: for example, what fraction of eligible requests finished within an agreed period? The appropriate period depends on the product. The key is to make the deadline and the treatment of unfinished work explicit.
+
+## A day has a time zone
+
+A run near midnight may belong to different dates for the customer and the server. If one card uses the customer's local day and another uses UTC, their counts can disagree without either query being broken.
+
+Choose the time zone deliberately and show it where the distinction matters. Also define whether the count uses creation time, start time, or completion time.
+
+A job created yesterday and completed today belongs to yesterday's intake and today's completed work. Both views are useful. Giving them the same label invites confusion.
+
+Small examples around midnight are excellent tests because they force these choices into the open before production data makes the disagreement hard to trace.
+
+## Stale data should look stale
+
+Sometimes the math is correct but the inputs are old. A dashboard may keep showing the last successful fetch while a new request fails in the background.
+
+Preserving the last known value can be helpful, but it should include an indication of when it was measured and whether refresh is failing. Otherwise, users may mistake an old healthy snapshot for the current state.
+
+Likewise, a missing response should not automatically become zero incidents or 100% success. Unknown and zero mean different things. The interface should preserve that difference even when an empty card is less visually pleasing.
+
+## Build a tiny truth table
+
+Before connecting the full system, create a hand-countable dataset. Include one success, one known failure, one unknown failure, one running request, and one retry of an earlier request. Give them timestamps around a date boundary.
+
+Write the expected value for each dashboard card. Then ask another person to calculate the same results from the definitions, without seeing the implementation.
+
+If you disagree, refine the definitions first. If you agree but the code differs, you have a focused bug to investigate. This is more effective than staring at a production percentage and deciding whether it feels plausible.
+
+Keep these examples as tests so a later change to the data source cannot quietly change what the metric means.
+
+## Make changes to definitions visible
+
+Suppose the team fixes the success metric to count completed requests instead of the absence of unknown errors. The displayed percentage may drop sharply even though the underlying service has not become worse.
+
+Explain that change in the dashboard or release notes. If historical numbers were calculated differently, mark the boundary rather than drawing a continuous trend line that implies an apples-to-apples comparison.
+
+A measurement change can be a product improvement precisely because it is less reassuring. The purpose is to help people understand the service, not preserve an attractive number.
+
+## Connect the metric to a decision
+
+Every important card should help someone decide what to do. A growing oldest-job age may mean a worker needs attention. A rise in unknown failures may mean the team needs better diagnosis. A low completion rate may require fixing the actual workflow.
+
+Those responses are different. Combining the signals into one unexplained health score can conceal the action that would help most. Clear definitions let the dashboard guide work rather than simply decorate the product with numbers.
+
+Show the sample count near the percentage when space allows. A perfect rate from one run carries very different evidence from the same rate across many varied runs. Readers should not have to guess how much activity sits behind the number.
+
+## Show the parts when they help
+
+Completed, failed, running, and waiting counts often explain more than one percentage. An empty sample should say there is no data rather than imply perfect performance.
+
+I would test the calculation using a tiny hand-written dataset like the examples above. That gives everyone a result they can verify without understanding the whole application.
+
+A trustworthy dashboard makes its claims easy to inspect. The name of a metric is part of its behavior, not just decoration above a number.
+
+## Technical deep dive
+
+**Plain-language bridge:** A percentage becomes trustworthy when another person can reconstruct which records entered its numerator and denominator.
+
+### Diagram: One cohort can support two different rates
+
+```text
+                    [100 accepted requests]
+                      /       |        \
+                     v        v         v
+               60 succeeded 20 failed 20 pending
+                     \        /
+                      v      v
+                 [80 terminal requests]
+
+Terminal success: 60 / 80  = 75%
+Success so far:   60 / 100 = 60%
+```
+
+The numbers are hypothetical. The pending group explains why the rates differ; neither percentage should appear without its definition.
+
+### Define the cohort and terminal states
+
+An illustrative definition might be "requests accepted during a chosen day that eventually completed successfully." This groups by acceptance time, not completion time. A different metric can group completions by day, but the two answer different questions and should have different names.
+
+Use one logical request ID across retries. Decide which states are terminal and whether cancellation belongs in the denominator. Preserve pending work separately instead of silently treating it as successful or excluding it without explanation.
+
+```text
+accepted cohort: 100 logical requests
+succeeded:        60
+failed:           20
+pending:          20
+
+success among terminal requests = 60 / 80  = 75%
+success observed so far         = 60 / 100 = 60%
+```
+
+Both calculations are valid under their labels. They are not interchangeable. If all 20 pending requests later succeed, eventual cohort success becomes 80 percent. Until resolution, a range of 60-80 percent describes the possible final fraction under these simplified assumptions.
+
+### Aggregate counts before dividing
+
+Suppose one worker succeeds on 9 of 10 requests and another on 1 of 100. Averaging their rates gives 45.5 percent. Pooling the counts gives 10 / 110, about 9.1 percent. The pooled rate answers the request-level question. The unweighted average answers a worker-level question that gives both workers equal weight.
+
+Store or retain access to numerator and denominator counts. A precomputed percentage without its population cannot be safely recombined into a larger period.
+
+### Make late updates reproducible
+
+A cohort may change after a delayed completion or corrected classification. Record an as-of time alongside the metric definition version. To reconstruct a historical chart, you need either a preserved snapshot or event history sufficient to rebuild state at that observation time.
+
+Choose time-zone boundaries before assigning dates. Store actual instants and derive the reporting interval from an explicit zone. A local day is not always a fixed 24-hour duration, so blindly adding 86,400 seconds is a different operation.
+
+### Verify reconciliation, not just the display
+
+For a mutually exclusive state model, assert that succeeded + failed + pending + other included states equals accepted requests in the cohort. Then verify sampled IDs against their event histories. This detects duplicate joins, dropped states, and retry inflation that a screenshot of the chart cannot reveal.
+
+Expose the definition and refresh time near the number. The technical contract and the interface copy need to describe the same population, especially after a definition change.

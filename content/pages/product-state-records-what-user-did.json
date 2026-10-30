@@ -1,0 +1,17 @@
+{
+  "id": "41833f02393955a792dc5064582c8849",
+  "slug": "product-state-records-what-user-did",
+  "title": "A Status Label Is a Claim About What Happened",
+  "source": "blog-draft",
+  "description": "Design product states that distinguish user choices, external facts, and stale interface actions.",
+  "tags": [
+    "product-design",
+    "data-modeling",
+    "reliability"
+  ],
+  "status": "published",
+  "sourceFile": "blog-drafts/product-state-records-what-user-did.md",
+  "sourceUrl": null,
+  "cover": null,
+  "warnings": []
+}

@@ -1,0 +1,222 @@
+<p><strong>Reading paths:</strong> Start below for the plain-language explanation, or jump to the
+<a href="#technical-deep-dive">technical deep dive</a> for implementation details and verification.</p>
+<p>A useful project structure helps you find the code for the thing you are changing.</p>
+<p>While working on a scheduler and planning frontend refactors, I kept returning to this
+question: should related files live together because they have the same file type, or
+because they support the same feature?</p>
+<h2 id="think-about-the-change-you-need-to-make">Think about the change you need to make</h2>
+<p>Suppose you want to change how users edit working hours.</p>
+<p>You may need the editor screen, the logic that loads hours, the rules that check input,
+and the tests for that behavior.</p>
+<p>If all screens live in one folder and all loading logic lives in another, you move
+between several folders to understand one feature.</p>
+<p>A feature folder keeps much of that work together. Here is an illustrative layout:</p>
+<pre><code class="language-text">src/
+  features/
+    availability/
+      availability-editor.tsx
+      use-availability.ts
+      availability.test.ts
+    appointments/
+      appointment-list.tsx
+  shared/
+    button.tsx
+</code></pre>
+<p>You can start at <code>availability</code> and follow the feature from there.</p>
+<h2 id="keep-local-code-local-at-first">Keep local code local at first</h2>
+<p>A function used only by the availability editor usually belongs with that editor.
+It does not need a shared home just because another feature might use it someday.</p>
+<p>Moving code into a shared folder creates a promise: multiple features can depend on it,
+and future changes need to consider those features.</p>
+<p>That promise is easier to keep when the shared purpose is already clear.</p>
+<h2 id="similar-code-may-represent-different-rules">Similar code may represent different rules</h2>
+<p>Imagine two features that both check a date.</p>
+<p>The booking feature allows appointments only in the future. The reporting feature
+allows reports only for completed days.</p>
+<p>Both checks involve dates, but they answer different business questions. Combining
+them into one clever function may hide the difference.</p>
+<p>The basic function that reads a date can be shared. The rules about which dates are
+allowed should stay near the features that own those decisions.</p>
+<h2 id="share-a-rule-when-it-really-is-one-rule">Share a rule when it really is one rule</h2>
+<p>Suppose both the website and the server need to check whether an appointment duration
+is allowed. A common definition can help them agree.</p>
+<p>The server must still perform the check itself. A website check gives quick feedback,
+but requests can reach the server without going through that screen.</p>
+<p>Also, shared code used in the browser must not contain server secrets or depend on
+server-only services.</p>
+<h2 id="start-with-a-change-map">Start with a change map</h2>
+<p>Before moving files, choose a recent change and list the files it touched. Note why
+each file changed. Some belong to the feature itself, some supply shared display pieces,
+and some provide application-wide wiring.</p>
+<p>If editing working hours repeatedly requires changes scattered across unrelated folders,
+that is evidence worth investigating. It is more useful than deciding that one folder
+style is fashionable.</p>
+<p>Also ask what made the work difficult. Was finding the files the problem, or was the
+business rule unclear? A new folder structure will not repair an ambiguous rule. The
+change map helps choose an intervention that addresses the actual source of confusion.</p>
+<h2 id="give-each-rule-a-clear-owner">Give each rule a clear owner</h2>
+<p>Suppose the scheduler rejects appointments longer than an hour. Where should that rule
+live? The answer depends on who owns the decision and which parts of the system need it.</p>
+<p>The appointment domain may own the allowed durations. The website uses them to offer
+choices, and the server uses them to validate requests. Both should depend on the same
+well-defined rule where the architecture allows it.</p>
+<p>The button component should not own that policy merely because it happens to disable
+the Submit button. A reusable button should know how to display a disabled state, while
+the feature decides when that state is appropriate.</p>
+<p>This separation makes a future policy change easier to locate and less likely to produce
+different behavior across screens.</p>
+<h2 id="define-what-other-features-may-import">Define what other features may import</h2>
+<p>A feature can expose a small public interface: the component or function another part
+of the application is meant to use. Its internal helpers remain implementation details.</p>
+<p>For example, a page might import an AvailabilityEditor rather than reach into the feature's
+internal state helpers. That reduces the number of files that depend on the feature's
+private organization.</p>
+<p>The public interface does not need elaborate machinery. A clear convention and a few
+well-chosen exports may be enough. The useful property is that a maintainer can change
+the feature's internals without unexpectedly breaking distant code that reached inside it.</p>
+<p>If every internal file becomes public, the boundary provides little protection beyond its name.</p>
+<h2 id="shared-code-should-have-a-specific-purpose">Shared code should have a specific purpose</h2>
+<p>A folder called shared can become a junk drawer because almost anything might be shared
+eventually. Prefer a meaningful category or a clear module purpose for code that really
+serves several features.</p>
+<p>A generic visual button, a date parser, and an appointment policy may all have multiple
+callers, but they have different responsibilities. Putting them together does not make
+them one coherent abstraction.</p>
+<p>Ask whether a change to the shared code should affect all its callers. If the answer
+is often no, the callers may need separate rules built on a smaller common primitive.
+This question catches abstractions that combine similar-looking code with different meanings.</p>
+<h2 id="keep-data-ownership-visible">Keep data ownership visible</h2>
+<p>Moving a loading hook into a feature folder does not automatically solve data coordination.
+Two screens may still fetch the same data separately, keep inconsistent local copies,
+or overwrite one another's updates.</p>
+<p>Identify which component or layer owns the authoritative value within the application
+and how changes become visible to other consumers. The appropriate mechanism depends
+on the existing stack and the lifetime of the data.</p>
+<p>For an editor, distinguish saved data from the draft the user is currently changing.
+If those are mixed together, cancelling an edit or receiving a background refresh can
+produce surprising behavior. Feature organization should make those states easier to
+understand rather than simply moving them into a new directory.</p>
+<h2 id="avoid-circular-dependencies">Avoid circular dependencies</h2>
+<p>Suppose availability imports appointments to calculate a display label, while appointments
+imports availability to validate a booking. The features now depend on each other.</p>
+<p>That may indicate a genuinely shared domain concept that needs its own home, or it may
+mean one feature is reaching into another for a convenience helper it should not use.</p>
+<p>Trace the dependency before creating a new shared module. Moving both functions into
+shared without clarifying their roles can hide the cycle rather than improve the design.</p>
+<p>A useful direction is for features to depend on stable lower-level rules and for application
+wiring to compose features. The exact boundaries should reflect the product, but their
+direction should be explainable.</p>
+<h2 id="review-a-file-move-differently-from-a-behavior-change">Review a file move differently from a behavior change</h2>
+<p>During a structural refactor, keep the intended behavior stable. A reviewer should be
+able to see where the old implementation went and what references changed.</p>
+<p>If you also discover a bug, record it and either fix it in a clearly separate change
+or explicitly explain why the refactor depends on it. Mixing the two without explanation
+makes failures harder to diagnose.</p>
+<p>Check the important user flow after the move. Compilation catches broken imports, but
+it may not reveal that an editor no longer refreshes after saving or that an error
+message appears in the wrong place. Verification should follow behavior, not just the file tree.</p>
+<h2 id="use-duplication-as-evidence-not-an-automatic-command">Use duplication as evidence, not an automatic command</h2>
+<p>Two similar functions are an invitation to compare meaning. They are not automatic proof
+that one should be deleted.</p>
+<p>Ask whether the functions enforce the same rule, change for the same reasons, and have
+the same callers' expectations. If they do, a shared implementation may prevent drift.
+If they do not, a common abstraction may fill with options that make both cases harder to read.</p>
+<p>A small amount of clear duplication can be easier to maintain while the requirements
+are still evolving. Revisit it when a stable common concept emerges. The goal is reducing
+future mistakes, not minimizing the number of repeated lines at any cost.</p>
+<h2 id="explain-the-structure-through-a-task">Explain the structure through a task</h2>
+<p>A short contributor note can show where to add an availability field, where its server
+validation belongs, and which checks protect the change. That gives new developers a
+working example of the intended boundaries.</p>
+<p>Avoid documenting a long list of abstract rules with no connection to a real feature.
+People learn the structure more quickly when they can follow one change from interface
+to validation to persistence.</p>
+<p>After the refactor, ask someone unfamiliar with the move to locate the relevant code
+for a small modification. Their search path will reveal whether the new organization
+actually communicates the ownership you intended.</p>
+<h2 id="decide-whether-the-refactor-earned-its-cost">Decide whether the refactor earned its cost</h2>
+<p>The strongest result is a change that becomes easier to explain and safer to make.
+Record concrete examples: fewer unrelated files need editing, a business rule now has
+one clear owner, or a feature can be understood without reading application-wide helpers.</p>
+<p>Do not claim faster development from a tidier tree alone. The improvement needs to show
+up in real work. A good structure is one that continues to help when requirements change,
+not just one that looks orderly immediately after the files are moved.</p>
+<h2 id="refactor-one-feature-at-a-time">Refactor one feature at a time</h2>
+<p>A manageable process is:</p>
+<ol>
+<li>Choose a feature you already need to change.</li>
+<li>Identify the files and rules it owns.</li>
+<li>Move closely related code together.</li>
+<li>Update the references between files.</li>
+<li>Run the relevant checks and try the user flow.</li>
+</ol>
+<p>Keep behavior stable while changing organization. Mixing a folder move with a new
+business rule makes failures harder to explain.</p>
+<p>The useful outcome is that another developer can find, understand, and change a feature
+with less searching. Folder names are only one tool for reaching that outcome.</p>
+<h2 id="technical-deep-dive">Technical deep dive</h2>
+<p><strong>Plain-language bridge:</strong> Folder names help people navigate. Import rules determine
+whether features can actually change independently.</p>
+<h3 id="diagram-give-imports-a-deliberate-direction">Diagram: Give imports a deliberate direction</h3>
+<pre><code class="language-text">                    [route]
+                       |
+                       v
+                [feature public API]
+                       |
+             +---------+----------+
+             |                    |
+             v                    v
+        [feature UI] ----&gt; [application service]
+                                  |
+                       +----------+---------+
+                       v                    v
+                  [domain rules]    [repository interface]
+                                            ^
+                                            |
+                                     [storage adapter]
+</code></pre>
+<p>Here arrows mean imports or declared dependencies, not runtime execution order.
+The application is wired to an adapter without making domain rules import storage.</p>
+<h3 id="treat-the-import-structure-as-a-directed-graph">Treat the import structure as a directed graph</h3>
+<p>Each module is a node; an import is an edge toward a dependency. A feature boundary
+works best when consumers depend on a small public surface rather than reaching into
+internal state and helpers.</p>
+<pre><code class="language-text">route -&gt; booking/public
+booking/application -&gt; booking/domain
+booking/application -&gt; repository interface
+booking/ui -&gt; booking/application
+storage adapter -&gt; repository interface
+</code></pre>
+<p>The arrows express dependencies, not necessarily runtime call order. The place that
+constructs the application can supply a storage adapter to the application service
+without making the domain import the storage package.</p>
+<p>A cycle such as booking -&gt; calendar -&gt; booking indicates that ownership needs inspection.
+Moving both folders into "shared" renames the cycle without explaining the relationship.
+A lower-level common rule or a coordinating application service may provide a clearer
+boundary, depending on which decisions truly belong together.</p>
+<h3 id="separate-public-types-from-internal-state">Separate public types from internal state</h3>
+<p>Export the operations and values another feature needs. Avoid exposing the entire
+mutable state container when the consumer only needs a read model or one action.
+A read model is a representation designed for a particular consumer, often smaller
+than the full persisted entity.</p>
+<p>For example, availability display may require start, end, and booking eligibility.
+It does not necessarily need direct access to the booking editor's unsaved form state.
+Exposing that state couples unrelated lifetimes and makes resets surprising.</p>
+<p>A barrel file can offer a public entry point, but it is not automatic encapsulation.
+Import restrictions need enforcement, and aggregate imports can also expose initialization
+or style-order side effects. Inspect the emitted behavior during migrations.</p>
+<h3 id="migrate-through-a-compatibility-boundary">Migrate through a compatibility boundary</h3>
+<p>When changing internal structure, preserve the existing public contract where practical.
+Move one consumer at a time, with an adapter translating old inputs into the new domain
+shape. Give the adapter an explicit removal condition so it does not become permanent
+accidental architecture.</p>
+<p>Separate structural moves from behavior edits in review. If both are necessary, describe
+the intentional behavior changes independently so reviewers do not assume every difference
+is merely a consequence of moving files.</p>
+<h3 id="check-whether-the-structure-earned-its-complexity">Check whether the structure earned its complexity</h3>
+<p>Choose a representative change, such as adding a booking rule. Inspect how many features
+must change, whether shared contracts expand unnecessarily, and whether tests can exercise
+the rule without the whole application.</p>
+<p>Also test import restrictions and a cross-feature user journey. A clean dependency
+graph cannot prove that integrated screens preserve behavior. The practical goal is
+to make the next meaningful change easier to localize without hiding its dependencies.</p>

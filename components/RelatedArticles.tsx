@@ -12,7 +12,9 @@ export function RelatedArticles({ pages }: { pages: RelatedPage[] }) {
         {pages.map((page) => (
           <Link key={page.id} href={page.href} prefetch={false}>
             <span>{page.title}</span>
-            <span aria-hidden='true'>↗</span>
+            <span className='related-arrow' aria-hidden='true'>
+              ↗
+            </span>
           </Link>
         ))}
       </div>

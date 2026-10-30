@@ -1,0 +1,17 @@
+{
+  "id": "09a1fe75ae79e66098930133ca53dd29",
+  "slug": "uploaded-file-was-missing",
+  "title": "The File Said Uploaded. The File Was Missing.",
+  "source": "blog-draft",
+  "description": "A download investigation that required checking beyond the status label.",
+  "tags": [
+    "debugging",
+    "storage",
+    "user-experience"
+  ],
+  "status": "published",
+  "sourceFile": "blog-drafts/uploaded-file-was-missing.md",
+  "sourceUrl": null,
+  "cover": null,
+  "warnings": []
+}

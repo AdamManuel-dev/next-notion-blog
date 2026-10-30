@@ -1,0 +1,257 @@
+---
+title: "A Database Backup Is Not Yet a Recovery Plan"
+description: "Design and test restoration around active writers, related files, crash points, and evidence that the recovered product works."
+status: draft
+tags: [reliability, data, architecture]
+---
+
+# A Database Backup Is Not Yet a Recovery Plan
+
+**Reading paths:** Start below for the plain-language explanation, or jump to the
+[technical deep dive](#technical-deep-dive) for implementation details and verification.
+
+A backup file can exist while recovery is still unsafe. The file may be incomplete,
+the application may still be writing to the database, or the restore operation may
+replace the only known-good copy before the new one is verified.
+
+In a long job-matching project conversation, backup and restore work uncovered several
+such concerns: open database connections, related journal files, crash windows, backup
+overwrites, late permission checks, and incomplete coordination around access.
+
+The history records specific investigation and repair work. It does not establish a
+universal guarantee for every failure or storage environment. The useful lesson is
+that recovery needs its own design and evidence, beyond successful backup creation.
+
+## Define what recovery is supposed to restore
+
+"Restore the database" sounds precise until you ask what else the application needs.
+There may be uploaded files, versioned configuration, external message records, or
+encryption material managed separately from the database.
+
+The recovery objective should describe the product state that needs to become usable.
+For example, can the application reopen its records, show consistent lists, and continue
+without repeating an external action that already happened?
+
+It should also describe acceptable loss. A backup from yesterday cannot recover changes
+made this morning unless another mechanism preserves them. That is a property of the
+available evidence, not a defect a restore button can magically solve.
+
+Writing down the intended recovery point makes the limits visible before an incident.
+
+## Stop the system from changing underneath you
+
+Restoring while another process continues writing creates a moving target. A background
+worker may still hold an open connection to the old database while the main application
+starts using the replacement.
+
+That can produce a split view of reality: different parts of the product believe they
+are updating the same data but are operating on different underlying state.
+
+A recovery design needs a reliable way to prevent ordinary access during the critical
+period. Stopping one visible server is insufficient if another worker or utility can
+still open the database directly.
+
+Map the access paths. Which processes read, which write, and which can reopen storage
+automatically? The coordination mechanism must cover the actual paths used by the
+application, including the less obvious maintenance and background paths.
+
+## Check prerequisites before making destructive changes
+
+A restore can fail for mundane reasons: insufficient permissions, unavailable space,
+an incompatible backup, or an unexpected file location. Discovering these problems
+after replacing the current database makes recovery harder.
+
+Check what can reasonably be checked in advance. Confirm that the candidate backup
+can be read, the destination can be prepared, and the backup represents an understood
+format or schema version.
+
+These checks do not eliminate every race or hardware failure. They reduce avoidable
+surprises before the operation crosses a point that is difficult to reverse.
+
+The sequence matters. "We validate the backup" is not enough if validation happens
+only after the existing database has been overwritten. A recovery plan should make
+the order of preparation, validation, replacement, and reopening explicit.
+
+## Related files can be part of the database state
+
+Some database configurations use journals or other companion files to coordinate
+changes. A plain copy of the main file may not represent a complete, consistent backup
+under every mode of operation.
+
+The correct backup method depends on the database and how it is running. This article
+does not offer a universal file-copy recipe. Use the database's supported approach and
+verify it under the conditions the application actually uses.
+
+The broader point is that a visible filename is not necessarily the whole logical
+object. Recovery should reason about the database's consistency requirements, rather
+than assuming that copying one familiar file captures everything important.
+
+The historical discussion's attention to sidecar files was valuable because those
+details sit exactly where a simple-looking recovery procedure can become unreliable.
+
+## Preserve a way back
+
+Before replacing the current state, consider how to retain it safely enough for
+investigation or rollback. A failed restore should not automatically destroy the evidence
+needed to understand why it failed.
+
+The retained copy needs its own identity. Reusing a single backup path can accidentally
+overwrite the only good version with a newer, broken one. Naming, retention, and the
+moment a backup becomes eligible for replacement are part of the design.
+
+This does not mean keeping unlimited copies forever. It means choosing a retention
+policy that supports the recovery promise and avoids discarding the known-good state
+before the replacement is verified.
+
+Be equally clear about what rollback can accomplish. Restoring local data cannot undo
+an email already sent or a payment already accepted by an external system.
+
+## Imagine a crash between every important step
+
+A restore procedure often looks safe when read from beginning to end. Real processes
+can stop halfway through.
+
+Walk through the operation and ask what happens if the process dies after each major
+step: access disabled, candidate prepared, old state preserved, replacement installed,
+verification started, normal operation resumed.
+
+At each point, the next invocation should be able to determine the situation from
+durable evidence. It should not depend entirely on a variable that disappeared when
+the previous process stopped.
+
+This reasoning may lead to a small recovery marker or an explicit set of phases.
+The goal is not to invent an elaborate framework. It is to make interruption produce
+an understandable state instead of a mystery requiring guesses under pressure.
+
+## Verify the product after reopening storage
+
+Successfully opening the database is an important check, but it is only the beginning.
+The application may still encounter missing relationships, incompatible schemas, or
+records that no longer match external state.
+
+Choose a small set of meaningful post-restore checks. Can representative records be
+read? Do important relationships hold? Can the application perform a safe ordinary
+operation? Are pending actions handled according to the recovery policy?
+
+Avoid a verification step that itself causes irreversible external side effects.
+For example, resending every pending notification is not a neutral way to prove that
+the restored application works.
+
+Recovery verification should establish useful operation while respecting uncertainty
+about what happened outside the restored database after the backup was created.
+
+## Test interruption and competing access
+
+A happy-path test proves that restoration can work under friendly conditions. More
+valuable boundary tests include an already-open connection, a competing writer, an
+unreadable backup, and interruption near the replacement step.
+
+Each test should check what remains afterward. Is the old state still recoverable?
+Does normal access remain safely disabled when verification fails? Can a later attempt
+understand the unfinished operation?
+
+Use a disposable environment for these experiments. The point is to create evidence
+before a real incident, when there is time to inspect failures without risking the
+only copy of important data.
+
+The historical discovery of additional edge cases after passing tests illustrates
+why the choice of failure scenarios matters more than a bare count of green checks.
+
+## Make the recovery explanation usable
+
+A recovery plan should identify the backup, the expected data age, the required access
+conditions, the verification steps, and the point at which normal operation can resume.
+It should also explain what to do when a check fails.
+
+That explanation is useful to the original author as well as another engineer. During
+an incident, clear decisions reduce the temptation to improvise destructive shortcuts.
+
+A backup preserves information. A recovery plan explains how to turn that information
+back into a trustworthy product state. Testing the connection between those two things
+is what turns a comforting file into a credible reliability capability.
+
+## Technical deep dive
+
+**Plain-language bridge:** Recovery replaces a live system's state. It must account
+for database consistency, active processes, interruption, and external effects.
+
+### Diagram: Recovery needs checkpoints and a way back
+
+~~~text
+[prepare candidate] ----> [stop relevant access]
+                                   |
+                                   v
+                         [verify + preserve old state]
+                                   |
+                                   v
+                           [install replacement]
+                                   |
+                                   v
+                            [reopen + check]
+                              /         \
+                             v           v
+                           pass         fail
+                             |           |
+                             v           v
+                      resume access   keep access stopped
+                                      inspect / recover
+~~~
+
+This is a conceptual recovery sequence, not a file-copy procedure. Durable phase
+records and database-specific guarantees determine how an interrupted step is resumed.
+
+
+### Choose a database-supported snapshot mechanism
+
+For SQLite, the online backup API is designed to copy a consistent database through
+the database engine rather than assuming a live main-file copy is sufficient.
+The API has its own completion and error handling requirements.
+See the [SQLite backup documentation](https://www.sqlite.org/backup.html).
+
+In WAL mode, committed changes can reside in the write-ahead log. Separating a database
+from its WAL at the wrong moment can lose committed state. Do not interpret companion
+files as disposable clutter during recovery.
+See [SQLite's WAL documentation](https://www.sqlite.org/wal.html).
+
+Those details are specific to SQLite. Other databases require their own supported backup
+and restore procedures; the state-machine reasoning below is the transferable part.
+
+### Make restoration a recoverable operation
+
+An illustrative durable operation record tracks candidate identity, preserved old
+identity, intended destination, and the last completed phase:
+
+~~~text
+prepared -> access quiesced -> candidate verified
+         -> replacement installed -> reopened and checked -> access resumed
+~~~
+
+Quiesced means the relevant users of storage have stopped accessing it. Enumerate
+background workers and direct database openers as well as the main server. A flag
+checked by only one path does not establish exclusive recovery access.
+
+A restart should inspect the durable record and actual files before deciding what
+happened. A single rename does not by itself prove multi-file crash durability.
+Filesystem, operating-system, and database requirements determine which operations
+and synchronization guarantees are needed.
+
+### Define recovery objectives separately
+
+The recovery point objective describes acceptable lost recent data. The recovery time
+objective describes acceptable time to restore useful service. A frequent backup can
+improve the first without improving the second if restoration is slow or untested.
+
+Measure both during a drill. Include locating the correct backup, restoring, validating,
+and resuming the product. Do not report only the byte-copy duration as total recovery time.
+
+### Reconcile actions outside the restored database
+
+A restored record may say a notification remains pending even though it was delivered
+after the backup. Preserve external identifiers or a separate durable reconciliation
+source where the product requires them. Replaying every pending action can create
+duplicate external effects.
+
+Test interruption at each phase, inability to reopen the candidate, and a competing
+writer that ignores the expected gate. The safe result of a failed verification may
+be continued downtime with the old state preserved, rather than automatic access to
+an unverified replacement. Define that behavior before relying on the recovery procedure.

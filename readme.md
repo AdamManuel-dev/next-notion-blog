@@ -1,4 +1,4 @@
-> **Current site:** content has moved to the local filesystem and Next.js static export. See [content/README.md](./content/README.md) for editing, building, importing, and known migration gaps. The starter-kit documentation below describes the legacy Notion integration, not the active content routes.
+> **Current site:** all 82 pages build from topic-organized `content/**/index.mdx` files using the Pages Router and static export. See [content/README.md](./content/README.md) for editing, adding pages, building, and known source gaps. No manifest updates or Notion access are needed. The starter-kit documentation below describes the legacy Notion integration, not the active content routes.
 
 <p align="center">
   <a href="https://transitivebullsh.it/nextjs-notion-starter-kit">

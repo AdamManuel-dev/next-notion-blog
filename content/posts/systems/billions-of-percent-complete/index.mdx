@@ -1,0 +1,255 @@
+---
+title: "How Can a Job Be Billions of Percent Complete?"
+slug: "billions-of-percent-complete"
+description: "What happens when two services disagree about the meaning of a number."
+type: "post"
+tags: ["distributed-systems","metrics","debugging"]
+order: 76
+id: "a60f1b4ef89bd34e0cced94a48c1af35"
+sourceUrl: null
+cover: null
+icon: null
+coverPosition: null
+---
+
+**Reading paths:** Start below for the plain-language explanation, or jump to the
+[technical deep dive](#technical-deep-dive) for implementation details and verification.
+
+A progress bar seems simple: divide completed steps by total steps and multiply by 100.
+
+That calculation only works if the first number is actually a count of completed steps.
+In a VM workflow investigation, the runner was receiving huge nested step identifiers
+and treating them as ordinary positions in a short list.
+
+The resulting percentages were impossible.
+
+<h2 id="an-address-is-not-a-distance">An address is not a distance</h2>
+
+House number 9000 does not mean you have walked 9,000 houses down the street.
+The number identifies a location. It is not necessarily a count.
+
+Likewise, a nested workflow step may carry information about its parent and child steps.
+That identifier helps locate the action, but does not say how much work is complete.
+
+The producer and consumer had different interpretations of the same field.
+
+<h2 id="send-meaning-explicitly">Send meaning explicitly</h2>
+
+A clearer progress message could separate:
+
+| Field | Purpose |
+| --- | --- |
+| Current step identifier | Locate the exact action for debugging. |
+| Completed top-level steps | Count finished stages of the main workflow. |
+| Total top-level steps | Provide a comparable denominator. |
+| Current stage label | Explain what the workflow is doing. |
+
+The services need an agreed contract: a precise definition of every field, including
+what happens inside loops and retries.
+
+If the total is unknown, show an activity description or completed-item count. A made-up
+percentage looks precise while giving the user less useful information.
+
+<h2 id="clamping-is-only-a-display-guard">Clamping is only a display guard</h2>
+
+Forcing a percentage into the range zero to 100 can prevent a broken-looking screen.
+It does not repair the underlying meaning.
+
+A value of a billion becoming 100 still incorrectly suggests the job is finished.
+The system should reject or flag invalid progress while preserving enough evidence
+to diagnose the producer-consumer mismatch.
+
+<h2 id="decide-what-the-progress-bar-promises">Decide what the progress bar promises</h2>
+
+There are several reasonable meanings for progress. It might count finished stages,
+processed items, transferred bytes, or estimated time remaining. They are not interchangeable.
+
+If a workflow has ten stages and the final stage takes most of the time, nine completed
+stages does not mean only 10% of the waiting time remains. The stage count can still be
+useful, but it should not quietly present itself as a time estimate.
+
+Label the measurement in plain language: "Nine of ten stages complete" or "45 of 100
+documents processed." If the total can change, explain that too. Honest activity information
+is often more helpful than a smooth animation based on an unreliable guess.
+
+<h2 id="nested-work-needs-a-display-rule">Nested work needs a display rule</h2>
+
+Suppose the main workflow has five stages. Stage three loops through 40 documents, and
+each document has four smaller actions. How should those actions affect the main bar?
+
+One design counts only the five main stages and adds a separate detail line: "Stage
+three: document 12 of 40." Another design uses a clearly defined weighted estimate.
+
+Either can work. Problems arise when one component reports a nested position and another
+assumes it is the number of completed main stages.
+
+Write examples for the beginning, middle, and end of the loop. Include an empty list
+and a list that grows after processing starts. Those examples force the team to choose
+a meaning before encoding it in a field name.
+
+<h2 id="retries-can-make-a-bar-move-backward">Retries can make a bar move backward</h2>
+
+A failed step may need to run again. Does that reduce completed progress, leave it unchanged,
+or begin a new attempt with its own bar?
+
+The answer depends on whether the previous work remains valid. If a file transfer resumes
+from a saved position, keeping completed bytes may be appropriate. If a session restart
+invalidates earlier work, the same display would be misleading.
+
+Keep the attempt identity visible to the system. A late update from attempt one should
+not overwrite the current status of attempt two. Otherwise, the bar can jump unpredictably
+even when each worker reports internally consistent numbers.
+
+The user should understand when a retry has begun instead of watching apparently random progress.
+
+Also define the zero-work case. If no items qualify, dividing by a total of zero is
+meaningless. The result might be a completed empty run, with a clear explanation that
+there was nothing to process, rather than a fabricated progress percentage.
+
+<h2 id="order-the-updates-as-well-as-the-fields">Order the updates as well as the fields</h2>
+
+Messages may arrive late. A report that stage two finished can reach the dashboard after
+a report that stage three finished. Simply displaying the last arrival can move the
+interface backward for no valid reason.
+
+A progress contract can include the job, attempt, and an increasing update sequence.
+The receiver can then reject an older update for the same attempt. The exact mechanism
+depends on the system, but the question should be answered explicitly.
+
+Timestamps are useful for explaining when information was observed. They should not
+automatically substitute for an ordering rule if different machines have different clocks.
+Again, the goal is shared meaning rather than merely adding more fields.
+
+<h2 id="validate-at-the-receiving-boundary">Validate at the receiving boundary</h2>
+
+A receiving service should check that counts are sensible for the declared measurement.
+Completed items cannot be negative. A known total should be compatible with the completed
+count. An unknown total should be represented deliberately, not by a magic number nobody remembers.
+
+When invalid data arrives, retain enough diagnostic information to explain the mismatch.
+Displaying the last valid state with a visible update problem may be better than accepting
+a nonsensical number.
+
+Do not silently replace invalid input with an attractive value. That makes the dashboard
+look healthy while the services continue disagreeing. Validation should reveal the
+contract violation so it can be corrected at its source.
+
+<h2 id="write-a-small-contract-test">Write a small contract test</h2>
+
+Imagine a test with a fake workflow containing two main stages and one nested loop.
+Feed it a known sequence of updates and write the expected display state after each one.
+
+Then add awkward cases: an old update arriving late, a duplicate update, a retry with
+a new attempt identifier, and an identifier that happens to contain a very large number.
+
+The important assertion is about meaning. The large identifier remains useful for
+locating the step, but must never become a completed-stage count.
+
+This kind of test protects the boundary between services. It can catch a mismatch even
+when the producer and consumer each pass their own internal tests.
+
+<h2 id="explain-slow-progress-without-inventing-precision">Explain slow progress without inventing precision</h2>
+
+Sometimes a stage takes much longer than the others. A bar that remains at 60% can
+make users think the system is stuck even when useful work continues.
+
+Show the current activity, the last meaningful update time, and a count where one is
+available. If the system cannot distinguish slow work from stalled work yet, say that
+in the operational view and improve the signal.
+
+The aim is to help a person decide whether to wait, inspect, or intervene. A progress
+display earns trust by making that decision easier, not by moving continuously.
+
+<h2 id="keep-progress-separate-from-ownership">Keep progress separate from ownership</h2>
+
+The historical investigation also involved leases and queue handling. A lease is a
+time-limited claim that a worker owns a job.
+
+Being alive, making progress, and completing the job are different facts. One should
+not silently substitute for another.
+
+The session reported targeted fixes and passing tests, with additional validation still
+pending in its handoff. The lasting lesson is about contracts: shared data needs shared
+meaning, especially when several services depend on it.
+
+<h2 id="technical-deep-dive">Technical deep dive</h2>
+
+**Plain-language bridge:** A step's address tells you where it is. A completed-step
+count tells you how far the job has progressed. They need separate fields and rules.
+
+<h3 id="diagram-an-address-and-a-count-answer-different-questions">Diagram: An address and a count answer different questions</h3>
+
+```text
+                    [progress event]
+                     /            \
+                    v              v
+          stepPath: [2,4,1]    completed: 2
+                    |          total:     5
+                    v              |
+          locate nested step       v
+             for debugging      2 / 5 = 40%
+
+          Never divide the step address by the total.
+```
+
+This is an illustrative contract. Nested location belongs in diagnostics; comparable
+completed and total units belong in the progress calculation.
+
+
+<h3 id="define-a-versioned-event-contract">Define a versioned event contract</h3>
+
+An illustrative event makes those meanings explicit:
+
+```json
+{
+  "schemaVersion": 1,
+  "jobId": "example-job",
+  "attemptId": "example-attempt",
+  "sequence": 12,
+  "stepPath": [2, 4, 1],
+  "completedUnits": 2,
+  "totalUnits": 5,
+  "unit": "top-level-stage",
+  "state": "running"
+}
+```
+
+Here, stepPath is an address through nested work. It never participates in the percentage.
+Validate integers, nonnegative counts, a positive known denominator, and compatible units.
+If the total is unknown, represent it explicitly as unknown and use an indeterminate
+display. A zero denominator is not evidence of 100 percent completion.
+
+A consumer that encounters an invalid contract should preserve a diagnostic and show
+an honest unavailable state. Clamping an invalid value to 100 hides the producer error.
+
+<h3 id="scope-ordering-to-the-attempt">Scope ordering to the attempt</h3>
+
+Sequence numbers provide an ordering rule within an attempt. The consumer retains
+the highest accepted sequence and rejects older updates for that attempt. Attempt
+identity prevents a delayed event from an earlier execution overwriting the current one.
+
+A timestamp alone is weaker because clocks can differ and events can arrive out of
+order. Also define how the active attempt changes: an event from any arbitrary new
+attempt must not automatically take ownership merely because it arrived last.
+
+<h3 id="choose-whether-work-is-weighted">Choose whether work is weighted</h3>
+
+Equal stage counts imply equal weight in the progress display, not equal elapsed time.
+If four quick stages finish before one expensive stage, the bar may sit at 80 percent
+for most of the run. That can be mathematically correct but easily misunderstood.
+
+A weighted design uses sum(completed weights) / sum(total weights), with a documented
+weight version. Historical duration estimates may improve expectations, but they are
+estimates and can drift. Changing the denominator during a run can make progress fall;
+that requires an explicit interface policy rather than an accidental monotonic clamp.
+
+<h3 id="test-the-state-transitions">Test the state transitions</h3>
+
+Exercise duplicate events, reordered sequences, a retry with a new attempt, unknown
+totals, and counts larger than the denominator. Verify that a completion event follows
+the product's completion rule rather than being inferred from a percentage.
+
+Progress and ownership should remain separate contracts. A worker can still own a job
+without producing a new progress event, and a stale progress event cannot prove that
+its sender still owns the job. Combining these meanings creates recovery errors far
+more consequential than an unusual number on a dashboard.

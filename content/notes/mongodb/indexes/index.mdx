@@ -1,0 +1,135 @@
+---
+title: "MongoDB Indexes"
+slug: "mongodb-indexes"
+description: "For compound indexes, this rule of thumb is helpful in deciding the order of fields in the index:"
+type: "note"
+tags: ["mongodb"]
+order: 31
+id: "853e4abcce7944bcb99748fd9d0368ea"
+sourceUrl: "https://adams-blog.notion.site/MongoDB-Indexes-853e4abcce7944bcb99748fd9d0368ea"
+cover: null
+icon: "🗂️"
+coverPosition: null
+---
+
+<a id="636d159f079c4ccd944be9ac72bb4e81"></a>
+
+<h2 id="local-heading-1">Follow the ESR rule</h2>
+
+<a id="58859fe8bb9b40afbdb693552781ab0a"></a>
+
+**For compound indexes, this rule of thumb is helpful in deciding the order of fields in the index:**
+
+<a id="10b0c6da5c29461e8f1433dbefe2ab38"></a>
+
+- First, add those fields against which **Equality** queries are run.
+
+<a id="03bd5a1f855947368d83e50f132d96b6"></a>
+
+- The next fields to be indexed should reflect the **Sort** order of the query.
+
+<a id="a5eee2e84f084d2295319206856e5148"></a>
+
+- The last fields represent the **Range** of data to be accessed.
+
+<a id="c5df3e0a179148ea8a0fff74eccfeef8"></a>
+
+<h2 id="local-heading-2">Use Covered Queries When Possible</h2>
+
+<a id="be01f174b4d14d9da56a8650510cbc79"></a>
+
+[Covered queries](https://docs.mongodb.com/manual/core/query-optimization/#covered-query) **return results from an index directly without having to access the source documents, and are therefore very efficient.**
+
+<a id="383469d855ae4899a3a465c2dff0ab54"></a>
+
+**For a query to be covered all the fields needed for filtering, sorting and/or being returned to the client must be present in an index. To determine whether a query is a covered query, use the** [explain()](https://docs.mongodb.com/manual/reference/method/cursor.explain/) **method. If the** <code><strong>explain()</strong></code> **output displays** <code><strong>totalDocsExamined</strong></code> **as 0, this shows the query is covered by an index. Read more in the** [documentation for explain results](https://docs.mongodb.com/manual/reference/explain-results/#covered-queries)**.**
+
+<a id="1cb9a6345b234c05a9be4bb661babfa0"></a>
+
+**A common gotcha when trying to achieve covered queries is that the \_id field is always returned by default. You need to explicitly exclude it from query results, or add it to the index.**
+
+<a id="4617b3d5b54044878710a9fa8d444f3b"></a>
+
+**In sharded clusters, MongoDB internally needs to access the fields of the shard key. This means covered queries are only possible when the shard key is part of the index. It is usually a good idea to do this anyway.**
+
+<a id="6c3d192bb71841fe9f6f85d9f2812e16"></a>
+
+<h2 id="local-heading-3">Use Caution When Considering Indexes on Low-Cardinality Fields</h2>
+
+<a id="f71e5d9496bc480c91e1c5c1a077a491"></a>
+
+**Queries on fields with a small number of unique values (low cardinality) can return large result sets. Compound indexes may include fields with low cardinality, but the value of the combined fields should exhibit high cardinality.**
+
+<a id="55ae4ce099564d5fafa46192ddcf249a"></a>
+
+<h2 id="local-heading-4">Use Partial Indexes</h2>
+
+<a id="98fe9b14fc0140fabd2e0f5a8554befe"></a>
+
+**Reduce the size and performance overhead of indexes by only including documents that will be accessed through the index. For example, create a** [partial index](https://docs.mongodb.com/manual/core/index-partial/) **on the** <code><strong>orderID</strong></code> **field that only includes order documents with an** <code><strong>orderStatus</strong></code> **of "In progress", or only indexes the** <code><strong>emailAddress</strong></code> **field for documents where it exists.**
+
+<a id="9735b0fd124b4d048b4a80fcee87c46c"></a>
+
+<h4 id="local-heading-5">Comparison with the <code><strong>sparse</strong></code> Index</h4>
+
+<a id="f033cadf5f1c4b5db35b2bd8bdbd42a7"></a>
+
+> Partial indexes represent a superset of the functionality offered by sparse indexes and should be preferred over sparse indexes.
+
+<a id="a6937bd3d667417bafa1af268574ef13"></a>
+
+Partial indexes offer a more expressive mechanism than [Sparse Indexes](https://docs.mongodb.com/manual/core/index-sparse/) indexes to specify which documents are indexed.
+
+<a id="92916437bbf445db94b65553befecce3"></a>
+
+Sparse indexes select documents to index ***solely*** based on the existence of the indexed field, or for compound indexes, the existence of the indexed fields.
+
+<a id="974b266594dd4125bf1aadc2cf8dde5c"></a>
+
+Partial indexes determine the index entries based on the specified filter. The filter can include fields other than the index keys and can specify conditions other than just an existence check.
+
+<a id="cca799c9d1b4443d9b5e748047308996"></a>
+
+However, a partial index can also specify filter expressions on fields other than the index key. For example, the following operation creates a partial index, where the index is on the `name` field but the filter expression is on the `email` field
+
+<a id="73b56c29958a4c5a8db0fcd249266174"></a>
+
+For the query optimizer to choose this partial index, the query predicate must include a condition on the `name` field as well as a *non-null* match on the `email` field.
+
+<a id="d1f045a01ae3461a8a4eeab3464c92ba"></a>
+
+For example, the following query can use the index because it includes both a condition on the `name` field and a non-null match on the `email` field
+
+<a id="026e9dbbabf5431a9fabd6a93e72e347"></a>
+
+```
+db.contacts.find( { name: "xyz", email: { $regex: /\.org$/ } } )
+```
+
+<a id="d7b396fb3f8b490fb0c836aeedc4c5ca"></a>
+
+* * *
+
+<a id="adf4aec52dea4c7db9da25135e56d6c9"></a>
+
+<h2 id="local-heading-6">Avoid Regular Expressions That Are Not Left Anchored or Rooted</h2>
+
+<a id="05946b8ce0d043db910a798fcf6646a1"></a>
+
+**Indexes are ordered by value. Leading wildcards are inefficient and may result in full index scans. Trailing wildcards can be efficient if there are sufficient case-sensitive leading characters in the expression.**
+
+<a id="c1afa9a501864e34bd805b269a40b090"></a>
+
+<h2 id="local-heading-7">Avoid Case Insensitive Regular Expressions</h2>
+
+<a id="77ec28aeecb346d9a4cba1901a8bd098"></a>
+
+**If the sole reason for using a regex is case insensitivity, use a** [case insensitive index](https://docs.mongodb.com/manual/core/index-case-insensitive/) **instead, as those are faster.**
+
+<a id="f564d2e8be0145dd850b64bf8583cee8"></a>
+
+[https://www.notion.so/adam-manuel-plnar/MongoDB-Research-6c273bc4863f4b75aeef37b1181206ac](https://www.notion.so/adam-manuel-plnar/MongoDB-Research-6c273bc4863f4b75aeef37b1181206ac)
+
+<a id="88c0606806ce48ce88b39ac129504f6d"></a>
+
+[https://adam-manuel-plnar.notion.site/MongoDB-Performance-e68abf47ae1141e9829a0d498416855c](https://adam-manuel-plnar.notion.site/MongoDB-Performance-e68abf47ae1141e9829a0d498416855c)

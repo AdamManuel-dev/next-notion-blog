@@ -25,31 +25,47 @@ function LinkArrow() {
 }
 
 const SITE_NAME = 'Adam Manuel’s “Dev Blog”'
-/** Manifest slug of the page served at `/`. */
-const ROOT_SLUG = 'adam-manuel-s-dev-blog'
+/**
+ * Pre-metadata fallback: the slug the page served at `/` used to have, before
+ * the content pipeline declared `type: home` in frontmatter. Only consulted
+ * for index entries that carry no `type`.
+ */
+const LEGACY_ROOT_SLUG = 'adam-manuel-s-dev-blog'
 /** The original site uses the lightning bolt as its default page icon. */
 const DEFAULT_PAGE_ICON = '⚡'
 const SITE_ORIGIN = 'https://blog.manuel.dev'
 const SITE_DESCRIPTION = 'Notes and articles by Adam Manuel.'
 const MAX_DESCRIPTION_LENGTH = 180
 
-export interface LocalPageData {
-  id: string
-  slug: string
-  title: string
-  html: string
-  cover: string | null
-  sourceUrl: string
-  /** Recovered page icon: an emoji, or a local asset path starting with `/`. */
-  icon?: string | null
-  /** Normalized 0..1 vertical focal point for the cover image. */
-  coverPosition?: number
-}
-
+/**
+ * One entry of the static index shipped with every page.
+ *
+ * The metadata fields come from MDX frontmatter and stay optional here so the
+ * layout keeps rendering for fixtures (and content) that predate them.
+ */
 export interface LocalPageIndexEntry {
   id: string
   slug: string
   title: string
+  /** Frontmatter description; drives the meta description when present. */
+  description?: string
+  /** Frontmatter page kind. Exactly one page is the `home` page. */
+  type?: 'home' | 'post' | 'note'
+  tags?: string[]
+  /** Frontmatter sort key; lower sorts first. */
+  order?: number
+}
+
+export interface LocalPageData extends LocalPageIndexEntry {
+  /** MDX compiled to static HTML at build time. */
+  html: string
+  cover: string | null
+  /** Original Notion URL, when the page was migrated from one. */
+  sourceUrl?: string | null
+  /** Recovered page icon: an emoji, or a local asset path starting with `/`. */
+  icon?: string | null
+  /** Normalized 0..1 vertical focal point for the cover image. */
+  coverPosition?: number
 }
 
 export interface LocalPageProps {
@@ -72,7 +88,7 @@ const entityReplacements: Record<string, string> = {
   '&nbsp;': ' '
 }
 
-/** Builds a plain-text meta description from the already-sanitized markup. */
+/** Plain-text fallback description, used when frontmatter declares none. */
 function getDescription(html: string, title: string): string {
   const text = html
     .replace(tagPattern, ' ')
@@ -95,6 +111,60 @@ function getDescription(html: string, title: string): string {
     ? truncated.slice(0, lastSpace)
     : truncated
   ).trim()}…`
+}
+
+const escapePattern = /[&<>"']/g
+const htmlEscapes: Record<string, string> = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;'
+}
+
+function escapeHtml(value: string): string {
+  return value.replace(escapePattern, (character) => htmlEscapes[character])
+}
+
+/** The home page is the one page whose frontmatter declares `type: home`. */
+function isHomeEntry(entry: LocalPageIndexEntry): boolean {
+  return entry.type ? entry.type === 'home' : entry.slug === LEGACY_ROOT_SLUG
+}
+
+/** Articles listed on the homepage, in frontmatter order (slug breaks ties). */
+export function selectEngineeringArticles(
+  pages: LocalPageIndexEntry[] | undefined
+): LocalPageIndexEntry[] {
+  return (pages ?? [])
+    .filter((entry) => entry.type === 'post')
+    .sort(
+      (a, b) =>
+        (a.order ?? 0) - (b.order ?? 0) ||
+        (a.slug < b.slug ? -1 : a.slug > b.slug ? 1 : 0)
+    )
+}
+
+/**
+ * The homepage's "Engineering articles" list. It used to be hand-maintained
+ * markup inside the homepage body; it now comes from page metadata and keeps
+ * the same structure (`section > h2 + ul > li > a`), so the existing content
+ * styles apply unchanged. Titles and slugs are escaped on the way in.
+ */
+export function renderEngineeringArticles(
+  articles: LocalPageIndexEntry[]
+): string {
+  if (!articles.length) return ''
+
+  const items = articles
+    .map(
+      (entry) =>
+        `<li><a href="/${escapeHtml(entry.slug)}">${escapeHtml(
+          entry.title
+        )}</a></li>`
+    )
+    .join('')
+
+  return `<section id="engineering-articles"><h2>Engineering articles</h2><ul>${items}</ul></section>`
 }
 
 /**
@@ -129,13 +199,23 @@ export function LocalPage({ page, isHome, pages }: LocalPageProps) {
 
   const documentTitle = isHome ? SITE_NAME : `${title} — ${SITE_NAME}`
   const canonicalUrl = isHome ? `${SITE_ORIGIN}/` : `${SITE_ORIGIN}/${slug}`
-  const description = isHome ? SITE_DESCRIPTION : getDescription(html, title)
+  // Frontmatter wins everywhere; the text fallback keeps pre-metadata pages
+  // (and fixtures) describable.
+  const description =
+    page.description?.trim() ||
+    (isHome ? SITE_DESCRIPTION : getDescription(html, title))
 
   const indexEntries = isHome && pages?.length ? pages : null
 
-  const rootPageId = isHome
-    ? page.id
-    : pages?.find((entry) => entry.slug === ROOT_SLUG)?.id
+  // The home page identifies itself through its metadata, not a hardcoded slug.
+  const rootPageId = isHome ? page.id : pages?.find(isHomeEntry)?.id
+
+  // Homepage index of articles, rebuilt from metadata on every build.
+  const engineeringArticlesHtml = React.useMemo(
+    () =>
+      isHome ? renderEngineeringArticles(selectEngineeringArticles(pages)) : '',
+    [isHome, pages]
+  )
 
   // Related reading is title-similarity only, over the same static index.
   const relatedPages = React.useMemo(
@@ -145,7 +225,7 @@ export function LocalPage({ page, isHome, pages }: LocalPageProps) {
         : selectRelatedPages(
             { id: page.id, title },
             (pages ?? [])
-              .filter((entry) => entry.slug !== ROOT_SLUG)
+              .filter((entry) => !isHomeEntry(entry))
               .map((entry) => ({
                 id: entry.id,
                 title: entry.title,
@@ -160,6 +240,8 @@ export function LocalPage({ page, isHome, pages }: LocalPageProps) {
     () => (isHome ? { html, entries: [] } : prepareLocalArticle(html)),
     [html, isHome]
   )
+
+  const bodyHtml = engineeringArticlesHtml + article.html
 
   return (
     <>
@@ -226,11 +308,15 @@ export function LocalPage({ page, isHome, pages }: LocalPageProps) {
 
             {isHome ? null : <ArticleOutline entries={article.entries} />}
 
-            {/* Content is pre-sanitized at build time and checked into the repo. */}
+            {/* The body is MDX compiled to static HTML at build time from
+                trusted in-repo sources — never user input, and never sanitized
+                checked-in HTML. The articles index is prepended as markup (not
+                as JSX children) so the body stays a direct child of the
+                article element and the content styles cascade unchanged. */}
             <article
               className={`${styles.content} lr-article`}
-              // pi-lens-ignore: dangerouslySetInnerHTML
-              dangerouslySetInnerHTML={{ __html: article.html }}
+              // pi-lens-ignore: dangerously-set-inner-html -- build-time MDX
+              dangerouslySetInnerHTML={{ __html: bodyHtml }}
             />
 
             {indexEntries ? (

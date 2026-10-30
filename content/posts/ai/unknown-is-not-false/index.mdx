@@ -1,0 +1,257 @@
+---
+title: "Unknown Is Not False: Designing Honest AI Results"
+slug: "unknown-is-not-false"
+description: "Preserve missing evidence instead of turning it into a confident negative answer."
+type: "post"
+tags: ["ai","product-design","evaluation"]
+order: 59
+id: "c9a9cf898d5d17d93eca5fab63a7c95b"
+sourceUrl: null
+cover: null
+icon: null
+coverPosition: null
+---
+
+**Reading paths:** Start below for the plain-language explanation, or jump to the
+[technical deep dive](#technical-deep-dive) for implementation details and verification.
+
+A resume does not mention a skill. Does that mean the person does not have it?
+
+No. It means the available document does not establish it. That distinction becomes
+important when an AI turns incomplete information into scores, recommendations, or decisions.
+
+In a long job-matching project conversation, the design evolved toward separate match,
+partial-match, non-match, and unknown states. It also distinguished evidence from a
+resume from information the owner later supplied. Some of those changes remained plans
+in the reviewed session, so this article explains the design rather than claiming a
+fully validated matching system.
+
+<h2 id="a-binary-answer-can-hide-three-situations">A binary answer can hide three situations</h2>
+
+Suppose a role asks for experience with a database. The candidate's information may
+explicitly establish that experience, explicitly establish that they do not have it,
+or say nothing about it.
+
+Those are different evidence states. Reducing them to yes and no forces missing information
+into one of the other categories.
+
+Guessing yes creates unsupported claims. Guessing no can discard a suitable option.
+Keeping unknown lets the product ask for clarification or explain the limit of its analysis.
+
+The same distinction applies to apartment preferences, customer records, document extraction,
+and many other products built on incomplete input. Absence from the source is not automatically
+evidence of absence in the world.
+
+<h2 id="define-each-label-with-examples">Define each label with examples</h2>
+
+Labels such as partial can be vague unless the team agrees what they mean. A partial
+match might mean that some requirements are supported, or that a related skill provides
+incomplete evidence for the exact requirement.
+
+Write examples that distinguish the categories. A fictional request for three years
+of experience might be supported, contradicted, or unresolved depending on the dates
+and wording available.
+
+Do not let the model invent the category definitions during each run. The product should
+provide the rule, and evaluation should check whether the model applies it consistently.
+Otherwise, the same label can mean different things across items that users are trying to compare.
+
+<h2 id="keep-the-source-of-a-claim">Keep the source of a claim</h2>
+
+A claim may come from a document, a direct user answer, or an inference. Those sources
+can all be useful, but they support different levels of confidence and verification.
+
+For each important result, preserve enough provenance to explain where it came from.
+Provenance is simply the origin and history of the information.
+
+An owner-provided answer should not silently become a resume-verified fact. Likewise,
+an inferred relationship between two technologies should not look like explicit experience
+with both. The interface can summarize the distinction in ordinary language without
+forcing the user to read internal model reasoning.
+
+<h2 id="ask-for-information-that-changes-the-decision">Ask for information that changes the decision</h2>
+
+Unknown fields can generate too many questions if the product asks about every missing
+detail. Prioritize the questions that materially affect the recommendation.
+
+For example, whether a candidate can work in the required location may matter more
+than a minor preference when deciding which roles to show first. The priority depends
+on the user's goals and the product's actual rules.
+
+Bundle related questions where that reduces effort, and preserve answers so the person
+does not have to repeat them. A clarification loop should make the next result better,
+not become a recurring intake form that forgets what it already learned.
+
+<h2 id="treat-answers-as-versioned-evidence">Treat answers as versioned evidence</h2>
+
+When a person adds information, the system's knowledge changes. Results calculated
+from the earlier profile may now be incomplete or wrong.
+
+Record which profile version produced a result and decide which results need reconsideration.
+The product can then explain that an older recommendation used an earlier set of facts.
+
+This does not require recalculating every historical item immediately. Prioritize useful
+items and keep resource limits explicit. The important point is that new evidence
+has a defined effect rather than leaving the system with a mixture of unexplained
+old and new answers.
+
+<h2 id="avoid-confidence-scores-that-conceal-missing-information">Avoid confidence scores that conceal missing information</h2>
+
+A model can sound certain even when its input is incomplete. A number such as 92% confidence
+does not solve the evidence problem by itself.
+
+Ask what the confidence refers to. Is it confidence that the text says something, that
+the interpretation is correct, or that the real-world person meets the requirement?
+Those are different claims.
+
+An evidence label and a short explanation may be more useful than an unexplained numerical
+score. If the product uses confidence to control behavior, evaluate that relationship
+against observed correctness. Do not assume a self-reported score is a calibrated probability.
+
+<h2 id="let-the-user-correct-the-interpretation">Let the user correct the interpretation</h2>
+
+A result should provide a practical route to correction. If the system says a requirement
+is unknown, the user may supply the missing detail. If it misread a document, the user
+should be able to identify the incorrect interpretation.
+
+Keep the correction connected to the evidence and result it changes. Otherwise, an
+edit may improve one screen while a cached ranking continues using the old assumption.
+
+The product should also distinguish a factual correction from a preference change.
+Both can affect recommendations, but one changes what is known and the other changes
+what the person wants. That distinction helps explain later differences.
+
+<h2 id="evaluate-the-categories-separately">Evaluate the categories separately</h2>
+
+An overall accuracy score can hide a system that rarely admits uncertainty. Measure
+whether supported claims, contradictions, and missing evidence are each handled appropriately.
+
+Include examples where the tempting answer is plausible but unsupported. Include explicit
+negative evidence so unknown does not become an escape hatch for every difficult case.
+
+Have a person inspect disagreements using the same category definitions. If reviewers
+cannot agree, the policy may need clarification before more prompting work will help.
+The answer sheet needs to express a stable product rule, not simply mirror the model's latest output.
+
+<h2 id="keep-ranking-separate-from-truth">Keep ranking separate from truth</h2>
+
+A product may rank an item lower because important information is missing. That can
+be a reasonable decision, but it should not relabel the missing fact as false.
+
+Explain the ranking effect separately: the item remains uncertain until a key requirement
+is clarified. A user may choose to explore it anyway.
+
+This preserves flexibility. Different users may have different tolerance for uncertainty,
+while the underlying evidence should remain the same. Mixing policy with factual labels
+makes it harder to change the ranking strategy without rewriting the apparent truth
+of every result.
+
+<h2 id="preserve-the-distinction-in-exports">Preserve the distinction in exports</h2>
+
+The distinction must survive beyond the visible screen. An exported file or downstream
+API should not collapse unknown into a blank value that another system interprets as
+false. Include an explicit category and, where appropriate, the evidence supporting it.
+
+Otherwise, careful product reasoning disappears at the next boundary. A readable badge
+helps the current user, while a stable data contract helps every later consumer interpret
+the result correctly. The same example should mean the same thing in the interface,
+the exported record, and the evaluation used to check the model.
+
+<h2 id="make-uncertainty-useful">Make uncertainty useful</h2>
+
+The objective is not to fill the product with disclaimers. It is to identify the specific
+information that would improve a decision and provide a manageable next step.
+
+An honest result can be concise: the available document supports two requirements,
+contradicts one, and leaves one unresolved. The user then understands what is known
+and what would change the assessment.
+
+That is a strong product and leadership principle for AI systems. Useful intelligence
+includes recognizing the boundary of the available evidence and helping the person
+move that boundary with the least unnecessary effort.
+
+<h2 id="technical-deep-dive">Technical deep dive</h2>
+
+**Plain-language bridge:** Missing support and explicit contradiction are different
+states. The data model needs enough room to preserve both.
+
+<h3 id="diagram-classify-evidence-before-applying-ranking-policy">Diagram: Classify evidence before applying ranking policy</h3>
+
+```text
+                    [versioned evidence]
+                            |
+                            v
+                 [support and contradiction?]
+                    /       |       |       \
+                   v        v       v        v
+              supported contradicted missing conflicting
+                    \       |       |       /
+                     v      v       v      v
+                       [assessment policy]
+                              |
+                              v
+                    [ranking or clarification]
+```
+
+These categories describe evidence, not a numerical confidence score. A ranking policy
+may penalize missing information without turning it into an asserted falsehood.
+
+
+<h3 id="represent-evidence-before-deriving-a-label">Represent evidence before deriving a label</h3>
+
+An illustrative assessment separates evidence from the decision applied to it:
+
+```json
+{
+  "requirementId": "example-skill",
+  "evidenceState": "missing",
+  "supportingRefs": [],
+  "contradictingRefs": [],
+  "assessmentVersion": 3,
+  "policyVersion": 2
+}
+```
+
+An evidence reference should identify the source version and relevant passage or fact.
+A derived category such as partial match may combine several requirements; it should
+not erase the underlying evidence states.
+
+Do not automatically treat absence of support as contradiction. Also define what
+happens when both supporting and contradicting evidence exist. A conflict can require
+review instead of being collapsed into whichever source was processed last.
+
+<h3 id="keep-logic-and-ranking-separate">Keep logic and ranking separate</h3>
+
+For a requirement with states supported, contradicted, missing, and conflicting, write
+a decision table before implementing aggregation. For example, a mandatory requirement
+with missing evidence may produce "needs clarification," while an explicit contradiction
+may produce "does not currently meet the rule."
+
+Ranking is a policy applied afterward. It may penalize unresolved requirements, but the
+penalty should not relabel the evidence. Different ranking policies can then operate on
+the same factual assessment without rewriting its provenance.
+
+Avoid generic Boolean coercion such as treating an absent field as false. Validation
+at every serialization boundary should preserve the allowed categories, including exports.
+
+<h3 id="evaluate-abstention-as-a-product-behavior">Evaluate abstention as a product behavior</h3>
+
+Coverage is the fraction of cases where the system issues a definitive answer.
+Conditional error is the error rate among those definitive answers. Lowering coverage
+can reduce conditional error by abstaining more often, so report both.
+
+Also inspect inappropriate abstention: cases with enough evidence where the system
+still says unknown. A product that avoids every mistake by answering nothing is rarely
+useful. Break results down by missing evidence, explicit contradiction, supported facts,
+and conflicts instead of hiding the differences in one accuracy number.
+
+<h3 id="test-evidence-updates-and-reversals">Test evidence updates and reversals</h3>
+
+Add a new source that resolves a missing requirement and verify that the assessment
+changes only where its dependencies changed. Then retract or supersede that source
+and confirm the result can return to unknown. "Once supported, always supported"
+is not a safe default when evidence has a lifecycle.
+
+Preserve the version used for earlier decisions so a later explanation can distinguish
+a changed fact from a changed policy. These are proposed implementation details for
+the historical design direction, not proof of a completed recommendation system.

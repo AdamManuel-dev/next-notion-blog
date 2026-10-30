@@ -1,10 +1,10 @@
-import rawSiteConfig from '../site.config'
+import rawSiteConfig from '../site.config.js'
 
 if (!rawSiteConfig) {
   throw new Error(`Config error: invalid site.config.js`)
 }
 
-// TODO: allow environment variables to override site.config.js
+// a deployment may override any site.config.js value with a JSON blob
 let siteConfigOverrides
 
 try {
@@ -33,22 +33,4 @@ export function getSiteConfig<T>(key: string, defaultValue?: T): T {
   }
 
   throw new Error(`Config error: missing required site config value "${key}"`)
-}
-
-export function getEnv(
-  key: string,
-  defaultValue?: string,
-  env = process.env
-): string {
-  const value = env[key]
-
-  if (value !== undefined) {
-    return value
-  }
-
-  if (defaultValue !== undefined) {
-    return defaultValue
-  }
-
-  throw new Error(`Config error: missing required env variable "${key}"`)
 }

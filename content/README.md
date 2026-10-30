@@ -37,6 +37,10 @@ Keep each page self-contained: Markdown, GFM, native JSX elements, and inline JS
 
 The layout owns the page title: do not repeat it as an H1 in the body. Preserve explicit heading and block IDs when editing, as existing fragment links depend on them. Raw HTML must be JSX-compatible (`className`, self-closing `<img />`, object-valued `style`, escaped literal braces). Native `<details><summary>…</summary>…</details>` and tables are supported. Keep asset paths under `/content-assets/` initially.
 
+Retained native HTML headings, inline elements, and list items are normalized to avoid extra Markdown paragraph wrappers. Use explicit `<p>` tags for intentionally multi-paragraph HTML list items; ordinary Markdown paragraphs and lists are unchanged.
+
+MDX and historical archives are excluded from automatic Prettier formatting to preserve recovered code samples. EditorConfig also preserves MDX trailing spaces, which can be meaningful in Markdown and fenced code. Avoid reformatting code samples as part of unrelated edits.
+
 The slugs `index`, `404`, and `500` are reserved for the static export and cannot be used for content.
 
 The homepage engineering list, full page index, search/navigation, related reading, routes, and sitemap derive from MDX metadata. `order` controls index order, with slug as the deterministic tie-breaker. Only one `home` is allowed; duplicate IDs, slugs, and conflicting compatibility routes fail validation.

@@ -1,10 +1,12 @@
 import Head from 'next/head'
 import * as React from 'react'
-import * as types from 'lib/types'
 
-// TODO: remove duplication between PageHead and NotionPage Head
+import * as config from 'lib/config'
 
-export const PageHead: React.FC<types.PageProps> = ({ site }) => {
+/** Shared document head for the standalone error routes. */
+export const PageHead: React.FC<{ description?: string }> = ({
+  description = config.description
+}) => {
   return (
     <Head>
       <meta charSet='utf-8' />
@@ -14,10 +16,10 @@ export const PageHead: React.FC<types.PageProps> = ({ site }) => {
         content='width=device-width, initial-scale=1, shrink-to-fit=no'
       />
 
-      {site?.description && (
+      {description && (
         <>
-          <meta name='description' content={site.description} />
-          <meta property='og:description' content={site.description} />
+          <meta name='description' content={description} />
+          <meta property='og:description' content={description} />
         </>
       )}
 

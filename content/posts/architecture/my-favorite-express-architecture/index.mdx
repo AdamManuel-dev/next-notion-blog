@@ -525,9 +525,9 @@ export const validateRequest = (validatorArray: ValidationChain[]) => [
   (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({
+      return res.status(400).json({ 
         error: 'Validation failed',
-        details: errors.array()
+        details: errors.array() 
       });
     }
     next();
@@ -599,7 +599,7 @@ import { DI } from '../../DI';
 
 export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   const isDevelopment = process.env.NODE_ENV === 'development';
-
+  
   DI.logger.error('Error occurred:', {
     message: err.message,
     stack: err.stack,
@@ -756,7 +756,7 @@ export class UserController {
   getUserById = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
     const user = await this.userService.getUserById(id);
-
+    
     if (!user) {
       res.status(404).json({ error: 'User not found' });
       return;
@@ -768,7 +768,7 @@ export class UserController {
   getPublicUserProfile = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
     const profile = await this.userService.getPublicProfile(id);
-
+    
     if (!profile) {
       res.status(404).json({ error: 'User not found' });
       return;
@@ -786,7 +786,7 @@ export class UserController {
   updateUser = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const { id } = req.params;
     const updates = req.body;
-
+    
     // Check ownership
     if (req.user?.id !== id) {
       res.status(403).json({ error: 'Access denied' });
@@ -859,7 +859,7 @@ export class UserService {
   async createUser(userData: Partial<User>): Promise<User> {
     const user = new User(userData.username!, userData.email!);
     Object.assign(user, userData);
-
+    
     await DI.em.persistAndFlush(user);
     return user;
   }
@@ -1011,13 +1011,13 @@ interface AuthorizedRequest extends Request {
 export const checkAccess = (resource: string, action: string) => {
   return (req: AuthorizedRequest, res: Response, next: NextFunction) => {
     const user = req.user;
-
+    
     if (!user) {
       return res.status(401).json({ error: 'Authentication required' });
     }
 
     const userRoles = user.roles || [{ role: 'user', group: 'global' }];
-
+    
     const hasPermission = userRoles.some(userRole => {
       const permission = ac.can(userRole.role)[action](resource);
       return permission.granted;
@@ -1330,17 +1330,17 @@ import { RequestContext } from '@mikro-orm/core';
 import { config } from './config';
 import { DI } from './DI';
 import { initializeServices } from './services';
-import {
-  errorHandler,
-  authMiddleware,
-  routeNotFoundHandler
+import { 
+  errorHandler, 
+  authMiddleware, 
+  routeNotFoundHandler 
 } from './shared/middleware';
 
 // Import routes
-import {
-  UserRouter,
-  PublicUserRouter,
-  ProductRouter
+import { 
+  UserRouter, 
+  PublicUserRouter, 
+  ProductRouter 
 } from './routes';
 
 export const createApp = () => {

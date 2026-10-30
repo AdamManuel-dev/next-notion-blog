@@ -1,5 +1,18 @@
-/* Shared, contrast-tested colors for reading and interactive surfaces. */
+/* Shared, contrast-tested colors for reading and interactive surfaces.
+ *
+ * The `--notion-font`, `--fg-color-0`, `--fg-color-1` and dark `--bg-color-1`
+ * declarations were carried over verbatim from `react-notion-x/src/styles.css`
+ * when that vendor stylesheet was dropped. They are still read by owned chrome
+ * (LocalPage shell font, whimsy's `.article-end` hairline,
+ * `.blog-search-trigger:hover`, `components/styles.module.css`), so the values
+ * must not drift. */
 :root {
+  --notion-font:
+    ui-sans-serif, system-ui, apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Helvetica, 'Apple Color Emoji', Arial, sans-serif, 'Segoe UI Emoji',
+    'Segoe UI Symbol';
+  --fg-color-0: rgba(55, 53, 47, 0.09);
+  --fg-color-1: rgba(55, 53, 47, 0.16);
   --blog-text: #242c27;
   --blog-muted: #526052;
   --blog-surface: #fbfcf8;
@@ -31,6 +44,10 @@
 }
 .dark-mode {
   color-scheme: dark;
+  /* Carried over verbatim from react-notion-x's `.dark-mode` block. */
+  --fg-color-0: var(--fg-color);
+  --fg-color-1: var(--fg-color);
+  --bg-color-1: rgb(63, 68, 71);
   --blog-text: #eef3eb;
   --blog-muted: #c2cdbb;
   --blog-surface: #2f3437;

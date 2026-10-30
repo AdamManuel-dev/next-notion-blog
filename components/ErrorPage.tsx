@@ -1,5 +1,6 @@
 import React from 'react'
 import Head from 'next/head'
+import { name as siteName } from 'lib/config'
 import { PageHead } from './PageHead'
 
 import styles from './styles.module.css'
@@ -12,7 +13,7 @@ export const ErrorPage: React.FC<{ statusCode: number }> = ({ statusCode }) => {
       <PageHead />
 
       <Head>
-        <meta property='og:site_name' content={title} />
+        <meta property='og:site_name' content={siteName} />
         <meta property='og:title' content={title} />
 
         <title>{title}</title>

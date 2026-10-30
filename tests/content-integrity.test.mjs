@@ -38,6 +38,12 @@ test('current MDX content has working internal routes, fragments and local asset
       targets.get(page.slug).add('engineering-articles').add('all-pages')
   }
   for (const page of compiled) {
+    // Inspect raw markup before the HTML parser repairs invalid nesting.
+    assert.doesNotMatch(
+      page.html,
+      /<(?:p|h[1-6]|em|strong|span|code)\b[^>]*>\s*<p\b/i,
+      `${page.slug}: nested paragraphs`
+    )
     const $ = load(page.html)
     assert.equal($('script, iframe, object, embed, style').length, 0, page.slug)
     for (const element of $('a[href]').toArray()) {

@@ -1,10 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 /**
  * Sick Graphics 🛹
  */
 export function bootstrap() {
-  console.clear()
   console.log(`
 
 =====================================================
@@ -63,22 +60,4 @@ know why you were looking this closely at my blog 😉
 
 
 `)
-  // Disable logger to keep this graphic at the top of the console.log
-  if (process.env.NODE_ENV === 'production') {
-    console.log = (...__) => {
-      /** noop */
-    }
-    console.error = (...__) => {
-      /** noop */
-    }
-    console.info = (...__) => {
-      /** noop */
-    }
-    console.warn = (...__) => {
-      /** noop */
-    }
-    console.debug = (...__) => {
-      /** noop */
-    }
-  }
 }

@@ -3,6 +3,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { test } from 'node:test'
+import { load } from 'cheerio'
 
 import {
   getLocalPage,
@@ -47,6 +48,111 @@ const home = (fields = {}) =>
     order: 0,
     ...fields
   })
+
+test('multiline retained HTML paragraphs render without nested or empty paragraphs', async () => {
+  const { root } = makeContent({
+    '': home(),
+    note: page(
+      { slug: 'retained-paragraph' },
+      [
+        '',
+        'First outside.',
+        '',
+        'Second outside.',
+        '',
+        '<details open>',
+        '<summary>More</summary>',
+        '<section id="description">',
+        '<p>',
+        'A **bold** value',
+        'with `inline` code.',
+        '</p>',
+        '</section>',
+        '</details>'
+      ].join('\n')
+    )
+  })
+  try {
+    const rendered = await getLocalPage('retained-paragraph', { root })
+    assert.doesNotMatch(rendered.html, /<p>\s*<p\b/)
+    const $ = load(rendered.html)
+    assert.equal($('p').length, 3, 'ordinary Markdown paragraphs remain intact')
+    assert.equal($('p:empty').length, 0)
+    assert.equal($('#description p').length, 1)
+    assert.equal($('#description strong').text(), 'bold')
+    assert.equal($('#description code').text(), 'inline')
+    assert.equal(
+      $('#description').text().replace(/\s+/g, ' ').trim(),
+      'A bold value with inline code.'
+    )
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true })
+  }
+})
+
+test('retained HTML lists stay tight without changing explicit or Markdown paragraphs', async () => {
+  const { root } = makeContent({
+    '': home(),
+    note: page(
+      { slug: 'retained-list' },
+      [
+        '',
+        '<ul id="retained-list">',
+        '<li>',
+        'A **bold** item.',
+        '</li>',
+        '<li>',
+        '<p>Explicit paragraph</p>',
+        '<ul><li>',
+        'Nested `inline` item.',
+        '</li></ul>',
+        '</li>',
+        '</ul>',
+        '',
+        '- First loose item.',
+        '',
+        '- Second loose item.'
+      ].join('\n')
+    )
+  })
+  try {
+    const rendered = await getLocalPage('retained-list', { root })
+    const $ = load(rendered.html)
+    assert.equal($('#retained-list > li').first().find('p').length, 0)
+    assert.equal($('#retained-list strong').text(), 'bold')
+    assert.equal($('#retained-list ul li p').length, 0)
+    assert.equal($('#retained-list code').text(), 'inline')
+    assert.equal($('#retained-list > li > p').text(), 'Explicit paragraph')
+    assert.equal($('body > ul').last().find('li > p').length, 2)
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true })
+  }
+})
+
+test('formatted native headings and inline HTML keep phrasing children', async () => {
+  for (const host of ['h2', 'a', 'em', 'strong', 'span', 'code']) {
+    const { root } = makeContent({
+      '': home(),
+      note: page(
+        { slug: 'phrasing-host' },
+        `<${host} id="phrasing">\nOne **bold** value\non two lines.\n</${host}>`
+      )
+    })
+    try {
+      const rendered = await getLocalPage('phrasing-host', { root })
+      const $ = load(rendered.html)
+      assert.equal($('#phrasing p').length, 0, host)
+      assert.equal($('#phrasing strong').text(), 'bold', host)
+      assert.equal(
+        $('#phrasing').text().replace(/\s+/g, ' ').trim(),
+        'One bold value on two lines.',
+        host
+      )
+    } finally {
+      fs.rmSync(root, { recursive: true, force: true })
+    }
+  }
+})
 
 test('non-finite cover positions fail validation before props serialization', () => {
   for (const value of ['.nan', '.inf', '-.inf']) {

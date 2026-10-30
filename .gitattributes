@@ -1,0 +1,2 @@
+# MDX retains Markdown hard breaks and original code-sample whitespace.
+content/**/*.mdx whitespace=-blank-at-eol

@@ -1,19 +1,21 @@
 import Head from 'next/head'
+import Link from 'next/link'
 import * as React from 'react'
-import * as types from 'lib/types'
+
+import * as config from 'lib/config'
 import { PageHead } from './PageHead'
 
 import styles from './styles.module.css'
 
-export const Page404: React.FC<types.PageProps> = ({ site, pageId, error }) => {
-  const title = site?.name || 'Notion Page Not Found'
+export const Page404: React.FC = () => {
+  const title = 'Page Not Found'
 
   return (
     <>
-      <PageHead site={site} />
+      <PageHead />
 
       <Head>
-        <meta property='og:site_name' content={title} />
+        <meta property='og:site_name' content={config.name} />
         <meta property='og:title' content={title} />
 
         <title>{title}</title>
@@ -21,17 +23,12 @@ export const Page404: React.FC<types.PageProps> = ({ site, pageId, error }) => {
 
       <div className={styles.container}>
         <main className={styles.main}>
-          <h1>Notion Page Not Found</h1>
+          <h1>{title}</h1>
 
-          {error ? (
-            <p>{error.message}</p>
-          ) : (
-            pageId && (
-              <p>
-                Make sure that Notion page "{pageId}" is publicly accessible.
-              </p>
-            )
-          )}
+          <p>
+            That page doesn’t exist. It may have been renamed or moved.{' '}
+            <Link href='/'>Head back to the blog</Link>.
+          </p>
 
           <img
             src='/404.png'

@@ -1,28 +1,19 @@
-// global styles shared across the entire site
+// Global stylesheets, ordered by increasing specificity of intent. Each later
+// sheet is allowed to win over the ones above it.
+
+// base element styles shared across the entire site
 import 'styles/global.css'
 
-// core styles shared by all of react-notion-x (required)
-import 'react-notion-x/src/styles.css'
-
-// used for code syntax highlighting (optional)
+// used for code syntax highlighting (Prism's Coy theme)
 import 'prismjs/themes/prism-coy.css'
 
-// this might be better for dark mode
-// import 'prismjs/themes/prism-okaidia.css'
-
-// used for collection views selector (optional)
-// TODO: re-add if we enable collection view dropdowns
-// import 'rc-dropdown/assets/index.css'
-
-// used for rendering equations (optional)
-import 'katex/dist/katex.min.css'
-
-// global style overrides for notion
-import 'styles/notion.css'
-
-// global style overrides for prism theme (optional)
+// owned overrides for the Prism theme above
 import 'styles/prism-theme.css'
+
+// playful accents layered on the base
 import 'styles/whimsy.css'
+
+// shared colour tokens, code-block presentation and contrast-tested palette
 import 'styles/theme.css'
 
 // isolated Details.so-inspired interactions (must win over theme.css)
@@ -31,9 +22,10 @@ import 'styles/details.css'
 // scoped chrome for the static local reader (must win over details.css)
 import 'styles/local-reader.css'
 
-// here we're bringing in any languages we want to support for
-// syntax highlighting via Notion's Code block
-import 'prismjs'
+// Importing prismjs registers its DOMContentLoaded `highlightAll()` pass, which
+// is what actually tokenises `<pre><code class="language-*">` fences in the
+// browser. The language imports below declare the grammars we support.
+import Prism from 'prismjs'
 import 'prismjs/components/prism-markup'
 import 'prismjs/components/prism-javascript'
 import 'prismjs/components/prism-typescript'
@@ -52,6 +44,12 @@ if (typeof window !== 'undefined') {
 
 export default function App({ Component, pageProps }) {
   const router = useRouter()
+
+  React.useEffect(() => {
+    // DOMContentLoaded only covers hard loads; Next links replace article HTML
+    // without loading a new document, so tokenise the new code blocks too.
+    Prism.highlightAll()
+  }, [router.asPath])
 
   React.useEffect(() => {
     if (fathomId) {

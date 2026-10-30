@@ -2,12 +2,14 @@ import { readFileSync } from 'node:fs'
 import assert from 'node:assert/strict'
 import test from 'node:test'
 
-const base = readFileSync(
-  new URL('../node_modules/react-notion-x/src/styles.css', import.meta.url),
-  'utf8'
-)
+// Every token under test now ships from our own stylesheet; nothing is read
+// out of node_modules, so vendor upgrades can no longer move our palette.
 const theme = readFileSync(
   new URL('../styles/theme.css', import.meta.url),
+  'utf8'
+)
+const localPage = readFileSync(
+  new URL('../components/LocalPage.module.css', import.meta.url),
   'utf8'
 )
 const variables = (css, selector) =>
@@ -16,15 +18,8 @@ const variables = (css, selector) =>
       ([, key, value]) => [key, value.trim()]
     )
   )
-const light = {
-  ...variables(base, /:root\s*\{([^}]+)/),
-  ...variables(theme, /:root\s*\{([^}]+)/)
-}
-const dark = {
-  ...light,
-  ...variables(base, /\.dark-mode\s*\{([^}]+)/),
-  ...variables(theme, /\.dark-mode\s*\{([^}]+)/)
-}
+const light = variables(theme, /:root\s*\{([^}]+)/)
+const dark = { ...light, ...variables(theme, /\.dark-mode\s*\{([^}]+)/) }
 const colors = [
   'red',
   'pink',
@@ -55,17 +50,24 @@ function luminance(rgb) {
     .reduce((sum, c, i) => sum + c * [0.2126, 0.7152, 0.0722][i], 0)
 }
 function check(fg, bg, palette, label, minimum = 4.5) {
-  const a = luminance(rgb(fg, palette)),
-    b = luminance(rgb(bg, palette))
+  const a = luminance(rgb(fg, palette))
+  const b = luminance(rgb(bg, palette))
   const ratio = (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)
   assert.ok(
     ratio >= minimum,
     `${label}: ${ratio.toFixed(2)}:1 is below ${minimum}:1`
   )
 }
+// Code surfaces live with the reader shell, not in the shared palette.
+const codeSurfaces = variables(localPage, /\.page\s*\{([^}]+)/)
+const darkCodeSurfaces = variables(
+  localPage,
+  /:global\(body\.dark-mode\)\s\.page\s*\{([^}]+)/
+)
+
 for (const [name, palette, codeBg] of [
-  ['light', light, '#f2f5ef'],
-  ['dark', dark, '#111827']
+  ['light', light, codeSurfaces['--lp-code-bg']],
+  ['dark', dark, darkCodeSurfaces['--lp-code-bg']]
 ]) {
   test(`${name} text, syntax, highlights and focus colors meet contrast targets`, () => {
     for (const fg of [
@@ -73,9 +75,12 @@ for (const [name, palette, codeBg] of [
       '--blog-muted',
       ...colors.map((c) => `--notion-${c}`)
     ]) {
+      // Every surface the site actually paints behind body copy and accents.
       for (const bg of [
         '--bg-color',
-        ...colors.map((c) => `--notion-${c}_background`)
+        '--bg-color-1',
+        '--blog-surface',
+        '--blog-panel'
       ]) {
         check(palette[fg], palette[bg], palette, `${fg} on ${bg}`)
       }
@@ -104,6 +109,20 @@ for (const [name, palette, codeBg] of [
     }
   })
 }
+// Chrome that used to inherit these from react-notion-x's stylesheet still
+// reads them (`.article-end`, `.blog-search-trigger:hover`, the LocalPage shell
+// font, module hairlines). Pin the carried values so dropping the vendor sheet
+// stays a no-op visually.
+test('tokens carried over from the removed vendor stylesheet keep their values', () => {
+  assert.equal(light['--fg-color-0'], 'rgba(55, 53, 47, 0.09)')
+  assert.equal(light['--fg-color-1'], 'rgba(55, 53, 47, 0.16)')
+  assert.equal(dark['--fg-color-0'], 'var(--fg-color)')
+  assert.equal(dark['--fg-color-1'], 'var(--fg-color)')
+  assert.equal(dark['--bg-color-1'], 'rgb(63, 68, 71)')
+  assert.match(light['--notion-font'], /^ui-sans-serif,\s+system-ui,/)
+  assert.match(light['--notion-font'], /'Segoe UI Symbol'$/)
+})
+
 // Bound the glass background over black/white so contrast does not depend on the article behind it.
 test('glass search text remains readable over either backdrop extreme', () => {
   for (const [foreground, background, alpha] of [

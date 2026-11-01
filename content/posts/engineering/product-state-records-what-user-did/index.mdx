@@ -28,7 +28,7 @@ described that design; it did not establish that the later feature was implement
 
 That small distinction is a useful starting point for designing trustworthy product state.
 
-<h2 id="begin-with-the-sentence-behind-the-label">Begin with the sentence behind the label</h2>
+## Begin with the sentence behind the label {#begin-with-the-sentence-behind-the-label}
 
 Before choosing database columns, write what each state means in ordinary language.
 "Saved" might mean the user wants to return to this opportunity. "Archived" might mean
@@ -45,7 +45,7 @@ screens and background jobs depend on conflicting assumptions.
 A state name is a compact promise. Its definition should explain what the application
 knows, how it learned that fact, and what the user can reasonably do next.
 
-<h2 id="choose-one-state-or-several-independent-facts">Choose one state or several independent facts</h2>
+## Choose one state or several independent facts {#choose-one-state-or-several-independent-facts}
 
 Saved, applied, and archived can be modeled as mutually exclusive states. That means
 an item belongs to only one of these categories at a time. This can make lists and
@@ -67,7 +67,7 @@ Consider these questions before deciding:
 An event such as "application reported on Tuesday" can remain in history even after the
 current item moves to archived. History and current state answer different questions.
 
-<h2 id="do-not-confuse-a-user-report-with-external-proof">Do not confuse a user report with external proof</h2>
+## Do not confuse a user report with external proof {#do-not-confuse-a-user-report-with-external-proof}
 
 If someone marks a job applied, the application can truthfully say that they recorded
 an application. It cannot infer that an employer received it successfully.
@@ -84,7 +84,7 @@ Clear copy helps too. "Mark as applied" describes an action the product actually
 "Apply now" could imply that the button submits something. A few words can change the
 user's understanding of the entire feature.
 
-<h2 id="old-buttons-remain-part-of-the-system">Old buttons remain part of the system</h2>
+## Old buttons remain part of the system {#old-buttons-remain-part-of-the-system}
 
 Many products place controls in emails, chat messages, or notifications. Those controls
 can remain visible long after the underlying record changes.
@@ -101,7 +101,7 @@ The right response to a stale action depends on the operation. Repeating "save" 
 the item is already saved may be harmless. Resurrecting an archived item without a
 clear user choice may be surprising. Define the behavior instead of guessing at runtime.
 
-<h2 id="check-ownership-where-the-change-happens">Check ownership where the change happens</h2>
+## Check ownership where the change happens {#check-ownership-where-the-change-happens}
 
 Hiding another person's button is not enough to protect their data. The server should
 verify that the requesting person can change the specific record before applying the
@@ -115,7 +115,7 @@ These checks are ordinary correctness work. They prevent accidental cross-accoun
 changes as well as deliberate misuse. They also make it easier to reason about shared
 devices, forwarded messages, and old links.
 
-<h2 id="saving-data-and-updating-a-message-are-separate-steps">Saving data and updating a message are separate steps</h2>
+## Saving data and updating a message are separate steps {#saving-data-and-updating-a-message-are-separate-steps}
 
 Suppose the database accepts a change to applied, but the attempt to edit the chat card
 fails. The interface still shows Save. Did the operation succeed?
@@ -131,7 +131,7 @@ The instruction should include the relevant revision. Otherwise, a delayed updat
 an older change may overwrite a newer card and make the screen move backward in time.
 The display should converge on the current record, not on whichever request finishes last.
 
-<h2 id="make-recovery-understandable-to-the-user">Make recovery understandable to the user</h2>
+## Make recovery understandable to the user {#make-recovery-understandable-to-the-user}
 
 Technical consistency is valuable because it supports a clearer experience. If a display
 update is delayed, an acknowledgment can explain that the choice was saved. Refreshing
@@ -145,7 +145,7 @@ For user-recorded states, preserving a small history can make support and correc
 easier. That does not mean keeping every detail forever. Retention should match the
 product's actual recovery and accountability needs.
 
-<h2 id="test-disagreements-between-screens">Test disagreements between screens</h2>
+## Test disagreements between screens {#test-disagreements-between-screens}
 
 The interesting tests go beyond clicking each button once. Try opening two views of
 the same record, changing it in one view, and acting from the other. Try retrying the
@@ -159,7 +159,7 @@ Also test list boundaries. If an item moves out of a paginated saved list, the n
 should not silently skip or duplicate items because the collection changed underneath it.
 The navigation policy may be simple, but it should be deliberate.
 
-<h2 id="state-design-is-product-design">State design is product design</h2>
+## State design is product design {#state-design-is-product-design}
 
 A few labels can carry decisions about ownership, evidence, history, retries, and user
 expectations. Treating them as colored badges postpones those decisions; it does not
@@ -170,12 +170,12 @@ buttons, and recovery behavior can then express the same meaning. That agreement
 what makes a product feel dependable even when people use it from different places
 and the network does not cooperate.
 
-<h2 id="technical-deep-dive">Technical deep dive</h2>
+## Technical deep dive {#technical-deep-dive}
 
 **Plain-language bridge:** A click requests a change to a record. It should not replace
 newer information just because an old screen still contains the button.
 
-<h3 id="diagram-reject-stale-writes-and-catch-the-display-up">Diagram: Reject stale writes and catch the display up</h3>
+### Diagram: Reject stale writes and catch the display up {#diagram-reject-stale-writes-and-catch-the-display-up}
 
 ```text
 [old button: expected revision 8]
@@ -197,7 +197,7 @@ This is an illustrative optimistic-concurrency path. The stored state can be cor
 while a chat card is behind; display recovery must not replay an obsolete state.
 
 
-<h3 id="make-transitions-explicit">Make transitions explicit</h3>
+### Make transitions explicit {#make-transitions-explicit}
 
 An illustrative transition accepts actor identity, item ID, desired state, expected
 revision, and a request ID. Validate ownership and the allowed transition before writing.
@@ -219,7 +219,7 @@ A revision protects against lost updates. It does not identify a repeated reques
 A stored request ID, scoped to the owner and operation, can return the prior outcome
 when the same request is delivered twice.
 
-<h3 id="preserve-the-source-of-the-state-claim">Preserve the source of the state claim</h3>
+### Preserve the source of the state claim {#preserve-the-source-of-the-state-claim}
 
 Store "user marked applied" as an event or attributable fact, rather than inventing
 an external submission acknowledgment. If a later integration supplies confirmation,
@@ -229,7 +229,7 @@ A current state can be a projection of those facts, but the product must define 
 facts affect the projection. Archiving an item should not erase a historical application
 report unless that is an explicit data-retention choice.
 
-<h3 id="keep-external-displays-revision-aware">Keep external displays revision-aware</h3>
+### Keep external displays revision-aware {#keep-external-displays-revision-aware}
 
 Commit the transition and a display-update outbox entry together. The sender then needs
 an ordering policy for each external message. Merely putting a revision in the outbox
@@ -240,7 +240,7 @@ processing pending updates. After a timeout, reconcile or resend current state a
 to the provider's capabilities. Retrying an old captured payload can move the display
 backward even though the database is correct.
 
-<h3 id="exercise-the-conflict-matrix">Exercise the conflict matrix</h3>
+### Exercise the conflict matrix {#exercise-the-conflict-matrix}
 
 Test two different requested transitions from the same revision, a duplicate request
 ID, and an old button after a successful newer transition. Include a database commit

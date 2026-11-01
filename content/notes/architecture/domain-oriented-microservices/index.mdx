@@ -30,11 +30,11 @@ coverPosition: null
 
 <a id="2dfb662563344a71876d503c237aeb84"></a>
 
-<figure><img src="/content-assets/0a9b32ab8c5332523f41.png" alt="" loading="lazy" /></figure>
+![](/content-assets/0a9b32ab8c5332523f41.png)
 
 <a id="48190cd33fa849a9be2d349f6695a96e"></a>
 
-<h2 id="local-heading-1">What is a Microservice?</h2>
+## What is a Microservice? {#local-heading-1}
 
 <a id="659e07fb314543ee9f59eef33087b6f7"></a>
 
@@ -54,7 +54,7 @@ In other words, organizations adopt microservices for an *operational* benefit a
 
 <a id="fbcefe4004274adcbda138bb8b6a9f82"></a>
 
-<h2 id="local-heading-2">Motivations</h2>
+## Motivations {#local-heading-2}
 
 <a id="50db0c791b854057a11c47002b26267c"></a>
 
@@ -130,7 +130,7 @@ The result is a slower developer experience, instability for service owners, mor
 
 <a id="3449a56f1eeb45dfae6e2380ca9e6804"></a>
 
-<h2 id="local-heading-3">Domain-Oriented Microservice Architecture</h2>
+## Domain-Oriented Microservice Architecture {#local-heading-3}
 
 <a id="5671ad25ace34d519c2be99b2a77d0a2"></a>
 
@@ -170,11 +170,11 @@ The rest of this post digs into Uber’s implementation of DOMA, the benefits we
 
 <a id="d51d8f10187a4030b76c719b0c07cfed"></a>
 
-<h2 id="local-heading-4">Uber’s Implementation</h2>
+## Uber’s Implementation {#local-heading-4}
 
 <a id="1a913ac6e1324062bdf43df2f9da2272"></a>
 
-<h3 id="local-heading-5">Domains</h3>
+### Domains {#local-heading-5}
 
 <a id="fe1d098f117f44ffacba7fd29b0580fc"></a>
 
@@ -182,7 +182,7 @@ Uber domains represent a collection of one or more microservices tied to a logic
 
 <a id="3e0333f505584651a038a986fb6527d1"></a>
 
-<h3 id="local-heading-6">Layer Design</h3>
+### Layer Design {#local-heading-6}
 
 <a id="ed217519aa6a45c5957de20ada9d6e41"></a>
 
@@ -230,7 +230,7 @@ As you can see, each subsequent layer represents an increasingly specific groupi
 
 <a id="8407cce26530436f8b3029615c6c9236"></a>
 
-<h3 id="local-heading-7">Gateways</h3>
+### Gateways {#local-heading-7}
 
 <a id="a49f8f20da014b0aafa9b85384139a52"></a>
 
@@ -242,7 +242,7 @@ Since upstream consumers only operate on a single service, gateways provide nume
 
 <a id="7928cdffbb0a43bb8bc03dc7a9b9b35e"></a>
 
-<h3 id="local-heading-8">Extensions</h3>
+### Extensions {#local-heading-8}
 
 <a id="22761da432394305b96fd0d5a1deb9ee"></a>
 
@@ -250,7 +250,7 @@ Extensions represent a mechanism to *extend* domains. The basic definition of an
 
 <a id="af0438d222084beebc8ca9ec755f3744"></a>
 
-<h4 id="local-heading-9">Logic Extensions</h4>
+#### Logic Extensions {#local-heading-9}
 
 <a id="06fa8c5bc1414167879f7a4fa799b9a8"></a>
 
@@ -270,7 +270,7 @@ This decouples the core code from each extension, and provides isolation between
 
 <a id="6accfa8d7a954bf9b03ba3d8830bd547"></a>
 
-<h4 id="local-heading-10">Data Extensions</h4>
+#### Data Extensions {#local-heading-10}
 
 <a id="b31c25a3b1854e7387746c76dcf1a620"></a>
 
@@ -278,7 +278,7 @@ Data extensions provide a mechanism for attaching arbitrary data to an interface
 
 <a id="ed1536c873e442cd8e94fb38d445476f"></a>
 
-<h4 id="local-heading-11">Custom</h4>
+#### Custom {#local-heading-11}
 
 <a id="1ed07f23883246f1a1baa127c7833019"></a>
 
@@ -286,7 +286,7 @@ Outside of logic and data extensions, many teams at Uber have introduced their o
 
 <a id="3ab4c1c10e374b2895395fa7a423140f"></a>
 
-<h2 id="local-heading-12">Benefits</h2>
+## Benefits {#local-heading-12}
 
 <a id="aea2d44f83da468eb5d3a61a52f0dc9a"></a>
 
@@ -298,7 +298,7 @@ DOMA is still young at Uber, and we are excited to share more data and in-depth 
 
 <a id="0b59e9513a6b43c590fea0b42a097302"></a>
 
-<h3 id="local-heading-13">Products &amp; Platforms</h3>
+### Products &amp; Platforms {#local-heading-13}
 
 <a id="7193ed2dd75b4c928ca7b82048598041"></a>
 
@@ -306,7 +306,7 @@ DOMA was the result of a consensus effort across product and platform teams at U
 
 <a id="d925ac3f1edd4a829a147ca4e9c86b6e"></a>
 
-<h3 id="local-heading-14">Reduced Complexity</h3>
+### Reduced Complexity {#local-heading-14}
 
 <a id="3703842aa0264444af3fc6ccf7d76b7e"></a>
 
@@ -314,7 +314,7 @@ Previously product teams would have to call numerous downstream services to leve
 
 <a id="ed89dc48048b4d7f8386ad318b9fd80a"></a>
 
-<h3 id="local-heading-15">Future Migrations</h3>
+### Future Migrations {#local-heading-15}
 
 <a id="d3d988cff21b4595b81c2e11062eff50"></a>
 
@@ -326,7 +326,7 @@ Two of Uber’s largest platform rewrites in the last year happened behind gatew
 
 <a id="01b93c7f9b6c40ab96501ac47d98b9d1"></a>
 
-<h3 id="local-heading-16">New Lines of Business &amp; Products</h3>
+### New Lines of Business &amp; Products {#local-heading-16}
 
 <a id="1221db53381f445fa354f3b8b5756fcb"></a>
 
@@ -334,7 +334,7 @@ Platforms designed using DOMA have proven to be much more extensible and easier 
 
 <a id="7d77a94bf38342a687c95fcf763c5cd1"></a>
 
-<h2 id="local-heading-17">Practical Advice</h2>
+## Practical Advice {#local-heading-17}
 
 <a id="381a7bd608634a8d945cf24cff3d9177"></a>
 
@@ -346,7 +346,7 @@ As a result, we think of evolving a microservice architecture more like “trimm
 
 <a id="4a76d9ef289b41a886c445ab9c433800"></a>
 
-<h3 id="local-heading-18">Startups</h3>
+### Startups {#local-heading-18}
 
 <a id="5c67adc8239948618e25f8f45ecdf1e8"></a>
 
@@ -362,7 +362,7 @@ With this in mind, it isn’t unreasonable to hold off on microservices altogeth
 
 <a id="042db4e6a58d4ac985115d066509281b"></a>
 
-<h3 id="local-heading-19">Midsize</h3>
+### Midsize {#local-heading-19}
 
 <a id="1f90005f3fed435c87b95e35689f90dc"></a>
 
@@ -382,7 +382,7 @@ Given that the number of microservices is likely still quite low, it may not mak
 
 <a id="5186092a501443ed8489408c35b9fffc"></a>
 
-<h3 id="local-heading-20">Large</h3>
+### Large {#local-heading-20}
 
 <a id="ba95059404604cbb818f4a072d29b319"></a>
 

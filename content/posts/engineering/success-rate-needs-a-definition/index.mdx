@@ -23,7 +23,7 @@ rate of unknown errors. That is a different question from how many jobs actually
 The review described the code at that time; this article does not claim the dashboard
 still behaves that way today.
 
-<h2 id="no-unknown-error-does-not-mean-success">No unknown error does not mean success</h2>
+## No unknown error does not mean success {#no-unknown-error-does-not-mean-success}
 
 Imagine ten jobs:
 
@@ -40,7 +40,7 @@ The percentage without an unknown error is 90%.
 Both numbers can be useful, but putting "Success rate" above the second one creates
 a misleading impression. A known failure remains a failure to deliver the requested result.
 
-<h2 id="averaging-percentages-adds-another-choice">Averaging percentages adds another choice</h2>
+## Averaging percentages adds another choice {#averaging-percentages-adds-another-choice}
 
 Suppose one workflow succeeds once out of one run. Another succeeds 50 times out of
 100 runs.
@@ -52,7 +52,7 @@ The overall successful-run percentage is about 50.5%: 51 successful runs out of 
 The first calculation gives each workflow equal weight. The second gives each run
 equal weight. Choose based on the question, then name it accurately.
 
-<h2 id="put-the-definition-beside-the-number">Put the definition beside the number</h2>
+## Put the definition beside the number {#put-the-definition-beside-the-number}
 
 A metric needs more than a formula. It needs a scope:
 
@@ -64,7 +64,7 @@ A metric needs more than a formula. It needs a scope:
 
 Without those rules, two engineers can produce different correct-looking answers.
 
-<h2 id="define-the-unit-before-the-percentage">Define the unit before the percentage</h2>
+## Define the unit before the percentage {#define-the-unit-before-the-percentage}
 
 Suppose a person asks the system to process one document. The system tries three times,
 with two failures followed by a successful result. How many things happened?
@@ -80,7 +80,7 @@ Before building the dashboard, write a sentence beginning, "One item in this cal
 means..." If the team cannot finish that sentence consistently, the percentage is not
 ready to be trusted.
 
-<h2 id="waiting-work-can-vanish-from-the-story">Waiting work can vanish from the story</h2>
+## Waiting work can vanish from the story {#waiting-work-can-vanish-from-the-story}
 
 Imagine 100 requests. Ten have finished successfully, and 90 have been stuck all afternoon.
 If the denominator includes only finished requests, the success rate is 100%.
@@ -95,7 +95,7 @@ For time-bounded completion, define a window: for example, what fraction of elig
 requests finished within an agreed period? The appropriate period depends on the product.
 The key is to make the deadline and the treatment of unfinished work explicit.
 
-<h2 id="a-day-has-a-time-zone">A day has a time zone</h2>
+## A day has a time zone {#a-day-has-a-time-zone}
 
 A run near midnight may belong to different dates for the customer and the server.
 If one card uses the customer's local day and another uses UTC, their counts can disagree
@@ -110,7 +110,7 @@ completed work. Both views are useful. Giving them the same label invites confus
 Small examples around midnight are excellent tests because they force these choices
 into the open before production data makes the disagreement hard to trace.
 
-<h2 id="stale-data-should-look-stale">Stale data should look stale</h2>
+## Stale data should look stale {#stale-data-should-look-stale}
 
 Sometimes the math is correct but the inputs are old. A dashboard may keep showing the
 last successful fetch while a new request fails in the background.
@@ -123,7 +123,7 @@ Likewise, a missing response should not automatically become zero incidents or 1
 success. Unknown and zero mean different things. The interface should preserve that
 difference even when an empty card is less visually pleasing.
 
-<h2 id="build-a-tiny-truth-table">Build a tiny truth table</h2>
+## Build a tiny truth table {#build-a-tiny-truth-table}
 
 Before connecting the full system, create a hand-countable dataset. Include one success,
 one known failure, one unknown failure, one running request, and one retry of an earlier
@@ -139,7 +139,7 @@ percentage and deciding whether it feels plausible.
 Keep these examples as tests so a later change to the data source cannot quietly change
 what the metric means.
 
-<h2 id="make-changes-to-definitions-visible">Make changes to definitions visible</h2>
+## Make changes to definitions visible {#make-changes-to-definitions-visible}
 
 Suppose the team fixes the success metric to count completed requests instead of the
 absence of unknown errors. The displayed percentage may drop sharply even though the
@@ -152,7 +152,7 @@ that implies an apples-to-apples comparison.
 A measurement change can be a product improvement precisely because it is less reassuring.
 The purpose is to help people understand the service, not preserve an attractive number.
 
-<h2 id="connect-the-metric-to-a-decision">Connect the metric to a decision</h2>
+## Connect the metric to a decision {#connect-the-metric-to-a-decision}
 
 Every important card should help someone decide what to do. A growing oldest-job age
 may mean a worker needs attention. A rise in unknown failures may mean the team needs
@@ -166,7 +166,7 @@ Show the sample count near the percentage when space allows. A perfect rate from
 run carries very different evidence from the same rate across many varied runs.
 Readers should not have to guess how much activity sits behind the number.
 
-<h2 id="show-the-parts-when-they-help">Show the parts when they help</h2>
+## Show the parts when they help {#show-the-parts-when-they-help}
 
 Completed, failed, running, and waiting counts often explain more than one percentage.
 An empty sample should say there is no data rather than imply perfect performance.
@@ -177,12 +177,12 @@ That gives everyone a result they can verify without understanding the whole app
 A trustworthy dashboard makes its claims easy to inspect. The name of a metric is
 part of its behavior, not just decoration above a number.
 
-<h2 id="technical-deep-dive">Technical deep dive</h2>
+## Technical deep dive {#technical-deep-dive}
 
 **Plain-language bridge:** A percentage becomes trustworthy when another person can
 reconstruct which records entered its numerator and denominator.
 
-<h3 id="diagram-one-cohort-can-support-two-different-rates">Diagram: One cohort can support two different rates</h3>
+### Diagram: One cohort can support two different rates {#diagram-one-cohort-can-support-two-different-rates}
 
 ```text
                     [100 accepted requests]
@@ -201,7 +201,7 @@ The numbers are hypothetical. The pending group explains why the rates differ;
 neither percentage should appear without its definition.
 
 
-<h3 id="define-the-cohort-and-terminal-states">Define the cohort and terminal states</h3>
+### Define the cohort and terminal states {#define-the-cohort-and-terminal-states}
 
 An illustrative definition might be "requests accepted during a chosen day that
 eventually completed successfully." This groups by acceptance time, not completion
@@ -227,7 +227,7 @@ If all 20 pending requests later succeed, eventual cohort success becomes 80 per
 Until resolution, a range of 60-80 percent describes the possible final fraction under
 these simplified assumptions.
 
-<h3 id="aggregate-counts-before-dividing">Aggregate counts before dividing</h3>
+### Aggregate counts before dividing {#aggregate-counts-before-dividing}
 
 Suppose one worker succeeds on 9 of 10 requests and another on 1 of 100. Averaging their
 rates gives 45.5 percent. Pooling the counts gives 10 / 110, about 9.1 percent.
@@ -237,7 +237,7 @@ a worker-level question that gives both workers equal weight.
 Store or retain access to numerator and denominator counts. A precomputed percentage
 without its population cannot be safely recombined into a larger period.
 
-<h3 id="make-late-updates-reproducible">Make late updates reproducible</h3>
+### Make late updates reproducible {#make-late-updates-reproducible}
 
 A cohort may change after a delayed completion or corrected classification. Record an
 as-of time alongside the metric definition version. To reconstruct a historical chart,
@@ -248,7 +248,7 @@ Choose time-zone boundaries before assigning dates. Store actual instants and de
 the reporting interval from an explicit zone. A local day is not always a fixed
 24-hour duration, so blindly adding 86,400 seconds is a different operation.
 
-<h3 id="verify-reconciliation-not-just-the-display">Verify reconciliation, not just the display</h3>
+### Verify reconciliation, not just the display {#verify-reconciliation-not-just-the-display}
 
 For a mutually exclusive state model, assert that succeeded + failed + pending +
 other included states equals accepted requests in the cohort. Then verify sampled IDs

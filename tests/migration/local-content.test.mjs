@@ -21,6 +21,63 @@ const compiled = new Map(
   )
 )
 
+// Compare actual emphasized code characters, not whether emphasis wraps code
+// or sits inside it. Both DOM orders are produced by equivalent Markdown.
+function emphasizedInlineCode($) {
+  return $('code')
+    .filter(
+      (_, element) => $(element).parents('pre,h1,h2,h3,h4,h5,h6').length === 0
+    )
+    .filter(
+      (_, element) =>
+        $(element).find('strong,b,em,i').length ||
+        $(element).parents('strong,b,em,i').length
+    )
+    .map((_, element) => {
+      const runs = []
+      function visit(node, bold, italic) {
+        if (node.type === 'text') {
+          const previous = runs.at(-1)
+          if (previous?.bold === bold && previous?.italic === italic)
+            previous.text += node.data
+          else runs.push({ text: node.data, bold, italic })
+          return
+        }
+        const nextBold = bold || ['strong', 'b'].includes(node.tagName)
+        const nextItalic = italic || ['em', 'i'].includes(node.tagName)
+        for (const child of node.children ?? [])
+          visit(child, nextBold, nextItalic)
+      }
+      visit(
+        element,
+        $(element).parents('strong,b').length > 0,
+        $(element).parents('em,i').length > 0
+      )
+      return { text: $(element).text(), runs }
+    })
+    .get()
+}
+
+test('inline-code emphasis comparison preserves character coverage across Markdown nesting', () => {
+  const fingerprint = (html) => emphasizedInlineCode(load(html))
+  assert.deepEqual(
+    fingerprint('<code><strong>value</strong></code>'),
+    fingerprint('<strong><code>value</code></strong>')
+  )
+  assert.deepEqual(
+    fingerprint('<code><em>value</em></code>'),
+    fingerprint('<em><code>value</code></em>')
+  )
+  assert.notDeepEqual(
+    fingerprint('<code><strong>value</strong></code>'),
+    fingerprint('<code>va<strong>lue</strong></code>')
+  )
+  assert.notDeepEqual(
+    fingerprint('<code><strong>value</strong></code>'),
+    fingerprint('<code>value</code>')
+  )
+})
+
 test('all 82 original pages and stable public identifiers survive migration', async () => {
   assert.ok(pages.length >= 82)
   assert.equal(new Set(pages.map((page) => page.slug)).size, pages.length)
@@ -170,22 +227,12 @@ test('legacy heading targets, block anchors, code, tables and disclosures remain
         `${original.slug}: ${selector} count`
       )
     }
-    // Heading <strong> wrappers intentionally inherit the heading's weight
-    // in the existing CSS; only non-heading inline code emphasis can drift.
-    for (const selector of ['code strong', 'code em']) {
-      const emphasized = ($) =>
-        $(selector)
-          .filter(
-            (_, element) => $(element).parents('h1,h2,h3,h4,h5,h6').length === 0
-          )
-          .map((_, element) => $(element).text())
-          .get()
-      assert.deepEqual(
-        emphasized(after),
-        emphasized(before),
-        `${original.slug}: ${selector}`
-      )
-    }
+    // Heading bold wrappers intentionally inherit the heading's weight.
+    assert.deepEqual(
+      emphasizedInlineCode(after),
+      emphasizedInlineCode(before),
+      `${original.slug}: inline-code text and per-character emphasis`
+    )
     const codes = ($) =>
       $('pre')
         .map((_, element) => $(element).text().replace(/\n$/, ''))

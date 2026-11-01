@@ -26,7 +26,7 @@ The later design proposed one logical digest per UTC hour, bounded results, and 
 for late arrivals. That proposal is the source of this article. It is not evidence that
 the complete redesign shipped or that duplicate notifications disappeared in production.
 
-<h2 id='a-timer-tells-you-when-to-look'>A timer tells you when to look</h2>
+## A timer tells you when to look {#a-timer-tells-you-when-to-look}
 
 Imagine a teacher sending a weekly class update. A calendar reminder tells the teacher
 when to write it. It does not prevent someone else from sending a second update for the
@@ -42,7 +42,7 @@ work. Both can be operating exactly as written while breaking the user's expecta
 
 The first design question is therefore a product question: what counts as one update?
 
-<h2 id='give-the-period-a-stable-name'>Give the period a stable name</h2>
+## Give the period a stable name {#give-the-period-a-stable-name}
 
 A useful identity might combine the recipient, the digest type, and the hour it covers.
 For example, a particular user's job summary for the hour beginning at 14:00 UTC is one
@@ -61,9 +61,7 @@ will display exactly one message. That boundary needs its own delivery reasoning
 
 Keeping these two problems separate makes the system easier to explain and test.
 
-<h2 id='decide-what-happens-to-late-results'>
-  Decide what happens to late results
-</h2>
+## Decide what happens to late results {#decide-what-happens-to-late-results}
 
 Suppose a digest closes at 14:00. One analysis finishes at 14:01, although the underlying
 item was discovered earlier. Should the system reopen the previous digest?
@@ -80,9 +78,7 @@ That policy trades a little delay for predictable delivery. An urgent alert prod
 choose a different tradeoff. The important part is choosing deliberately rather than
 letting the timing of background calculations make the decision accidentally.
 
-<h2 id='selection-is-different-from-consumption'>
-  Selection is different from consumption
-</h2>
+## Selection is different from consumption {#selection-is-different-from-consumption}
 
 The job-matching plan also proposed a strict limit on the number of selected jobs.
 A bounded digest respects attention, but it creates another question: what happens to
@@ -100,9 +96,7 @@ Once preparation begins, saving the chosen set also makes retries more predictab
 A delivery retry should not quietly become a different digest because the ranking
 changed while the messaging provider was unavailable.
 
-<h2 id='a-failed-send-and-an-uncertain-send-differ'>
-  A failed send and an uncertain send differ
-</h2>
+## A failed send and an uncertain send differ {#a-failed-send-and-an-uncertain-send-differ}
 
 Some delivery failures are clear. A provider may reject a request before accepting it.
 Other failures leave uncertainty. The application may time out after the provider has
@@ -119,7 +113,7 @@ provider offers. Some products may choose an explicit manual recovery path.
 The historical plan treated ambiguous sends cautiously. The transferable lesson is
 to represent uncertainty honestly instead of converting every timeout into "not sent."
 
-<h2 id='separate-different-promises'>Separate different promises</h2>
+## Separate different promises {#separate-different-promises}
 
 A job digest and a questionnaire are different product messages. One summarizes new
 opportunities. The other asks for information that may improve future recommendations.
@@ -135,9 +129,7 @@ Separation does not require building a large collection of services. A small app
 can use clear records and functions within one codebase. The useful boundary is in the
 meaning and ownership of the messages, not in the number of deployed processes.
 
-<h2 id='test-a-timeline-not-just-a-function'>
-  Test a timeline, not just a function
-</h2>
+## Test a timeline, not just a function {#test-a-timeline-not-just-a-function}
 
 A test that calls a digest function once will miss most of the interesting failures.
 The important examples involve time and competing events:
@@ -155,9 +147,7 @@ These cases test promises someone can understand. They also reveal where the sys
 needs durable state: information that survives a restart, rather than disappearing with
 the process that happened to be running.
 
-<h2 id='catch-up-should-respect-attention'>
-  Catch-up should respect attention
-</h2>
+## Catch-up should respect attention {#catch-up-should-respect-attention}
 
 After an outage, a scheduler may discover several missed periods. Sending every missed
 digest immediately can turn a recovery success into a bad user experience.
@@ -170,9 +160,7 @@ Record the skipped or combined periods so the next restart does not rediscover t
 unfinished work. Recovery needs a durable explanation of what happened, even when that
 explanation is "intentionally combined into a later summary."
 
-<h2 id='measure-the-promise-people-experience'>
-  Measure the promise people experience
-</h2>
+## Measure the promise people experience {#measure-the-promise-people-experience}
 
 A healthy timer is not enough to prove a healthy notification feature. Useful checks
 include duplicate logical periods, late-result delay, selected items never delivered,
@@ -185,14 +173,12 @@ An hourly digest is a small distributed-systems problem hiding inside an ordinar
 product feature. Giving the hour a stable identity makes its rules visible. The rest of
 the design becomes a series of understandable choices about timing, content, and trust.
 
-<h2 id='technical-deep-dive'>Technical deep dive</h2>
+## Technical deep dive {#technical-deep-dive}
 
 **Plain-language bridge:** The hour needs a permanent identity, and retries need to
 reuse it. Otherwise, each retry can look like a brand-new promise to the user.
 
-<h3 id='diagram-freeze-one-digest-per-logical-hour'>
-  Diagram: Freeze one digest per logical hour
-</h3>
+### Diagram: Freeze one digest per logical hour {#diagram-freeze-one-digest-per-logical-hour}
 
 ```text
 [results ready before cutoff]
@@ -218,9 +204,7 @@ reuse it. Otherwise, each retry can look like a brand-new promise to the user.
 Retries reuse the digest identity and selection. An uncertain send requires evidence
 about delivery; a timeout alone does not establish that nothing was sent.
 
-<h3 id='define-the-bucket-and-uniqueness-rule'>
-  Define the bucket and uniqueness rule
-</h3>
+### Define the bucket and uniqueness rule {#define-the-bucket-and-uniqueness-rule}
 
 For an hourly UTC policy, the bucket start is floor(epochSeconds / 3600) \* 3600.
 An illustrative uniqueness key is:
@@ -237,7 +221,7 @@ for 14:00 may select results ready before 14:00 and defer later completions. Spe
 whether the interval is closed or open at each endpoint so a result exactly on the
 boundary has one unambiguous destination.
 
-<h3 id='commit-a-stable-selection'>Commit a stable selection</h3>
+### Commit a stable selection {#commit-a-stable-selection}
 
 Inside the preparation transaction, create or obtain the digest, select eligible items,
 and record its selected item IDs. If items may appear only once across all digests of
@@ -250,9 +234,7 @@ source versions so later delivery does not silently recalculate a different dige
 Mark an item included only when it belongs to the committed selection. Eligibility,
 selection, and confirmed delivery remain separate facts.
 
-<h3 id='model-delivery-uncertainty-explicitly'>
-  Model delivery uncertainty explicitly
-</h3>
+### Model delivery uncertainty explicitly {#model-delivery-uncertainty-explicitly}
 
 A useful delivery state machine distinguishes prepared, sending, confirmed, rejected,
 and uncertain. A timeout after sending is not automatically a rejected delivery.
@@ -268,7 +250,7 @@ semantics. Without such support or a way to query the accepted delivery, exactly
 visible delivery may be unattainable. The product needs a deliberate choice between
 duplicate risk, missed-message risk, and manual resolution.
 
-<h3 id='test-time-and-competing-workers'>Test time and competing workers</h3>
+### Test time and competing workers {#test-time-and-competing-workers}
 
 Use a controllable clock for bucket boundaries and barriers for concurrent preparation.
 Test the instant before and at the cutoff, a late analysis, equal-ranked items, two

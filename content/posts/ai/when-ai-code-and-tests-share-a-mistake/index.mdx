@@ -21,7 +21,7 @@ The risk is that they all started with the same incorrect assumption. This is es
 easy to miss when an AI writes an implementation and then uses that implementation to
 decide what the tests should expect.
 
-<h2 id="a-tiny-example">A tiny example</h2>
+## A tiny example {#a-tiny-example}
 
 Suppose an appointment ends at 10:00. Can another appointment start at exactly 10:00?
 
@@ -36,7 +36,7 @@ These appointments should therefore be allowed:
 
 They touch at the boundary, but they do not occupy any time together.
 
-<h2 id="how-the-mistake-spreads">How the mistake spreads</h2>
+## How the mistake spreads {#how-the-mistake-spreads}
 
 An implementation might mistakenly count touching boundaries as an overlap.
 
@@ -50,7 +50,7 @@ does not provide three independent reasons to trust the behavior.
 
 This is an illustrative failure mode, not a report of a measured incident in my project.
 
-<h2 id="write-the-expected-behavior-independently">Write the expected behavior independently</h2>
+## Write the expected behavior independently {#write-the-expected-behavior-independently}
 
 Before asking for code, write examples in ordinary language:
 
@@ -64,7 +64,7 @@ Those examples come from the product rule. The implementation must satisfy them.
 For this rule, two intervals overlap when each starts before the other one ends.
 Using "before" instead of "before or at" is what allows appointments to touch.
 
-<h2 id="give-the-reviewer-a-different-job">Give the reviewer a different job</h2>
+## Give the reviewer a different job {#give-the-reviewer-a-different-job}
 
 Instead of asking only, "Does this code look correct?", ask the reviewer to compare
 the behavior with the agreed examples and look for a case that breaks the rule.
@@ -77,7 +77,7 @@ A useful review request is:
 Using a different model or a fresh conversation may bring another perspective, but it
 does not guarantee independent reasoning. The reviewer still needs a reliable reference.
 
-<h2 id="independence-comes-from-the-reference-not-the-headcount">Independence comes from the reference, not the headcount</h2>
+## Independence comes from the reference, not the headcount {#independence-comes-from-the-reference-not-the-headcount}
 
 Three agents can repeat the same assumption if all three read the same implementation
 and use it as their definition of correctness. Their agreement may feel reassuring
@@ -93,7 +93,7 @@ This applies to people too. A human review that only checks style and whether te
 pass can miss the same wrong product assumption. The question is where the expected
 behavior came from, not merely who produced the check.
 
-<h2 id="write-an-example-before-exposing-the-implementation">Write an example before exposing the implementation</h2>
+## Write an example before exposing the implementation {#write-an-example-before-exposing-the-implementation}
 
 For a small rule, ask someone to describe the expected result using only the requirement.
 In the appointment example, give them the two time intervals and ask whether they conflict.
@@ -108,7 +108,7 @@ from quietly deciding the answer before anyone has considered the product rule.
 Once the expectation is agreed, record why it is correct. That explanation helps future
 maintainers distinguish an intentional boundary from a test value chosen by accident.
 
-<h2 id="use-boundary-examples-because-they-expose-assumptions">Use boundary examples because they expose assumptions</h2>
+## Use boundary examples because they expose assumptions {#use-boundary-examples-because-they-expose-assumptions}
 
 Many incorrect implementations work for ordinary inputs. The difference appears at
 the edge: exactly at 10:00, an empty list, the largest allowed duration, or a missing
@@ -124,7 +124,7 @@ examples that distinguish plausible wrong implementations from the correct rule.
 A good boundary test has an explanation: if this case fails, a specific assumption
 about the product is likely wrong. That makes the failure informative during a future change.
 
-<h2 id="look-for-properties-as-well-as-examples">Look for properties as well as examples</h2>
+## Look for properties as well as examples {#look-for-properties-as-well-as-examples}
 
 A property is a rule that should hold across many inputs. For an overlap function,
 swapping the two appointments should not change the result. If A conflicts with B,
@@ -140,7 +140,7 @@ time in a window-anchored scheduler. Assuming that it must would encode the wron
 Properties are powerful because they test relationships, but they still need a justified
 source. A mathematically tidy assumption can be the wrong business rule.
 
-<h2 id="distinguish-testing-the-result-from-testing-the-method">Distinguish testing the result from testing the method</h2>
+## Distinguish testing the result from testing the method {#distinguish-testing-the-result-from-testing-the-method}
 
 A fragile test may assert that an internal helper was called with a particular argument
 without checking the user-visible result. The implementation can satisfy that test
@@ -154,7 +154,7 @@ Internal interaction checks can still be useful where the interaction itself is 
 contract. The point is to choose them deliberately. Tests should not merely mirror
 the implementation's structure so closely that any shared mistake becomes invisible.
 
-<h2 id="test-the-negative-path-without-breaking-everything">Test the negative path without breaking everything</h2>
+## Test the negative path without breaking everything {#test-the-negative-path-without-breaking-everything}
 
 A test that proves one invalid request is rejected does not prove all valid requests
 still work. A prompt or code change can become overly restrictive and pass the negative
@@ -167,7 +167,7 @@ For an AI assistant, a change that avoids an unwanted behavior should also be ch
 against ordinary useful requests. Otherwise, the system may achieve the safety or quality
 metric by becoming unhelpful. The expected behavior needs both sides of the boundary.
 
-<h2 id="review-generated-tests-as-seriously-as-generated-code">Review generated tests as seriously as generated code</h2>
+## Review generated tests as seriously as generated code {#review-generated-tests-as-seriously-as-generated-code}
 
 Ask what failure each test would catch and where its expected result came from. If
 the answer is only that the current code returns it, the test may be preserving an
@@ -181,7 +181,7 @@ Use small, explicit fixtures whose meaning a reviewer can understand. Keep the e
 result separate from the function being tested; calculating the expectation with the
 same flawed helper can make a test incapable of noticing that helper's mistake.
 
-<h2 id="make-an-adversarial-review-concrete">Make an adversarial review concrete</h2>
+## Make an adversarial review concrete {#make-an-adversarial-review-concrete}
 
 An instruction to be skeptical is less useful than a bounded challenge. Ask the reviewer
 to find a valid input the code wrongly rejects, an invalid input it wrongly accepts,
@@ -195,7 +195,7 @@ The process should allow a finding to be rejected when a caller, validation laye
 or product rule disproves it. The objective is better evidence, not the maximum number
 of defects reported by a reviewer trying to satisfy its assignment.
 
-<h2 id="know-what-mutation-testing-tells-you">Know what mutation testing tells you</h2>
+## Know what mutation testing tells you {#know-what-mutation-testing-tells-you}
 
 Deliberately changing a comparison or removing a check can reveal whether tests protect
 that behavior. If a relevant wrong version still passes, investigate the gap.
@@ -208,7 +208,7 @@ Keep deliberate mutations out of the final implementation and use a controlled w
 that restores the correct version. The exercise is valuable when it checks a specific
 important rule, not when it becomes another number detached from the product's needs.
 
-<h2 id="record-confidence-as-evidence-not-agreement">Record confidence as evidence, not agreement</h2>
+## Record confidence as evidence, not agreement {#record-confidence-as-evidence-not-agreement}
 
 A useful review summary states which requirements were checked, which examples were
 run, which findings were confirmed, and what remains untested. It does not simply say
@@ -218,7 +218,7 @@ That gives the next maintainer a clear account of why the change is believed cor
 Agreement can be part of the process, but the durable asset is the evidence connecting
 the implementation to the behavior the product is supposed to provide.
 
-<h2 id="try-deliberately-breaking-the-rule">Try deliberately breaking the rule</h2>
+## Try deliberately breaking the rule {#try-deliberately-breaking-the-rule}
 
 For an important boundary, temporarily introduce the wrong behavior and run the tests.
 If the tests still pass, they are not protecting that rule. Restore the correct code
@@ -230,12 +230,12 @@ the tests notice.
 AI can help produce code and checks quickly. Trust grows when those checks are tied
 to behavior someone has independently decided is correct.
 
-<h2 id="technical-deep-dive">Technical deep dive</h2>
+## Technical deep dive {#technical-deep-dive}
 
 **Plain-language bridge:** Tests need an answer key that does not come from the same
 assumption as the implementation they are checking.
 
-<h3 id="diagram-give-the-test-an-independent-answer-key">Diagram: Give the test an independent answer key</h3>
+### Diagram: Give the test an independent answer key {#diagram-give-the-test-an-independent-answer-key}
 
 ```text
 RISK
@@ -258,7 +258,7 @@ Independence comes from the source of the expected behavior. A second generator 
 reviewer can repeat the same misunderstanding if it uses the same mistaken reference.
 
 
-<h3 id="separate-the-oracle-from-the-implementation">Separate the oracle from the implementation</h3>
+### Separate the oracle from the implementation {#separate-the-oracle-from-the-implementation}
 
 A test oracle is the source used to decide the correct result. For interval overlap,
 the oracle might be a product rule stating that one appointment may start at the
@@ -273,7 +273,7 @@ This contract produces a concrete boundary example: [09:30,10:00) and [10:00,10:
 do not overlap. Copying the implementation's comparison into the expected-value
 calculation would remove the independence the test needs.
 
-<h3 id="add-properties-that-constrain-the-result">Add properties that constrain the result</h3>
+### Add properties that constrain the result {#add-properties-that-constrain-the-result}
 
 Examples catch known mistakes. Properties check broader relationships:
 
@@ -292,7 +292,7 @@ A second implementation can act as a differential oracle only if it is independe
 derived and trustworthy for the tested scope. Two implementations based on the same
 misread requirement can agree on the wrong answer.
 
-<h3 id="interpret-mutation-testing-carefully">Interpret mutation testing carefully</h3>
+### Interpret mutation testing carefully {#interpret-mutation-testing-carefully}
 
 Mutation testing deliberately makes small implementation changes, such as replacing
 a strict comparison with an inclusive one, then checks whether tests fail. A surviving
@@ -305,7 +305,7 @@ them to missing requirements rather than optimizing a percentage blindly.
 This differs from breaking unrelated setup. A test suite failing because the application
 no longer starts does not prove it detects the intended business-rule mutation.
 
-<h3 id="review-the-tests-information-path">Review the test&#39;s information path</h3>
+### Review the test's information path {#review-the-tests-information-path}
 
 Ask where the expected value came from, which boundary it distinguishes, and what
 incorrect implementation would still pass. Also inspect fixtures: if fixture builders

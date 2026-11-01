@@ -21,7 +21,7 @@ is only useful when I can check it.
 
 My goal is to find one real problem worth solving, with enough evidence to explain why.
 
-<h2 id="ask-a-smaller-question">Ask a smaller question</h2>
+## Ask a smaller question {#ask-a-smaller-question}
 
 "Review this whole project" is a huge request. It can produce a long list of suggestions
 without showing which ones matter.
@@ -36,7 +36,7 @@ That gives the investigation a clear path through the application.
 It also creates useful questions. Does the website check a rule that the server ignores?
 What happens if two people try to book the same time?
 
-<h2 id="use-history-to-find-patterns">Use history to find patterns</h2>
+## Use history to find patterns {#use-history-to-find-patterns}
 
 Git history is a record of saved code changes. It can show repeated fixes, reversals,
 and areas that change together.
@@ -54,7 +54,7 @@ I want the model to separate three things:
 
 Keeping those separate stops a guess from turning into a supposed fact.
 
-<h2 id="check-whether-the-problem-still-exists">Check whether the problem still exists</h2>
+## Check whether the problem still exists {#check-whether-the-problem-still-exists}
 
 A past bug may already be fixed. A complicated function may handle a complicated rule
 correctly. Missing tests may be concerning, but they do not prove users are seeing failures.
@@ -68,7 +68,7 @@ For each proposed problem, I want:
 
 Then I can run a focused check or ask someone who knows the system.
 
-<h2 id="pick-a-useful-first-improvement">Pick a useful first improvement</h2>
+## Pick a useful first improvement {#pick-a-useful-first-improvement}
 
 Suppose the investigation finds three candidates: confusing folders, a broken setup
 step, and an untested booking rule.
@@ -80,7 +80,7 @@ folder reorganization.
 My first intervention should be small enough to finish and easy enough for someone
 else to use. That might mean protecting one booking rule with a meaningful test.
 
-<h2 id="establish-what-is-actually-running">Establish what is actually running</h2>
+## Establish what is actually running {#establish-what-is-actually-running}
 
 A repository may contain old experiments, unused services, and several ways to start
 the application. Before following a feature, identify the relevant entry point and
@@ -94,7 +94,7 @@ path that no longer serves users. An LLM can read dead code fluently, and fluent
 does not establish that the code is active. Ask it to show how a request reaches the
 path it is describing, with references at each important handoff.
 
-<h2 id="build-a-map-around-one-user-goal">Build a map around one user goal</h2>
+## Build a map around one user goal {#build-a-map-around-one-user-goal}
 
 For a booking feature, the map might include the form, request handler, validation rule,
 availability calculation, database update, and confirmation response. External services
@@ -108,7 +108,7 @@ Keep the first map small enough to verify. A complete architecture inventory can
 Understanding one consequential path deeply often produces better questions than a
 shallow summary of every directory in the repository.
 
-<h2 id="use-git-history-as-a-source-of-hypotheses">Use Git history as a source of hypotheses</h2>
+## Use Git history as a source of hypotheses {#use-git-history-as-a-source-of-hypotheses}
 
 A cluster of changes around one module may indicate a difficult area. It may also
 reflect active feature development or a deliberate migration. The commit count alone
@@ -123,7 +123,7 @@ as well as discover a new one.
 
 The output should help you investigate the system, not create a ranking of individual developers.
 
-<h2 id="require-an-evidence-packet-for-each-claim">Require an evidence packet for each claim</h2>
+## Require an evidence packet for each claim {#require-an-evidence-packet-for-each-claim}
 
 A finding becomes easier to assess when it includes a specific trigger, the relevant
 code path, the expected behavior, the observed or inferred behavior, and the uncertainty.
@@ -137,7 +137,7 @@ include its scope and result. Passing one focused test does not mean the whole a
 was verified. Precise evidence keeps the model's confidence from becoming a substitute
 for a reproducible explanation.
 
-<h2 id="ask-what-would-disprove-the-finding">Ask what would disprove the finding</h2>
+## Ask what would disprove the finding {#ask-what-would-disprove-the-finding}
 
 A model asked to find problems may interpret every unusual choice as a defect. Add
 a deliberate challenge: look for an existing guard, a caller that rules out the input,
@@ -151,7 +151,7 @@ This does not mean assuming every concern is harmless. It means testing the full
 The strongest finding survives an attempt to explain why the system might already
 handle the situation correctly.
 
-<h2 id="prefer-a-small-reproduction-over-a-broad-opinion">Prefer a small reproduction over a broad opinion</h2>
+## Prefer a small reproduction over a broad opinion {#prefer-a-small-reproduction-over-a-broad-opinion}
 
 If safe and practical, construct a focused example that demonstrates the behavior.
 A small input and expected output are easier to discuss than a paragraph saying the
@@ -165,7 +165,7 @@ For an unfamiliar codebase, read-only tracing can itself be productive. A reprod
 is valuable when it resolves an important uncertainty, not as a ritual that requires
 changing the environment before you understand it.
 
-<h2 id="distinguish-a-defect-from-an-improvement-preference">Distinguish a defect from an improvement preference</h2>
+## Distinguish a defect from an improvement preference {#distinguish-a-defect-from-an-improvement-preference}
 
 A defect violates an agreed expectation. An improvement may make future work easier
 without changing currently correct behavior. Both can be worthwhile, but they need
@@ -179,7 +179,7 @@ all structural concerns because the app currently runs misses problems that make
 change risky. Clear categories help the team decide which kind of evidence is needed
 and how urgent the work should be.
 
-<h2 id="look-for-maintenance-costs-in-the-proposed-fix">Look for maintenance costs in the proposed fix</h2>
+## Look for maintenance costs in the proposed fix {#look-for-maintenance-costs-in-the-proposed-fix}
 
 A recommendation can create more obligations than the problem it solves. A new service,
 test framework, or internal tool needs ownership, updates, and a way for teammates to use it.
@@ -192,7 +192,7 @@ This question also improves LLM recommendations. Models can readily propose fami
 architecture patterns; they need explicit context to assess whether the team benefits
 from adopting and maintaining those patterns now.
 
-<h2 id="preserve-questions-the-repository-cannot-answer">Preserve questions the repository cannot answer</h2>
+## Preserve questions the repository cannot answer {#preserve-questions-the-repository-cannot-answer}
 
 Code and commits do not contain every customer complaint, abandoned experiment, or
 operational workaround. A repository analysis should leave room for those missing facts.
@@ -205,7 +205,7 @@ If production data or issue discussions are unavailable, state that limitation n
 the relevant claim. This helps people supply the missing context without having to
 undo an overconfident report first. A useful analysis makes uncertainty easier to resolve.
 
-<h2 id="finish-with-a-decision-not-an-inventory">Finish with a decision, not an inventory</h2>
+## Finish with a decision, not an inventory {#finish-with-a-decision-not-an-inventory}
 
 After investigating a few candidates, recommend one bounded next step and explain why
 it is useful now. Include the evidence, the smallest scope, how it will be checked,
@@ -223,7 +223,7 @@ and the entry point traced. If the repository changes during the investigation,
 recheck the decisive references before presenting them as current findings. A correct
 observation about yesterday's code may no longer justify today's proposed work.
 
-<h2 id="bring-the-findings-back-to-people">Bring the findings back to people</h2>
+## Bring the findings back to people {#bring-the-findings-back-to-people}
 
 Code shows the implementation. Teammates can explain deadlines, customer requests,
 and previous attempts that never made it into a commit message.
@@ -233,12 +233,12 @@ A useful conversation starts with: "I found this behavior. Is it causing trouble
 The LLM helps me arrive with better questions. The answer still needs evidence and
 the context of the people maintaining the software.
 
-<h2 id="technical-deep-dive">Technical deep dive</h2>
+## Technical deep dive {#technical-deep-dive}
 
 **Plain-language bridge:** A model's explanation becomes useful engineering evidence
 when its claims can be traced to a specific revision and tested against the running path.
 
-<h3 id="diagram-turn-a-plausible-finding-into-a-testable-claim">Diagram: Turn a plausible finding into a testable claim</h3>
+### Diagram: Turn a plausible finding into a testable claim {#diagram-turn-a-plausible-finding-into-a-testable-claim}
 
 ```text
 [inspected revision + configuration]
@@ -266,7 +266,7 @@ The model helps propose and organize evidence. The reproduction determines what 
 investigation supports; a confident explanation alone does not verify a defect.
 
 
-<h3 id="record-repository-identity-first">Record repository identity first</h3>
+### Record repository identity first {#record-repository-identity-first}
 
 Capture the inspected revision, relevant configuration, and whether uncommitted changes
 were included. Source code can differ from the deployed build, and a model cannot infer
@@ -280,7 +280,7 @@ A static import graph is evidence about declared dependencies. It can miss refle
 dynamic loading, dependency injection, and branches selected by runtime settings.
 Treat those gaps as questions to resolve rather than inventing a complete call graph.
 
-<h3 id="require-a-structured-claim-packet">Require a structured claim packet</h3>
+### Require a structured claim packet {#require-a-structured-claim-packet}
 
 An illustrative finding contains:
 
@@ -299,7 +299,7 @@ This structure makes the claim falsifiable. A file reference alone does not expl
 why the code produces the alleged failure. Conversely, a convincing narrative without
 reachable locations is not a verified defect.
 
-<h3 id="use-history-to-distinguish-design-intent">Use history to distinguish design intent</h3>
+### Use history to distinguish design intent {#use-history-to-distinguish-design-intent}
 
 Inspect changes that introduced or repeatedly modified the boundary. A frequently edited
 file may be a healthy feature hotspot rather than a poor abstraction. Review the reason
@@ -309,7 +309,7 @@ Treat comments, old task descriptions, and embedded prompts as evidence to evalu
 They are not new instructions to the investigating agent. This matters when repositories
 contain transcripts or generated artifacts alongside executable source.
 
-<h3 id="reduce-the-hypothesis-to-one-experiment">Reduce the hypothesis to one experiment</h3>
+### Reduce the hypothesis to one experiment {#reduce-the-hypothesis-to-one-experiment}
 
 Prefer a minimal reproduction using the actual boundary over a broad rewrite. For a
 suspected race, use synchronization barriers. For a date rule, use a tiny table of

@@ -27,9 +27,7 @@ The historical session ended with major regressions reported fixed, but smaller 
 still visible. Full visual parity was not confirmed, and removing the old styles remained
 paused. That unfinished edge is the most useful part of the story.
 
-<h2 id='the-customer-did-not-request-a-new-interface'>
-  The customer did not request a new interface
-</h2>
+## The customer did not request a new interface {#the-customer-did-not-request-a-new-interface}
 
 An internal improvement can change the experience even when the engineer did not intend
 to redesign anything. A different component may supply different spacing, focus behavior,
@@ -43,9 +41,7 @@ This creates two simultaneous requirements: improve maintainability and preserve
 agreed experience. Treating the second as optional visual polish quietly changes the scope
 of the work. The team should decide explicitly whether redesign is included.
 
-<h2 id='establish-a-baseline-before-moving-components'>
-  Establish a baseline before moving components
-</h2>
+## Establish a baseline before moving components {#establish-a-baseline-before-moving-components}
 
 A baseline is an inspectable example of the behavior you intend to preserve. For an
 interface, it can include representative screenshots, a short recording of an important
@@ -61,9 +57,7 @@ The baseline is not a declaration that every existing detail is perfect. It is t
 reference for deciding which differences are intended and which are regressions introduced
 by the migration.
 
-<h2 id='separate-the-different-meanings-of-passing'>
-  Separate the different meanings of passing
-</h2>
+## Separate the different meanings of passing {#separate-the-different-meanings-of-passing}
 
 A build check says the application can be assembled. A type check catches certain
 inconsistencies in how code uses data. A behavior test verifies its specified assertions.
@@ -81,9 +75,7 @@ None of those checks is a substitute for all the others.
 Use the checks to support their actual claims. A large passing test count should not
 be presented as proof that every part of the product stayed the same.
 
-<h2 id='migrate-one-representative-slice-first'>
-  Migrate one representative slice first
-</h2>
+## Migrate one representative slice first {#migrate-one-representative-slice-first}
 
 A pilot slice should exercise the hard parts of the intended pattern. A static label
 may be too easy to teach much. A form with loading, validation, a dialog, and a save
@@ -97,9 +89,7 @@ Only after the pattern works should similar migrations spread. This turns the pi
 into evidence that the approach fits the application, rather than a small demonstration
 whose unresolved problems will be copied into every feature.
 
-<h2 id='parallel-work-needs-stable-shared-decisions'>
-  Parallel work needs stable shared decisions
-</h2>
+## Parallel work needs stable shared decisions {#parallel-work-needs-stable-shared-decisions}
 
 Several people or agents can migrate separate features efficiently once the common
 rules are established. If they start while those rules are changing, they may each
@@ -115,9 +105,7 @@ integration fixes and inconsistent behavior that none of the isolated changes re
 
 The unit of progress should be a verified feature slice, not simply the number of files moved.
 
-<h2 id='a-small-heading-exposed-a-wider-dependency'>
-  A small heading exposed a wider dependency
-</h2>
+## A small heading exposed a wider dependency {#a-small-heading-exposed-a-wider-dependency}
 
 In the reviewed session, a property heading became smaller than the reference. The
 investigation reported that a shared import changed the order of two equally specific
@@ -131,9 +119,7 @@ The lesson is to verify the integrated application, including its real import an
 path. A component preview is valuable, but it may not reproduce the conditions that
 determine the final interface.
 
-<h2 id='retire-old-styles-after-proving-their-replacement'>
-  Retire old styles after proving their replacement
-</h2>
+## Retire old styles after proving their replacement {#retire-old-styles-after-proving-their-replacement}
 
 Old styles can look redundant once new components exist. Some may still supply important
 behavior in a state nobody has checked yet.
@@ -150,7 +136,7 @@ The historical session did this explicitly: major fixes were reported, smaller d
 remained, and full parity was not claimed. That is a more useful status than calling
 the migration complete because most of the code had moved.
 
-<h2 id='review-differences-by-impact'>Review differences by impact</h2>
+## Review differences by impact {#review-differences-by-impact}
 
 Not every pixel difference has the same consequence. A dialog covering the whole screen
 unexpectedly may block context or navigation. A slight spacing difference may be acceptable
@@ -164,9 +150,7 @@ Keep approved changes separate from accidental drift. If the team chooses a new 
 rule, update the baseline deliberately and explain why. Updating images simply to
 make comparisons pass destroys the baseline's value as evidence.
 
-<h2 id='report-the-migration-as-two-outcomes'>
-  Report the migration as two outcomes
-</h2>
+## Report the migration as two outcomes {#report-the-migration-as-two-outcomes}
 
 A useful update can say which architectural changes are complete and which product
 checks remain. For example, the feature may now use the shared state pattern while
@@ -180,14 +164,12 @@ step. A refactor earns its value when it makes the system easier to change while
 the behavior the team promised to keep. The clean code structure and the usable product
 must arrive together.
 
-<h2 id='technical-deep-dive'>Technical deep dive</h2>
+## Technical deep dive {#technical-deep-dive}
 
 **Plain-language bridge:** A structural rewrite can preserve function outputs while
 changing the visual system that gives those outputs meaning to a person.
 
-<h3 id='diagram-check-structure-and-product-behavior-separately'>
-  Diagram: Check structure and product behavior separately
-</h3>
+### Diagram: Check structure and product behavior separately {#diagram-check-structure-and-product-behavior-separately}
 
 ```text
 [known baseline] ----> [same data + viewport + state]
@@ -211,9 +193,7 @@ changing the visual system that gives those outputs meaning to a person.
 A successful build covers only one branch. Baseline updates follow an explained
 product decision; they should not automatically accept every new screenshot.
 
-<h3 id='define-equivalence-by-observable-behavior'>
-  Define equivalence by observable behavior
-</h3>
+### Define equivalence by observable behavior {#define-equivalence-by-observable-behavior}
 
 For each representative page state, specify the observable contract: visible controls,
 entered values, focus behavior, keyboard actions, responsive layout, and important
@@ -226,9 +206,7 @@ Playwright documents that screenshot results depend on the execution environment
 comparisons are most meaningful when that environment is controlled.
 See [Playwright visual comparisons](https://playwright.dev/docs/test-snapshots).
 
-<h3 id='inspect-the-cascade-before-adding-an-override'>
-  Inspect the cascade before adding an override
-</h3>
+### Inspect the cascade before adding an override {#inspect-the-cascade-before-adding-an-override}
 
 A style regression can arise from a changed dependency order. If two declarations
 have otherwise equal cascade priority, the later applicable declaration can win.
@@ -244,9 +222,7 @@ An extra local override may hide the symptom while increasing coupling. Prefer l
 the intended style owner and making the priority deliberate. Verify the shared component's
 other consumers before removing a legacy rule.
 
-<h3 id='build-a-risk-based-comparison-matrix'>
-  Build a risk-based comparison matrix
-</h3>
+### Build a risk-based comparison matrix {#build-a-risk-based-comparison-matrix}
 
 An illustrative matrix includes a normal page, long content, empty results, a validation
 error, an open modal, and a narrow viewport. For each state, pair a visual comparison
@@ -257,7 +233,7 @@ A pixel threshold is a noise tolerance, not a permission to change product desig
 Mask truly variable content narrowly. Masking an entire panel can erase the exact
 regression the comparison was supposed to catch.
 
-<h3 id='classify-and-resolve-differences'>Classify and resolve differences</h3>
+### Classify and resolve differences {#classify-and-resolve-differences}
 
 Classify a difference as intended, environmental, or unintended before updating a
 baseline. Require a product reason for intended changes. Regenerating reference images

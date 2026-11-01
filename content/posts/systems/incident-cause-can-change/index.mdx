@@ -26,7 +26,7 @@ The lesson is not that the original diagnosis was necessarily wrong. It is that 
 current failure population needs to guide the next decision. Yesterday's important
 problem can become today's distracting explanation.
 
-<h2 id="a-request-has-several-chances-to-fail">A request has several chances to fail</h2>
+## A request has several chances to fail {#a-request-has-several-chances-to-fail}
 
 Consider a simplified sequence: accept work, assign a worker, open the application,
 find the required record, and produce an output.
@@ -39,7 +39,7 @@ That is why a single red status is an incomplete debugging signal. You need to k
 where the request stopped and what evidence supports the reported reason. A change
 in the failure location can be progress even before end-to-end completion improves.
 
-<h2 id="define-the-sample-before-counting">Define the sample before counting</h2>
+## Define the sample before counting {#define-the-sample-before-counting}
 
 Choose a period and a group of relevant executions. Record which software versions,
 environments, and input types the sample includes.
@@ -53,7 +53,7 @@ recomputed that dataset. The useful supported observation is the reported shift 
 the dominant failure category. New operational decisions would need fresh data from
 the system as it exists now.
 
-<h2 id="group-symptoms-without-pretending-they-are-causes">Group symptoms without pretending they are causes</h2>
+## Group symptoms without pretending they are causes {#group-symptoms-without-pretending-they-are-causes}
 
 An error such as navigation timeout is a symptom. Its cause might be the wrong page,
 a hidden element, a delayed response, or a stale session.
@@ -66,7 +66,7 @@ Then inspect representative cases from the largest groups. The grouping tells yo
 where to spend attention; the detailed trace tests the explanation. A count alone does
 not establish root cause, but it can prevent a memorable anecdote from dominating the investigation.
 
-<h2 id="count-failed-requests-and-repeated-attempts-separately">Count failed requests and repeated attempts separately</h2>
+## Count failed requests and repeated attempts separately {#count-failed-requests-and-repeated-attempts-separately}
 
 One request retried 20 times can produce more log entries than 10 different requests
 that each fail once. Depending on the question, either view may matter.
@@ -79,7 +79,7 @@ Also consider impact severity. A rare failure that produces incorrect output may
 attention before a common failure that stops safely. Frequency helps prioritize, but
 it should not be the only dimension of the decision.
 
-<h2 id="verify-that-the-earlier-fix-still-holds">Verify that the earlier fix still holds</h2>
+## Verify that the earlier fix still holds {#verify-that-the-earlier-fix-still-holds}
 
 Do not assume that a later failure proves earlier steps are now reliable in every case.
 It proves only that those steps passed in the observed attempt.
@@ -92,7 +92,7 @@ This avoids two extremes: repeatedly reopening an already-addressed explanation 
 evidence, and declaring a whole subsystem solved after one run gets past it. The status
 should reflect the scope of what has actually been observed.
 
-<h2 id="choose-the-next-intervention-from-the-evidence">Choose the next intervention from the evidence</h2>
+## Choose the next intervention from the evidence {#choose-the-next-intervention-from-the-evidence}
 
 Suppose the current sample contains many hidden-element failures, some detail-page
 readiness failures, and a smaller number of database errors. The next useful intervention
@@ -105,7 +105,7 @@ Choose a small change that tests the explanation. If the element is hidden becau
 the wrong layout is active, merely increasing the click timeout may not help. The
 intervention should follow the observed state rather than the generic error label.
 
-<h2 id="watch-for-bottleneck-migration">Watch for bottleneck migration</h2>
+## Watch for bottleneck migration {#watch-for-bottleneck-migration}
 
 After the navigation fix, a new group of failures may become dominant farther along
 the request path. That is expected in systems with several independent defects.
@@ -118,7 +118,7 @@ stage, and how many progressed? Define the units carefully so retries do not inf
 the counts. This shows whether the latest change moved the bottleneck or merely changed
 the error message at the same boundary.
 
-<h2 id="compare-the-same-kinds-of-requests">Compare the same kinds of requests</h2>
+## Compare the same kinds of requests {#compare-the-same-kinds-of-requests}
 
 A change in the most common error can also come from a change in traffic. A release
 might receive larger inputs, more new accounts, or requests from a different environment.
@@ -134,7 +134,7 @@ the current failures to choose the next investigation without claiming that the 
 release caused the change. Diagnosis and causal measurement are related but different
 questions, and confusing them can send a team back toward yesterday's explanation.
 
-<h2 id="keep-a-short-hypothesis-log">Keep a short hypothesis log</h2>
+## Keep a short hypothesis log {#keep-a-short-hypothesis-log}
 
 For each meaningful change, record the suspected cause, supporting evidence, intervention,
 and observed result. Include what would disprove the explanation.
@@ -147,7 +147,7 @@ of every command. Link detailed evidence when needed, but lead with the decision
 experiment supported. Long conversations become easier to learn from when their reasoning
 is captured in this form.
 
-<h2 id="communicate-progress-without-hiding-the-remaining-failure">Communicate progress without hiding the remaining failure</h2>
+## Communicate progress without hiding the remaining failure {#communicate-progress-without-hiding-the-remaining-failure}
 
 A useful update might say: "Dispatch is reaching the application in the inspected runs.
 The largest current failure group stops at a hidden navigation control. We are testing
@@ -161,12 +161,12 @@ For technical leadership, this is a practical responsibility: keep the team's at
 aligned with current evidence while preserving a clear view of the user outcome that
 still needs to be delivered.
 
-<h2 id="technical-deep-dive">Technical deep dive</h2>
+## Technical deep dive {#technical-deep-dive}
 
 **Plain-language bridge:** To know what is failing now, track requests through the same
 stages and distinguish their logical identity from each retry attempt.
 
-<h3 id="diagram-fixing-an-early-stage-can-expose-the-next-blocker">Diagram: Fixing an early stage can expose the next blocker</h3>
+### Diagram: Fixing an early stage can expose the next blocker {#diagram-fixing-an-early-stage-can-expose-the-next-blocker}
 
 ```text
 BEFORE
@@ -185,7 +185,7 @@ The funnel is illustrative. Compare stage failures with stage entrants, and keep
 logical requests separate from retry attempts before drawing a conclusion.
 
 
-<h3 id="design-a-minimal-event-record">Design a minimal event record</h3>
+### Design a minimal event record {#design-a-minimal-event-record}
 
 An illustrative diagnostic event carries:
 
@@ -211,7 +211,7 @@ Keep diagnostic categories stable enough to compare releases, with a versioned m
 when categories change. Renaming an error can make a chart appear improved without
 changing the failure.
 
-<h3 id="build-stage-conditioned-rates">Build stage-conditioned rates</h3>
+### Build stage-conditioned rates {#build-stage-conditioned-rates}
 
 For each stage, count requests that entered it and requests that passed it. The
 conditional failure rate is failures at that stage divided by entrants to that stage.
@@ -224,7 +224,7 @@ A funnel helps distinguish increased exposure from a regression.
 Choose whether the funnel tracks first attempts, final logical outcomes, or every
 attempt. Mixing those units can produce impossible counts or hide retry amplification.
 
-<h3 id="compare-like-populations">Compare like populations</h3>
+### Compare like populations {#compare-like-populations}
 
 Stratify by release, input class, and environment when they plausibly affect the failure.
 Inspect representative traces inside a large category before asserting a cause.
@@ -234,7 +234,7 @@ If logging coverage changed, report the measurement break. Missing events should
 quietly become successful completions. Track instrumentation gaps as unknown outcomes
 until another authoritative source resolves them.
 
-<h3 id="tie-an-intervention-to-a-predicted-change">Tie an intervention to a predicted change</h3>
+### Tie an intervention to a predicted change {#tie-an-intervention-to-a-predicted-change}
 
 Write the hypothesis in terms of an observable transition: "After correcting page
 selection, requests in this category should reach the detail stage while earlier

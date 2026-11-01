@@ -26,11 +26,11 @@ To do this you tell MongoDB to use one of your indexes as a shard key. It then d
 
 <a id="75645c7b76904ecc9785250741e4e4c5"></a>
 
-<figure><img src="/content-assets/7f9eb2ab8c7396b036d5.png" alt="" loading="lazy" /></figure>
+![](/content-assets/7f9eb2ab8c7396b036d5.png)
 
 <a id="d86602c04552445aa30aec8f2af32383"></a>
 
-<h3 id="local-heading-1">1. The distribution of reads and writes</h3>
+### 1\. The distribution of reads and writes {#local-heading-1}
 
 <a id="944e397c70f643789cb6f69ead8daaeb"></a>
 
@@ -42,7 +42,7 @@ Similarly, if all of your reads are going to the same replica set, then you’d 
 
 <a id="91321a812dd149c79505ecdae6352aa4"></a>
 
-<h3 id="local-heading-2">2. The size of your chunks</h3>
+### 2\. The size of your chunks {#local-heading-2}
 
 <a id="9b1334d8d4734b7f8bba7439d023d3d7"></a>
 
@@ -50,7 +50,7 @@ Secondarily important is the chunk size. MongoDB will split large chunks into sm
 
 <a id="873e401fb0eb493391dbb0244e7c6a94"></a>
 
-<h3 id="local-heading-3">3. The number of shards each query hits</h3>
+### 3\. The number of shards each query hits {#local-heading-3}
 
 <a id="831f18f097194e799af1d64c975d0cee"></a>
 
@@ -58,11 +58,11 @@ Finally it’s nice to ensure that most queries hit as few shards as possible.Th
 
 <a id="7596c4926e0542a681546e4cf510ebf5"></a>
 
-<h2 id="local-heading-4">Good shard key schemes</h2>
+## Good shard key schemes {#local-heading-4}
 
 <a id="2a233161b9314fd69015c63f6f425ce2"></a>
 
-<h3 id="local-heading-5">Hashed id</h3>
+### Hashed id {#local-heading-5}
 
 <a id="43ad6a100c8e488cbc4bb76e0b14669e"></a>
 
@@ -84,7 +84,7 @@ It’s not perfect, because queries for multiple documents will have to hit all 
 
 <a id="1fd361fb81504745aeb8c2a3079c629b"></a>
 
-<h3 id="local-heading-6">Multi-tenant compound index</h3>
+### Multi-tenant compound index {#local-heading-6}
 
 <a id="a13f995e0aaf4f83b8ea049a9c8378f1"></a>
 
@@ -110,7 +110,7 @@ To avoid this problem in the future, we will likely migrate to an index on `{pr
 
 <a id="b1e16d37dd1c45e1880119144fad2c3b"></a>
 
-<h2 id="local-heading-7">In summary</h2>
+## In summary {#local-heading-7}
 
 <a id="26a67b19456f46999c532db9b7bb5c6a"></a>
 

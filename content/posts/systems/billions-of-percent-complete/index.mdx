@@ -23,7 +23,7 @@ and treating them as ordinary positions in a short list.
 
 The resulting percentages were impossible.
 
-<h2 id="an-address-is-not-a-distance">An address is not a distance</h2>
+## An address is not a distance {#an-address-is-not-a-distance}
 
 House number 9000 does not mean you have walked 9,000 houses down the street.
 The number identifies a location. It is not necessarily a count.
@@ -33,7 +33,7 @@ That identifier helps locate the action, but does not say how much work is compl
 
 The producer and consumer had different interpretations of the same field.
 
-<h2 id="send-meaning-explicitly">Send meaning explicitly</h2>
+## Send meaning explicitly {#send-meaning-explicitly}
 
 A clearer progress message could separate:
 
@@ -50,7 +50,7 @@ what happens inside loops and retries.
 If the total is unknown, show an activity description or completed-item count. A made-up
 percentage looks precise while giving the user less useful information.
 
-<h2 id="clamping-is-only-a-display-guard">Clamping is only a display guard</h2>
+## Clamping is only a display guard {#clamping-is-only-a-display-guard}
 
 Forcing a percentage into the range zero to 100 can prevent a broken-looking screen.
 It does not repair the underlying meaning.
@@ -59,7 +59,7 @@ A value of a billion becoming 100 still incorrectly suggests the job is finished
 The system should reject or flag invalid progress while preserving enough evidence
 to diagnose the producer-consumer mismatch.
 
-<h2 id="decide-what-the-progress-bar-promises">Decide what the progress bar promises</h2>
+## Decide what the progress bar promises {#decide-what-the-progress-bar-promises}
 
 There are several reasonable meanings for progress. It might count finished stages,
 processed items, transferred bytes, or estimated time remaining. They are not interchangeable.
@@ -72,7 +72,7 @@ Label the measurement in plain language: "Nine of ten stages complete" or "45 of
 documents processed." If the total can change, explain that too. Honest activity information
 is often more helpful than a smooth animation based on an unreliable guess.
 
-<h2 id="nested-work-needs-a-display-rule">Nested work needs a display rule</h2>
+## Nested work needs a display rule {#nested-work-needs-a-display-rule}
 
 Suppose the main workflow has five stages. Stage three loops through 40 documents, and
 each document has four smaller actions. How should those actions affect the main bar?
@@ -87,7 +87,7 @@ Write examples for the beginning, middle, and end of the loop. Include an empty 
 and a list that grows after processing starts. Those examples force the team to choose
 a meaning before encoding it in a field name.
 
-<h2 id="retries-can-make-a-bar-move-backward">Retries can make a bar move backward</h2>
+## Retries can make a bar move backward {#retries-can-make-a-bar-move-backward}
 
 A failed step may need to run again. Does that reduce completed progress, leave it unchanged,
 or begin a new attempt with its own bar?
@@ -106,7 +106,7 @@ Also define the zero-work case. If no items qualify, dividing by a total of zero
 meaningless. The result might be a completed empty run, with a clear explanation that
 there was nothing to process, rather than a fabricated progress percentage.
 
-<h2 id="order-the-updates-as-well-as-the-fields">Order the updates as well as the fields</h2>
+## Order the updates as well as the fields {#order-the-updates-as-well-as-the-fields}
 
 Messages may arrive late. A report that stage two finished can reach the dashboard after
 a report that stage three finished. Simply displaying the last arrival can move the
@@ -120,7 +120,7 @@ Timestamps are useful for explaining when information was observed. They should 
 automatically substitute for an ordering rule if different machines have different clocks.
 Again, the goal is shared meaning rather than merely adding more fields.
 
-<h2 id="validate-at-the-receiving-boundary">Validate at the receiving boundary</h2>
+## Validate at the receiving boundary {#validate-at-the-receiving-boundary}
 
 A receiving service should check that counts are sensible for the declared measurement.
 Completed items cannot be negative. A known total should be compatible with the completed
@@ -134,7 +134,7 @@ Do not silently replace invalid input with an attractive value. That makes the d
 look healthy while the services continue disagreeing. Validation should reveal the
 contract violation so it can be corrected at its source.
 
-<h2 id="write-a-small-contract-test">Write a small contract test</h2>
+## Write a small contract test {#write-a-small-contract-test}
 
 Imagine a test with a fake workflow containing two main stages and one nested loop.
 Feed it a known sequence of updates and write the expected display state after each one.
@@ -148,7 +148,7 @@ locating the step, but must never become a completed-stage count.
 This kind of test protects the boundary between services. It can catch a mismatch even
 when the producer and consumer each pass their own internal tests.
 
-<h2 id="explain-slow-progress-without-inventing-precision">Explain slow progress without inventing precision</h2>
+## Explain slow progress without inventing precision {#explain-slow-progress-without-inventing-precision}
 
 Sometimes a stage takes much longer than the others. A bar that remains at 60% can
 make users think the system is stuck even when useful work continues.
@@ -160,7 +160,7 @@ in the operational view and improve the signal.
 The aim is to help a person decide whether to wait, inspect, or intervene. A progress
 display earns trust by making that decision easier, not by moving continuously.
 
-<h2 id="keep-progress-separate-from-ownership">Keep progress separate from ownership</h2>
+## Keep progress separate from ownership {#keep-progress-separate-from-ownership}
 
 The historical investigation also involved leases and queue handling. A lease is a
 time-limited claim that a worker owns a job.
@@ -172,12 +172,12 @@ The session reported targeted fixes and passing tests, with additional validatio
 pending in its handoff. The lasting lesson is about contracts: shared data needs shared
 meaning, especially when several services depend on it.
 
-<h2 id="technical-deep-dive">Technical deep dive</h2>
+## Technical deep dive {#technical-deep-dive}
 
 **Plain-language bridge:** A step's address tells you where it is. A completed-step
 count tells you how far the job has progressed. They need separate fields and rules.
 
-<h3 id="diagram-an-address-and-a-count-answer-different-questions">Diagram: An address and a count answer different questions</h3>
+### Diagram: An address and a count answer different questions {#diagram-an-address-and-a-count-answer-different-questions}
 
 ```text
                     [progress event]
@@ -196,7 +196,7 @@ This is an illustrative contract. Nested location belongs in diagnostics; compar
 completed and total units belong in the progress calculation.
 
 
-<h3 id="define-a-versioned-event-contract">Define a versioned event contract</h3>
+### Define a versioned event contract {#define-a-versioned-event-contract}
 
 An illustrative event makes those meanings explicit:
 
@@ -222,7 +222,7 @@ display. A zero denominator is not evidence of 100 percent completion.
 A consumer that encounters an invalid contract should preserve a diagnostic and show
 an honest unavailable state. Clamping an invalid value to 100 hides the producer error.
 
-<h3 id="scope-ordering-to-the-attempt">Scope ordering to the attempt</h3>
+### Scope ordering to the attempt {#scope-ordering-to-the-attempt}
 
 Sequence numbers provide an ordering rule within an attempt. The consumer retains
 the highest accepted sequence and rejects older updates for that attempt. Attempt
@@ -232,7 +232,7 @@ A timestamp alone is weaker because clocks can differ and events can arrive out 
 order. Also define how the active attempt changes: an event from any arbitrary new
 attempt must not automatically take ownership merely because it arrived last.
 
-<h3 id="choose-whether-work-is-weighted">Choose whether work is weighted</h3>
+### Choose whether work is weighted {#choose-whether-work-is-weighted}
 
 Equal stage counts imply equal weight in the progress display, not equal elapsed time.
 If four quick stages finish before one expensive stage, the bar may sit at 80 percent
@@ -243,7 +243,7 @@ weight version. Historical duration estimates may improve expectations, but they
 estimates and can drift. Changing the denominator during a run can make progress fall;
 that requires an explicit interface policy rather than an accidental monotonic clamp.
 
-<h3 id="test-the-state-transitions">Test the state transitions</h3>
+### Test the state transitions {#test-the-state-transitions}
 
 Exercise duplicate events, reordered sequences, a retry with a new attempt, unknown
 totals, and counts larger than the denominator. Verify that a completion event follows

@@ -14,7 +14,7 @@ coverPosition: 0.5
 
 <a id='23910a0af92081e2a14df985a6108d22'></a>
 
-<h2 id='local-heading-1'>Express.js Enterprise Architecture Setup Guide</h2>
+## Express.js Enterprise Architecture Setup Guide {#local-heading-1}
 
 <a id='23910a0af920818281ffc9f136bad244'></a>
 
@@ -22,7 +22,7 @@ A step-by-step tutorial for setting up a scalable, enterprise-ready Express.js a
 
 <a id='23910a0af920810f9f75c502c99d2a8a'></a>
 
-<h3 id='local-heading-2'>🎯 What You’ll Build</h3>
+### 🎯 What You’ll Build {#local-heading-2}
 
 <a id='23910a0af92081f0a64bf3b8c2108d28'></a>
 
@@ -66,7 +66,7 @@ By the end of this guide, you’ll have a production-ready Express.js applicatio
 
 <a id='23910a0af920810ea2deef9257dacdf4'></a>
 
-<h3 id='local-heading-3'>📋 Prerequisites</h3>
+### 📋 Prerequisites {#local-heading-3}
 
 <a id='23910a0af92081e989fdef145a7c00db'></a>
 
@@ -90,7 +90,7 @@ By the end of this guide, you’ll have a production-ready Express.js applicatio
 
 <a id='23910a0af920819ebfb0f7dd64618fe4'></a>
 
-<h3 id='local-heading-4'>🚀 Step 1: Project Initialization</h3>
+### 🚀 Step 1: Project Initialization {#local-heading-4}
 
 <a id='23910a0af920809fbdc5e98b9d47c217'></a>
 
@@ -102,7 +102,7 @@ By the end of this guide, you’ll have a production-ready Express.js applicatio
 
 <a id='23910a0af9208197a099c6afff35f272'></a>
 
-<h4 id='local-heading-5'>Create Project Structure</h4>
+#### Create Project Structure {#local-heading-5}
 
 <a id='23910a0af92081378889c997f83fdd9c'></a>
 
@@ -122,7 +122,7 @@ mkdir -p src/user/__tests__
 
 <a id='23910a0af9208113b504cd6ffec021ab'></a>
 
-<h4 id='local-heading-6'>Install Dependencies</h4>
+#### Install Dependencies {#local-heading-6}
 
 <a id='23910a0af920811392d0cca297d0762d'></a>
 
@@ -144,7 +144,7 @@ npm install --save-dev cross-env
 
 <a id='23910a0af9208143bb20dcee47e8ca29'></a>
 
-<h4 id='local-heading-7'>TypeScript Configuration</h4>
+#### TypeScript Configuration {#local-heading-7}
 
 <a id='23910a0af9208155ad34d338ba10f902'></a>
 
@@ -177,7 +177,7 @@ Create `tsconfig.json`:
 
 <a id='23910a0af920819a94c5c2182559e2f2'></a>
 
-<h4 id='local-heading-8'>Package.json Scripts</h4>
+#### Package.json Scripts {#local-heading-8}
 
 <a id='23910a0af920816db85de78d6b12dab7'></a>
 
@@ -205,7 +205,7 @@ Update your `package.json` scripts section:
 
 <a id='23910a0af920819b9d1ed4c794b6d449'></a>
 
-<h3 id='local-heading-9'>🔧 Step 2: Core Configuration Setup</h3>
+### 🔧 Step 2: Core Configuration Setup {#local-heading-9}
 
 <a id='23910a0af920808d910de2c5958e159e'></a>
 
@@ -217,7 +217,7 @@ Update your `package.json` scripts section:
 
 <a id='23910a0af92081698687f8a259803885'></a>
 
-<h4 id='local-heading-10'>Environment Configuration</h4>
+#### Environment Configuration {#local-heading-10}
 
 <a id='23910a0af9208180a7b3c1fa0482bca5'></a>
 
@@ -266,7 +266,7 @@ if (config.nodeEnv === 'production') {
 
 <a id='23910a0af92081c6a919ecbbcb561246'></a>
 
-<h4 id='local-heading-11'>Environment Files</h4>
+#### Environment Files {#local-heading-11}
 
 <a id='23910a0af92081649ad2c01f6b69d966'></a>
 
@@ -316,7 +316,7 @@ LOG_LEVEL=info
 
 <a id='23910a0af92081e2b666f93586808ada'></a>
 
-<h3 id='local-heading-12'>🏗️ Step 3: Dependency Injection Container</h3>
+### 🏗️ Step 3: Dependency Injection Container {#local-heading-12}
 
 <a id='23910a0af920802eb98fe2cf870f0b73'></a>
 
@@ -357,7 +357,7 @@ export const DI = {} as {
 
 <a id='23910a0af9208171a90acd41e52fc69f'></a>
 
-<h3 id='local-heading-13'>🛠️ Step 4: Shared Infrastructure</h3>
+### 🛠️ Step 4: Shared Infrastructure {#local-heading-13}
 
 <a id='23910a0af92080b9817dd78b5465f342'></a>
 
@@ -369,7 +369,7 @@ export const DI = {} as {
 
 <a id='23910a0af92081e8bebadc2c2d402169'></a>
 
-<h4 id='local-heading-14'>Logger Service</h4>
+#### Logger Service {#local-heading-14}
 
 <a id='23910a0af920811ca3c0c44110fc15ef'></a>
 
@@ -411,7 +411,7 @@ export const logger = createLogger();
 
 <a id='23910a0af92081099755c81b188bb3fd'></a>
 
-<h4 id='local-heading-15'>Custom Error Classes</h4>
+#### Custom Error Classes {#local-heading-15}
 
 <a id='23910a0af9208198ad21f87265c0bf59'></a>
 
@@ -466,7 +466,7 @@ export class ConflictError extends AppError {
 
 <a id='23910a0af92081748ee6e536c9fd8f04'></a>
 
-<h4 id='local-heading-16'>Base Entity</h4>
+#### Base Entity {#local-heading-16}
 
 <a id='23910a0af92081608ffde570b5508a1a'></a>
 
@@ -523,7 +523,7 @@ export abstract class BaseEntity {
 
 <a id='23910a0af92081958a44deb17facb630'></a>
 
-<h4 id='local-heading-17'>Type Definitions</h4>
+#### Type Definitions {#local-heading-17}
 
 <a id='23910a0af92081018d76e04c24b914b5'></a>
 
@@ -562,7 +562,7 @@ export interface SearchQuery {
 
 <a id='23910a0af920814cbb00d4f48db6db61'></a>
 
-<h3 id='local-heading-18'>🔒 Step 5: Middleware Stack</h3>
+### 🔒 Step 5: Middleware Stack {#local-heading-18}
 
 <a id='23910a0af920808dbbccf7272a169c85'></a>
 
@@ -574,7 +574,7 @@ export interface SearchQuery {
 
 <a id='23910a0af92081d086a1e15841047a21'></a>
 
-<h4 id='local-heading-19'>Try-Catch Wrapper</h4>
+#### Try-Catch Wrapper {#local-heading-19}
 
 <a id='23910a0af92081958bbbfd956bf14a76'></a>
 
@@ -597,7 +597,7 @@ export const tryCatch = (fn: RequestHandler): RequestHandler => {
 
 <a id='23910a0af92081c98eb0e9a1b10da7a7'></a>
 
-<h4 id='local-heading-20'>Validation Middleware</h4>
+#### Validation Middleware {#local-heading-20}
 
 <a id='23910a0af92081eb9ed8e1d13a0bb355'></a>
 
@@ -629,7 +629,7 @@ export const validateRequest = (validations: ValidationChain[]) => {
 
 <a id='23910a0af92081aaa175f6568c5fccfd'></a>
 
-<h4 id='local-heading-21'>Error Handler Middleware</h4>
+#### Error Handler Middleware {#local-heading-21}
 
 <a id='23910a0af9208133844dd103b4284930'></a>
 
@@ -706,7 +706,7 @@ export const notFoundHandler = (req: Request, res: Response) => {
 
 <a id='23910a0af92081c8bcc5e049427c6976'></a>
 
-<h4 id='local-heading-22'>Authentication Middleware</h4>
+#### Authentication Middleware {#local-heading-22}
 
 <a id='23910a0af9208193b095dce49dae472d'></a>
 
@@ -766,7 +766,7 @@ export const optionalAuth = (
 
 <a id='23910a0af92081609239c20ae84bab57'></a>
 
-<h4 id='local-heading-23'>Middleware Index</h4>
+#### Middleware Index {#local-heading-23}
 
 <a id='23910a0af920815b8d2fe9917c1ce57f'></a>
 
@@ -787,7 +787,7 @@ export { authenticateToken, optionalAuth } from './auth.middleware';
 
 <a id='23910a0af9208178b866d1bc8624adb1'></a>
 
-<h3 id='local-heading-24'>🗄️ Step 6: Database Setup</h3>
+### 🗄️ Step 6: Database Setup {#local-heading-24}
 
 <a id='23910a0af920800f9ab9e634fb586b12'></a>
 
@@ -799,7 +799,7 @@ export { authenticateToken, optionalAuth } from './auth.middleware';
 
 <a id='23910a0af92081c0bd64cc60136f8961'></a>
 
-<h4 id='local-heading-25'>MikroORM Configuration</h4>
+#### MikroORM Configuration {#local-heading-25}
 
 <a id='23910a0af9208124bc40fba2cd8eb4c7'></a>
 
@@ -833,7 +833,7 @@ export default defineConfig({
 
 <a id='23910a0af92081dcb0b7e669219e7a25'></a>
 
-<h3 id='local-heading-26'>👤 Step 7: Create Your First Domain (User)</h3>
+### 👤 Step 7: Create Your First Domain (User) {#local-heading-26}
 
 <a id='23910a0af92080fe95a8e59221558d0b'></a>
 
@@ -841,7 +841,7 @@ The User domain demonstrates how to implement a complete feature following domai
 
 <a id='23910a0af92081fa83d6f9ce53a08edd'></a>
 
-<h4 id='local-heading-27'>User Entity</h4>
+#### User Entity {#local-heading-27}
 
 <a id='23910a0af92081dabe46fcc75f286c73'></a>
 
@@ -909,7 +909,7 @@ export class User extends BaseEntity {
 
 <a id='23910a0af92081b0b2e1f7d24e14c993'></a>
 
-<h4 id='local-heading-28'>User Service</h4>
+#### User Service {#local-heading-28}
 
 <a id='23910a0af92081518043fe8344b8ff21'></a>
 
@@ -1024,7 +1024,7 @@ export class UserService {
 
 <a id='23910a0af92081848a28cf310a70e9eb'></a>
 
-<h4 id='local-heading-29'>User Controller</h4>
+#### User Controller {#local-heading-29}
 
 <a id='23910a0af920814caec3fab32b68fd77'></a>
 
@@ -1124,7 +1124,7 @@ export class UserController {
 
 <a id='23910a0af920817bb972ec450279c803'></a>
 
-<h4 id='local-heading-30'>User Routes</h4>
+#### User Routes {#local-heading-30}
 
 <a id='23910a0af92081f7b791f86677d12432'></a>
 
@@ -1209,7 +1209,7 @@ export { router as UserRouter };
 
 <a id='23910a0af92081379484c0413876c5e1'></a>
 
-<h3 id='local-heading-31'>🧪 Step 8: Testing Setup</h3>
+### 🧪 Step 8: Testing Setup {#local-heading-31}
 
 <a id='23910a0af9208068b73bd126611237a9'></a>
 
@@ -1221,7 +1221,7 @@ export { router as UserRouter };
 
 <a id='23910a0af920815c9714e200e9b818e2'></a>
 
-<h4 id='local-heading-32'>Jest Configuration</h4>
+#### Jest Configuration {#local-heading-32}
 
 <a id='23910a0af92081319e06d5b90c1709f1'></a>
 
@@ -1249,7 +1249,7 @@ module.exports = {
 
 <a id='23910a0af920818b93e5c9b886d81109'></a>
 
-<h4 id='local-heading-33'>Test Setup</h4>
+#### Test Setup {#local-heading-33}
 
 <a id='23910a0af9208100a314d2bc9f454be2'></a>
 
@@ -1291,7 +1291,7 @@ beforeEach(async () => {
 
 <a id='23910a0af92081848124d6110adaddf2'></a>
 
-<h4 id='local-heading-34'>Example Test</h4>
+#### Example Test {#local-heading-34}
 
 <a id='23910a0af9208159891ce0e284ec6d83'></a>
 
@@ -1370,7 +1370,7 @@ describe('UserService', () => {
 
 <a id='23910a0af9208197bbbff93872760981'></a>
 
-<h3 id='local-heading-35'>🚀 Step 9: Application Bootstrap</h3>
+### 🚀 Step 9: Application Bootstrap {#local-heading-35}
 
 <a id='23910a0af920801aa005c11ca3862776'></a>
 
@@ -1382,7 +1382,7 @@ describe('UserService', () => {
 
 <a id='23910a0af92081e18ad2c542cb2236b5'></a>
 
-<h4 id='local-heading-36'>Service Registration</h4>
+#### Service Registration {#local-heading-36}
 
 <a id='23910a0af920813fa003f5f1ebbfc83f'></a>
 
@@ -1407,7 +1407,7 @@ export const initializeServices = () => {
 
 <a id='23910a0af9208132a67ec7efcbd6740b'></a>
 
-<h4 id='local-heading-37'>Main Application</h4>
+#### Main Application {#local-heading-37}
 
 <a id='23910a0af9208161b362f0577d5af5e9'></a>
 
@@ -1476,7 +1476,7 @@ export const createApp = () => {
 
 <a id='23910a0af9208125944ff167b39e42cb'></a>
 
-<h4 id='local-heading-38'>Application Entry Point</h4>
+#### Application Entry Point {#local-heading-38}
 
 <a id='23910a0af92081c0b437f82e48a07521'></a>
 
@@ -1571,7 +1571,7 @@ bootstrap();
 
 <a id='23910a0af9208110b62bc59a398c558c'></a>
 
-<h3 id='local-heading-39'>🏃‍♂️ Step 10: Run Your Application</h3>
+### 🏃‍♂️ Step 10: Run Your Application {#local-heading-39}
 
 <a id='23910a0af92080a68654e42f917aede5'></a>
 
@@ -1583,7 +1583,7 @@ bootstrap();
 
 <a id='23910a0af92081c5abe0c2a93b749292'></a>
 
-<h4 id='local-heading-40'>Install Missing Dependencies</h4>
+#### Install Missing Dependencies {#local-heading-40}
 
 <a id='23910a0af920815db264f36c8e10f2a2'></a>
 
@@ -1595,7 +1595,7 @@ npm install --save-dev @types/bcrypt @types/jsonwebtoken
 
 <a id='23910a0af9208193b5a4d22906c5f725'></a>
 
-<h4 id='local-heading-41'>Start Development Server</h4>
+#### Start Development Server {#local-heading-41}
 
 <a id='23910a0af92081129c1ad1212ded40f2'></a>
 
@@ -1613,7 +1613,7 @@ Your application should now be running on `http://localhost:3000`!
 
 <a id='23910a0af9208142b767e6d19029ce09'></a>
 
-<h4 id='local-heading-42'>Test the API</h4>
+#### Test the API {#local-heading-42}
 
 <a id='23910a0af92081c29e1dfe4baa9adcb1'></a>
 
@@ -1638,7 +1638,7 @@ curl http://localhost:3000/api/users/profile \
 
 <a id='23910a0af920814cadecee38f723d7a4'></a>
 
-<h4 id='local-heading-43'>Run Tests</h4>
+#### Run Tests {#local-heading-43}
 
 <a id='23910a0af92081faaf30e994ced05026'></a>
 
@@ -1652,7 +1652,7 @@ npm test
 
 <a id='23910a0af9208176b002db39b13cb271'></a>
 
-<h3 id='local-heading-44'>🎯 What You’ve Built</h3>
+### 🎯 What You’ve Built {#local-heading-44}
 
 <a id='23910a0af920810fa8fbc7e05d7303b1'></a>
 
@@ -1700,7 +1700,7 @@ Congratulations! You now have a production-ready Express.js application with:
 
 <a id='23910a0af920819aad22f7aa66dc87fa'></a>
 
-<h3 id='local-heading-45'>🚀 Next Steps</h3>
+### 🚀 Next Steps {#local-heading-45}
 
 <a id='23910a0af920812bb1bcc32138a3f668'></a>
 
@@ -1748,7 +1748,7 @@ Now that you have the foundation, you can:
 
 <a id='23910a0af9208139838de1b4b1e5b292'></a>
 
-<h3 id='local-heading-46'>📚 Architecture Benefits</h3>
+### 📚 Architecture Benefits {#local-heading-46}
 
 <a id='23910a0af920815b875ee386f590a7b1'></a>
 
@@ -1784,6 +1784,4 @@ This setup provides:
 
 <a id='23910a0af92080a8872fcf3ee27cf9da'></a>
 
-<h3 id='local-heading-47'>
-  You now have a solid foundation for building any Express.js application! 🎉
-</h3>
+### You now have a solid foundation for building any Express.js application! 🎉 {#local-heading-47}

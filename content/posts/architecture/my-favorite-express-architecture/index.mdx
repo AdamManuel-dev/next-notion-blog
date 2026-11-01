@@ -28,7 +28,7 @@ coverPosition: 0.5
 
 <a id='23910a0af92081e99648f5282ba2e8d3'></a>
 
-<h2 id='local-heading-1'>Express.js Enterprise Architecture Tutorial</h2>
+## Express.js Enterprise Architecture Tutorial {#local-heading-1}
 
 <a id='23910a0af9208110ac49d5cd609e5bd3'></a>
 
@@ -36,7 +36,7 @@ This comprehensive tutorial demonstrates how to implement proven enterprise arch
 
 <a id='23910a0af92081d88257c6b4b938e762'></a>
 
-<h3 id='local-heading-2'>🏗️ Table of Contents</h3>
+### 🏗️ Table of Contents {#local-heading-2}
 
 <a id='23910a0af92081a48a6ad2a3bdc2bea1'></a>
 
@@ -92,7 +92,7 @@ This comprehensive tutorial demonstrates how to implement proven enterprise arch
 
 <a id='23910a0af920810a8f37d65de7ed9a90'></a>
 
-<h3 id='local-heading-3'>1. Project Foundation</h3>
+### 1\. Project Foundation {#local-heading-3}
 
 <a id='23910a0af92080b3a685d3d83c4caea1'></a>
 
@@ -104,7 +104,7 @@ This comprehensive tutorial demonstrates how to implement proven enterprise arch
 
 <a id='23910a0af9208163a207fdb8445197f5'></a>
 
-<h4 id='local-heading-4'>Initial Setup</h4>
+#### Initial Setup {#local-heading-4}
 
 <a id='23910a0af92081efa4c6c3a6b91f2939'></a>
 
@@ -127,7 +127,7 @@ npm install eslint @typescript-eslint/eslint-plugin @typescript-eslint/parser
 
 <a id='23910a0af92081e29ac6f6553a27b106'></a>
 
-<h4 id='local-heading-5'>TypeScript Configuration</h4>
+#### TypeScript Configuration {#local-heading-5}
 
 <a id='23910a0af920811386eff7aa22e59c03'></a>
 
@@ -160,7 +160,7 @@ Create `tsconfig.json`:
 
 <a id='23910a0af92081bc9ff6d80cfa82acdd'></a>
 
-<h4 id='local-heading-6'>Package.json Scripts</h4>
+#### Package.json Scripts {#local-heading-6}
 
 <a id='23910a0af9208189bc26c1b4165acca7'></a>
 
@@ -182,7 +182,7 @@ Create `tsconfig.json`:
 
 <a id='23910a0af920813cb2a1ea9772fb51bc'></a>
 
-<h3 id='local-heading-7'>2. Domain-Driven Directory Structure</h3>
+### 2\. Domain-Driven Directory Structure {#local-heading-7}
 
 <a id='23910a0af9208065b906f612c35499f6'></a>
 
@@ -220,7 +220,7 @@ src/
 
 <a id='23910a0af920812b9daaf16ba48c74f6'></a>
 
-<h4 id='local-heading-8'>Core Configuration</h4>
+#### Core Configuration {#local-heading-8}
 
 <a id='23910a0af920819e906fe2a3c1dee74e'></a>
 
@@ -252,7 +252,7 @@ export const config = {
 
 <a id='23910a0af9208115924fc8915328f9e5'></a>
 
-<h3 id='local-heading-9'>3. Dependency Injection Setup</h3>
+### 3\. Dependency Injection Setup {#local-heading-9}
 
 <a id='23910a0af92080b2a758ecf2238e008e'></a>
 
@@ -326,7 +326,7 @@ export const initializeServices = () => {
 
 <a id='23910a0af92081afbf67e953521d31f5'></a>
 
-<h3 id='local-heading-10'>4. Database Architecture with MikroORM</h3>
+### 4\. Database Architecture with MikroORM {#local-heading-10}
 
 <a id='23910a0af92080fa9113f97431724437'></a>
 
@@ -338,7 +338,7 @@ export const initializeServices = () => {
 
 <a id='23910a0af92081c483a3ceeb9efa3fc9'></a>
 
-<h4 id='local-heading-11'>Base Entity Setup</h4>
+#### Base Entity Setup {#local-heading-11}
 
 <a id='23910a0af92081fab41de008782ee582'></a>
 
@@ -372,7 +372,7 @@ export abstract class BaseEntity {
 
 <a id='23910a0af920813992f5d36b42c030c5'></a>
 
-<h4 id='local-heading-12'>MikroORM Configuration</h4>
+#### MikroORM Configuration {#local-heading-12}
 
 <a id='23910a0af92081f99a56e7937561e024'></a>
 
@@ -403,7 +403,7 @@ export default defineConfig({
 
 <a id='23910a0af92081618a0ddcf03b0e038c'></a>
 
-<h4 id='local-heading-13'>Example Entity</h4>
+#### Example Entity {#local-heading-13}
 
 <a id='23910a0af9208159b3cbc6440e49b1fb'></a>
 
@@ -455,7 +455,7 @@ export class User extends BaseEntity {
 
 <a id='23910a0af920810e86b8ec509a289d4c'></a>
 
-<h3 id='local-heading-14'>5. Middleware Architecture</h3>
+### 5\. Middleware Architecture {#local-heading-14}
 
 <a id='23910a0af920807d90c5c71ac739b6f3'></a>
 
@@ -467,7 +467,7 @@ export class User extends BaseEntity {
 
 <a id='23910a0af92081c59903c9114ad7598f'></a>
 
-<h4 id='local-heading-15'>Global Middleware Setup</h4>
+#### Global Middleware Setup {#local-heading-15}
 
 <a id='23910a0af92081ffa7fac164350e7aa9'></a>
 
@@ -486,7 +486,7 @@ export { routeNotFoundHandler } from './routeNotFound.middleware';
 
 <a id='23910a0af920810f9b64d2c9362203f6'></a>
 
-<h4 id='local-heading-16'>Try-Catch Wrapper</h4>
+#### Try-Catch Wrapper {#local-heading-16}
 
 <a id='23910a0af92081b887b7dc08ff0e5150'></a>
 
@@ -507,7 +507,7 @@ export const tryCatch = (fn: RequestHandler): RequestHandler => {
 
 <a id='23910a0af92081d59e72d39ecd0f138e'></a>
 
-<h4 id='local-heading-17'>Request Validation Middleware</h4>
+#### Request Validation Middleware {#local-heading-17}
 
 <a id='23910a0af92081318615f5dee458cb1a'></a>
 
@@ -537,7 +537,7 @@ export const validateRequest = (validatorArray: ValidationChain[]) => [
 
 <a id='23910a0af92081f39ac3d6eb51326a24'></a>
 
-<h4 id='local-heading-18'>Authentication Middleware</h4>
+#### Authentication Middleware {#local-heading-18}
 
 <a id='23910a0af920812095f4edb9df79bdd5'></a>
 
@@ -585,7 +585,7 @@ export async function authMiddleware(
 
 <a id='23910a0af9208124a1ececfb79615ad0'></a>
 
-<h4 id='local-heading-19'>Error Handling Middleware</h4>
+#### Error Handling Middleware {#local-heading-19}
 
 <a id='23910a0af92081ddbe0fd9b949c38742'></a>
 
@@ -638,7 +638,7 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
 
 <a id='23910a0af92081118c01fab981012ae0'></a>
 
-<h3 id='local-heading-20'>6. Route Organization</h3>
+### 6\. Route Organization {#local-heading-20}
 
 <a id='23910a0af9208016afb1f53adc072ff6'></a>
 
@@ -650,7 +650,7 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
 
 <a id='23910a0af9208197a4e2e52c3da0f2a0'></a>
 
-<h4 id='local-heading-21'>Route Structure Pattern</h4>
+#### Route Structure Pattern {#local-heading-21}
 
 <a id='23910a0af9208100afc4ea727c7accc2'></a>
 
@@ -703,7 +703,7 @@ export { router as UserRouter };
 
 <a id='23910a0af92081d888b0ecc6b0f9a141'></a>
 
-<h4 id='local-heading-22'>Public Routes Pattern</h4>
+#### Public Routes Pattern {#local-heading-22}
 
 <a id='23910a0af92081af873cfe45adba8a9e'></a>
 
@@ -734,7 +734,7 @@ export { router as PublicUserRouter };
 
 <a id='23910a0af920810b8a0cf91ba751a68c'></a>
 
-<h4 id='local-heading-23'>Controller Pattern</h4>
+#### Controller Pattern {#local-heading-23}
 
 <a id='23910a0af92081feb0dde83731909db0'></a>
 
@@ -801,7 +801,7 @@ export class UserController {
 
 <a id='23910a0af92081caa395d2fd6d096bec'></a>
 
-<h4 id='local-heading-24'>Central Route Registration</h4>
+#### Central Route Registration {#local-heading-24}
 
 <a id='23910a0af920819aad7bf7d5425572cc'></a>
 
@@ -823,7 +823,7 @@ export { ProductRouter } from './product/product.routes';
 
 <a id='23910a0af92081a6a777e2c7e258cfe0'></a>
 
-<h3 id='local-heading-25'>7. Service Layer Patterns</h3>
+### 7\. Service Layer Patterns {#local-heading-25}
 
 <a id='23910a0af9208029b9f6ca4f55439196'></a>
 
@@ -835,7 +835,7 @@ export { ProductRouter } from './product/product.routes';
 
 <a id='23910a0af9208195aec9cc94991f421f'></a>
 
-<h4 id='local-heading-26'>Service Base Pattern</h4>
+#### Service Base Pattern {#local-heading-26}
 
 <a id='23910a0af92081778064efcd795386a3'></a>
 
@@ -903,7 +903,7 @@ export class UserService {
 
 <a id='23910a0af92081a98ef5c2384333d0fa'></a>
 
-<h3 id='local-heading-27'>8. Error Handling Strategy</h3>
+### 8\. Error Handling Strategy {#local-heading-27}
 
 <a id='23910a0af9208097819bc39cc53a7e91'></a>
 
@@ -915,7 +915,7 @@ export class UserService {
 
 <a id='23910a0af9208174a5aefa9515c28bb2'></a>
 
-<h4 id='local-heading-28'>Custom Error Classes</h4>
+#### Custom Error Classes {#local-heading-28}
 
 <a id='23910a0af9208194a8a2dec0037a052e'></a>
 
@@ -967,7 +967,7 @@ export class ForbiddenError extends AppError {
 
 <a id='23910a0af92081a7be5ec89ab26d5fc9'></a>
 
-<h3 id='local-heading-29'>9. Authentication &amp; Authorization</h3>
+### 9\. Authentication &amp; Authorization {#local-heading-29}
 
 <a id='23910a0af920809b861ec2f2489acf5e'></a>
 
@@ -979,7 +979,7 @@ export class ForbiddenError extends AppError {
 
 <a id='23910a0af92081c49d06d0168e57fcac'></a>
 
-<h4 id='local-heading-30'>Role-Based Access Control</h4>
+#### Role-Based Access Control {#local-heading-30}
 
 <a id='23910a0af92081de94fae08e378907ee'></a>
 
@@ -1038,7 +1038,7 @@ export const checkAccess = (resource: string, action: string) => {
 
 <a id='23910a0af92081c1abc4d9b569da6e3d'></a>
 
-<h3 id='local-heading-31'>10. Utility Functions</h3>
+### 10\. Utility Functions {#local-heading-31}
 
 <a id='23910a0af920806ea449c2f573216025'></a>
 
@@ -1050,7 +1050,7 @@ export const checkAccess = (resource: string, action: string) => {
 
 <a id='23910a0af92081d0a455ceaa1196d917'></a>
 
-<h4 id='local-heading-32'>Pagination Utilities</h4>
+#### Pagination Utilities {#local-heading-32}
 
 <a id='23910a0af92081869812c1460c5ec041'></a>
 
@@ -1080,7 +1080,7 @@ export const getPaginationParams = (req: Request): PaginationParams => {
 
 <a id='23910a0af920817781d1cf0829515a70'></a>
 
-<h4 id='local-heading-33'>Search Utilities</h4>
+#### Search Utilities {#local-heading-33}
 
 <a id='23910a0af92081c59e01c2b6f750c03c'></a>
 
@@ -1112,7 +1112,7 @@ export const buildSearchConditions = (searchTerm: string, fields: string[]) => {
 
 <a id='23910a0af9208114a73ff68f34c25584'></a>
 
-<h3 id='local-heading-34'>11. Real-time Features</h3>
+### 11\. Real-time Features {#local-heading-34}
 
 <a id='23910a0af920804e85eed556bc4b0aff'></a>
 
@@ -1124,7 +1124,7 @@ export const buildSearchConditions = (searchTerm: string, fields: string[]) => {
 
 <a id='23910a0af9208172adf4fde0a6d0e41c'></a>
 
-<h4 id='local-heading-35'>Server-Sent Events</h4>
+#### Server-Sent Events {#local-heading-35}
 
 <a id='23910a0af92081cbb97fd9630143ccfa'></a>
 
@@ -1176,7 +1176,7 @@ export class SSEService {
 
 <a id='23910a0af920818d9413cc5df26a1a6c'></a>
 
-<h3 id='local-heading-36'>12. Testing Setup</h3>
+### 12\. Testing Setup {#local-heading-36}
 
 <a id='23910a0af920801b82c3db066d47f3b3'></a>
 
@@ -1188,7 +1188,7 @@ export class SSEService {
 
 <a id='23910a0af920812db5fcedc141c94cec'></a>
 
-<h4 id='local-heading-37'>Jest Configuration</h4>
+#### Jest Configuration {#local-heading-37}
 
 <a id='23910a0af92081df80b1e2026f8fe02e'></a>
 
@@ -1213,7 +1213,7 @@ export default {
 
 <a id='23910a0af920815699fdc558c67ea284'></a>
 
-<h4 id='local-heading-38'>Test Setup</h4>
+#### Test Setup {#local-heading-38}
 
 <a id='23910a0af92081cf8a0cf46c9e4c99fa'></a>
 
@@ -1246,7 +1246,7 @@ beforeEach(async () => {
 
 <a id='23910a0af92081cfb379d0180992327d'></a>
 
-<h4 id='local-heading-39'>Example Test</h4>
+#### Example Test {#local-heading-39}
 
 <a id='23910a0af920812dbe5affcf1aedc509'></a>
 
@@ -1300,7 +1300,7 @@ describe('UserService', () => {
 
 <a id='23910a0af9208139bf3ce74ea934e9db'></a>
 
-<h3 id='local-heading-40'>13. Main Application Setup</h3>
+### 13\. Main Application Setup {#local-heading-40}
 
 <a id='23910a0af92080e6b70ef4c4bb3ee9c0'></a>
 
@@ -1312,7 +1312,7 @@ describe('UserService', () => {
 
 <a id='23910a0af920818fba3ed0f94c48f34b'></a>
 
-<h4 id='local-heading-41'>App Configuration</h4>
+#### App Configuration {#local-heading-41}
 
 <a id='23910a0af92081d78d33fe44d9dd343b'></a>
 
@@ -1381,7 +1381,7 @@ export const createApp = () => {
 
 <a id='23910a0af92081ef908df6392a05cfba'></a>
 
-<h4 id='local-heading-42'>Application Entry Point</h4>
+#### Application Entry Point {#local-heading-42}
 
 <a id='23910a0af920811f8ab4ed1a4ad38f77'></a>
 
@@ -1445,7 +1445,7 @@ bootstrap();
 
 <a id='23910a0af92081789393c82cc71f6a91'></a>
 
-<h3 id='local-heading-43'>14. Environment Configuration</h3>
+### 14\. Environment Configuration {#local-heading-43}
 
 <a id='23910a0af920802e9506d8d4dc740a70'></a>
 
@@ -1503,7 +1503,7 @@ JWT_SECRET=your-production-jwt-secret
 
 <a id='23910a0af92081429b74ca96da0cf4b8'></a>
 
-<h3 id='local-heading-44'>🎯 Key Benefits of This Architecture</h3>
+### 🎯 Key Benefits of This Architecture {#local-heading-44}
 
 <a id='23910a0af92081c09a04f17a2a0feeb0'></a>
 
@@ -1535,7 +1535,7 @@ JWT_SECRET=your-production-jwt-secret
 
 <a id='23910a0af92081718cd9c2ed7c5cc512'></a>
 
-<h3 id='local-heading-45'>🚀 Getting Started</h3>
+### 🚀 Getting Started {#local-heading-45}
 
 <a id='23910a0af92081bb8dccc2e8707ad347'></a>
 

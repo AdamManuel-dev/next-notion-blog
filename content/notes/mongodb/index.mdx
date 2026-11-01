@@ -22,7 +22,7 @@ coverPosition: null
 
 <a id='b2b3802dd79f4d4f96abeda8b08b7a7d'></a>
 
-<h4 id='local-heading-1'>Corollary Documents &amp; Notes</h4>
+#### Corollary Documents &amp; Notes {#local-heading-1}
 
 <a id='7cd819863c2949ea92cdc9aa6ff20f5e'></a>
 
@@ -58,352 +58,231 @@ coverPosition: null
 
 <a id='7df11cd0467c42a3aaadd61c8ecf7422'></a>
 
-<figure>
-  <img src='/content-assets/9a3d75a6f988999ff692.png' alt='' loading='lazy' />
-</figure>
+![](/content-assets/9a3d75a6f988999ff692.png)
 
 <a id='58af67796dbc4ba185556a9ec6530575'></a>
 
-<h3 id='local-heading-2'>Guarantees associated with consistency levels</h3>
+### Guarantees associated with consistency levels {#local-heading-2}
 
 <a id='a5ee363ee3d14f089a009fbfd0874d64'></a>
 
-<h4 id='local-heading-3'>Strong consistency</h4>
+#### Strong consistency {#local-heading-3}
 
 <a id='c01cdd0d1d504e99b4b45108e6ca9642'></a>
 
 <details open={true}>
-  <summary>Description</summary>
-  <section id='be2a730dae3844ab9aa50c401e59bbba'>
-    <p>
-      Strong consistency offers a linearizability guarantee. Linearizability
-      refers to serving requests concurrently. The reads are guaranteed to
-      return the most recent committed version of an item. A client never sees
-      an uncommitted or partial write. Users are always guaranteed to read the
-      latest committed write.
-    </p>
-  </section>
-  <section id='d2923ae00f2248fb808701ab45b4c69b'>
-    <p>
-      The following graphic illustrates the strong consistency with musical
-      notes. After the data is written to the "West US 2" region, when you read
-      the data from other regions, you get the most recent value:
-    </p>
-  </section>
+<summary>Description</summary>
+<section id='be2a730dae3844ab9aa50c401e59bbba'>
+
+Strong consistency offers a linearizability guarantee. Linearizability refers to serving requests concurrently. The reads are guaranteed to return the most recent committed version of an item. A client never sees an uncommitted or partial write. Users are always guaranteed to read the latest committed write.
+
+</section>
+<section id='d2923ae00f2248fb808701ab45b4c69b'>
+
+The following graphic illustrates the strong consistency with musical notes. After the data is written to the "West US 2" region, when you read the data from other regions, you get the most recent value:
+
+</section>
 </details>
 
 <a id='84686124476b4ea680edf7b764eeea04'></a>
 
-<figure>
-  <img src='/content-assets/03e41d002f24e7ef8e21.gif' alt='' loading='lazy' />
-</figure>
+![](/content-assets/03e41d002f24e7ef8e21.gif)
 
 <a id='1f1393f215344abf8700e8a1d241b718'></a>
 
-<h4 id='local-heading-4'>Bounded staleness consistency</h4>
+#### Bounded staleness consistency {#local-heading-4}
 
 <a id='490fbf4c92ea4ac5b00ca63c3bc4709d'></a>
 
 <details open={true}>
-  <summary>Description</summary>
-  <section id='6816020e4d174e4692ede2fa8d6cf855'>
-    <p>
-      In bounded staleness consistency, the reads are guaranteed to honor the
-      consistent-prefix guarantee. The reads might lag behind writes by at
-      most&nbsp;<em>"K"</em>&nbsp;versions (that is, "updates") of an item or
-      by&nbsp;<em>"T"</em>&nbsp;time interval, whichever is reached first. In
-      other words, when you choose bounded staleness, the "staleness" can be
-      configured in two ways:
-    </p>
+<summary>Description</summary>
+<section id='6816020e4d174e4692ede2fa8d6cf855'>
+
+In bounded staleness consistency, the reads are guaranteed to honor the consistent-prefix guarantee. The reads might lag behind writes by at most *"K"* versions (that is, "updates") of an item or by *"T"* time interval, whichever is reached first. In other words, when you choose bounded staleness, the "staleness" can be configured in two ways:
+
+</section>
+<section id='97034f5b54074a4aa5b5cf80fcd7cd2b'>
+
+- The number of versions (*K*) of the item
+
+</section>
+<section id='106067016a514884988260cb038d36ca'>
+
+- The time interval (*T*) reads might lag behind the writes
+
+</section>
+<section id='28ae1126ade945aca4eea20c31bffa10'>
+
+For a single region account, the minimum value of *K*  and *T* is 10 write operations or 5 seconds. For multi-region accounts the minimum value of *K* and  *T* is 100,000 write operations or 300 seconds.
+
+</section>
+<section id='355a04c7965042ddba9b12c91928a693'>
+
+Bounded staleness offers total global order outside of the "staleness window." When a client performs read operations within a region that accepts writes, the guarantees provided by bounded staleness consistency are identical to those guarantees by the strong consistency. As the staleness window approaches for either time or updates, whichever is closer, the service will throttle new writes to allow replication to catch up and honor the consistency guarantee.
+
+</section>
+<section id='35decf0fc6424bdeadec4a0dbdfb70a7'>
+
+Inside the staleness window, Bounded Staleness provides the following consistency guarantees:
+
+</section>
+<section id='ef0d2aa3c5de4d3fbc3c77cc255ff580'>
+
+- Consistency for clients in the same region for an account with single write region = Strong
+
+</section>
+<section id='cd25c8be74b5440f8732e03706611d39'>
+
+- Consistency for clients in different regions for an account with single write region = Consistent Prefix
+
+</section>
+<section id='5d038a014f0c4dcc991d03f0cccd0499'>
+
+- Consistency for clients writing to a single region for an account with multiple write regions = Consistent Prefix
+
+</section>
+<section id='77e66437cb634fe5bde1afb764d4156e'>
+
+- Consistency for clients writing to different regions for an account with multiple write regions = Eventual
+  <section id='db6a4011b4b840ac8ef85c954fc5f29e'>
+  Bounded staleness is frequently chosen by globally distributed applications that expect low write latencies but require total global order guarantee. Bounded staleness is great for applications featuring group collaboration and sharing, stock ticker, publish-subscribe/queueing etc. The following graphic illustrates the bounded staleness consistency with musical notes. After the data is written to the "West US 2" region, the "East US 2" and "Australia East" regions read the written value based on the configured maximum lag time or the maximum operations:
   </section>
-  <section id='97034f5b54074a4aa5b5cf80fcd7cd2b'>
-    <ul>
-      <li>
-        The number of versions (<em>K</em>) of the item
-      </li>
-    </ul>
-  </section>
-  <section id='106067016a514884988260cb038d36ca'>
-    <ul>
-      <li>
-        The time interval (<em>T</em>) reads might lag behind the writes
-      </li>
-    </ul>
-  </section>
-  <section id='28ae1126ade945aca4eea20c31bffa10'>
-    <p>
-      For a single region account, the minimum value of&nbsp;<em>K</em>
-      &nbsp;and&nbsp;<em>T</em>&nbsp;is 10 write operations or 5 seconds. For
-      multi-region accounts the minimum value of&nbsp;<em>K</em>&nbsp;and&nbsp;
-      <em>T</em>&nbsp;is 100,000 write operations or 300 seconds.
-    </p>
-  </section>
-  <section id='355a04c7965042ddba9b12c91928a693'>
-    <p>
-      Bounded staleness offers total global order outside of the "staleness
-      window." When a client performs read operations within a region that
-      accepts writes, the guarantees provided by bounded staleness consistency
-      are identical to those guarantees by the strong consistency. As the
-      staleness window approaches for either time or updates, whichever is
-      closer, the service will throttle new writes to allow replication to catch
-      up and honor the consistency guarantee.
-    </p>
-  </section>
-  <section id='35decf0fc6424bdeadec4a0dbdfb70a7'>
-    <p>
-      Inside the staleness window, Bounded Staleness provides the following
-      consistency guarantees:
-    </p>
-  </section>
-  <section id='ef0d2aa3c5de4d3fbc3c77cc255ff580'>
-    <ul>
-      <li>
-        Consistency for clients in the same region for an account with single
-        write region = Strong
-      </li>
-    </ul>
-  </section>
-  <section id='cd25c8be74b5440f8732e03706611d39'>
-    <ul>
-      <li>
-        Consistency for clients in different regions for an account with single
-        write region = Consistent Prefix
-      </li>
-    </ul>
-  </section>
-  <section id='5d038a014f0c4dcc991d03f0cccd0499'>
-    <ul>
-      <li>
-        Consistency for clients writing to a single region for an account with
-        multiple write regions = Consistent Prefix
-      </li>
-    </ul>
-  </section>
-  <section id='77e66437cb634fe5bde1afb764d4156e'>
-    <ul>
-      <li>
-        Consistency for clients writing to different regions for an account with
-        multiple write regions = Eventual
-        <section id='db6a4011b4b840ac8ef85c954fc5f29e'>
-          <p>
-            Bounded staleness is frequently chosen by globally distributed
-            applications that expect low write latencies but require total
-            global order guarantee. Bounded staleness is great for applications
-            featuring group collaboration and sharing, stock ticker,
-            publish-subscribe/queueing etc. The following graphic illustrates
-            the bounded staleness consistency with musical notes. After the data
-            is written to the "West US 2" region, the "East US 2" and "Australia
-            East" regions read the written value based on the configured maximum
-            lag time or the maximum operations:
-          </p>
-        </section>
-      </li>
-    </ul>
-  </section>
+
+</section>
 </details>
 
 <a id='39996ed342ac4d749122fc6f80ca184d'></a>
 
-<figure>
-  <img src='/content-assets/7c88e4da5753e971b0b3.gif' alt='' loading='lazy' />
-</figure>
+![](/content-assets/7c88e4da5753e971b0b3.gif)
 
 <a id='51659f4af2024c43b4b18043fa45208c'></a>
 
-<h4 id='local-heading-5'>Session consistency</h4>
+#### Session consistency {#local-heading-5}
 
 <a id='ea5abf3747c346b3b58cd72246b99dce'></a>
 
 <details open={true}>
-  <summary>Description</summary>
-  <section id='d7dfdf720fae4d3994e6061c5c5ced71'>
-    <p>
-      In session consistency, within a single client session reads are
-      guaranteed to honor the consistent-prefix, monotonic reads, monotonic
-      writes, read-your-writes, and write-follows-reads guarantees. This assumes
-      a single "writer" session or sharing the session token for multiple
-      writers.
-    </p>
+<summary>Description</summary>
+<section id='d7dfdf720fae4d3994e6061c5c5ced71'>
+
+In session consistency, within a single client session reads are guaranteed to honor the consistent-prefix, monotonic reads, monotonic writes, read-your-writes, and write-follows-reads guarantees. This assumes a single "writer" session or sharing the session token for multiple writers.
+
+</section>
+<section id='e2559248835e47f99cd8ec970619b739'>
+
+Clients outside of the session performing writes will see the following guarantees:
+
+</section>
+<section id='eafde9fb5bc5427fb921fd98580970d2'>
+
+- Consistency for clients in same region for an account with single write region = Consistent Prefix
+
+</section>
+<section id='590f0d724c00468a9921d8e30e9510bb'>
+
+- Consistency for clients in different regions for an account with single write region = Consistent Prefix
+
+</section>
+<section id='e92667cd59bd43f89eedabe360749e07'>
+
+- Consistency for clients writing to a single region for an account with multiple write regions = Consistent Prefix
+
+</section>
+<section id='35f28668e7f246678f66aa36bb284b5c'>
+
+- Consistency for clients writing to multiple regions for an account with multiple write regions = Eventual
+
+</section>
+<section id='e59c1b1912014d6c85536a0a944068cc'>
+
+- Consistency for clients using the&nbsp;[Azure Cosmos DB integrated cache](https://docs.microsoft.com/en-us/azure/cosmos-db/integrated-cache)&nbsp;= Eventual
+  <section id='8eeb40b9c17e4a71a7c6da8318a73451'>
+  Session consistency is the most widely used consistency level for both single region as well as globally distributed applications. It provides write latencies, availability, and read throughput comparable to that of eventual consistency but also provides the consistency guarantees that suit the needs of applications written to operate in the context of a user. The following graphic illustrates the session consistency with musical notes. The "West US 2 writer" and the "West US 2 reader" are using the same session (Session A) so they both read the same data at the same time. Whereas the "Australia East" region is using "Session B" so, it receives data later but in the same order as the writes.
   </section>
-  <section id='e2559248835e47f99cd8ec970619b739'>
-    <p>
-      Clients outside of the session performing writes will see the following
-      guarantees:
-    </p>
-  </section>
-  <section id='eafde9fb5bc5427fb921fd98580970d2'>
-    <ul>
-      <li>
-        Consistency for clients in same region for an account with single write
-        region = Consistent Prefix
-      </li>
-    </ul>
-  </section>
-  <section id='590f0d724c00468a9921d8e30e9510bb'>
-    <ul>
-      <li>
-        Consistency for clients in different regions for an account with single
-        write region = Consistent Prefix
-      </li>
-    </ul>
-  </section>
-  <section id='e92667cd59bd43f89eedabe360749e07'>
-    <ul>
-      <li>
-        Consistency for clients writing to a single region for an account with
-        multiple write regions = Consistent Prefix
-      </li>
-    </ul>
-  </section>
-  <section id='35f28668e7f246678f66aa36bb284b5c'>
-    <ul>
-      <li>
-        Consistency for clients writing to multiple regions for an account with
-        multiple write regions = Eventual
-      </li>
-    </ul>
-  </section>
-  <section id='e59c1b1912014d6c85536a0a944068cc'>
-    <ul>
-      <li>
-        Consistency for clients using the&nbsp;
-        <a href='https://docs.microsoft.com/en-us/azure/cosmos-db/integrated-cache'>
-          Azure Cosmos DB integrated cache
-        </a>
-        &nbsp;= Eventual
-        <section id='8eeb40b9c17e4a71a7c6da8318a73451'>
-          <p>
-            Session consistency is the most widely used consistency level for
-            both single region as well as globally distributed applications. It
-            provides write latencies, availability, and read throughput
-            comparable to that of eventual consistency but also provides the
-            consistency guarantees that suit the needs of applications written
-            to operate in the context of a user. The following graphic
-            illustrates the session consistency with musical notes. The "West US
-            2 writer" and the "West US 2 reader" are using the same session
-            (Session A) so they both read the same data at the same time.
-            Whereas the "Australia East" region is using "Session B" so, it
-            receives data later but in the same order as the writes.
-          </p>
-        </section>
-      </li>
-    </ul>
-  </section>
+
+</section>
 </details>
 
 <a id='83230006f1a54ffab8c236250377d623'></a>
 
-<figure>
-  <img src='/content-assets/64013a53f37f722f7f5d.gif' alt='' loading='lazy' />
-</figure>
+![](/content-assets/64013a53f37f722f7f5d.gif)
 
 <a id='132fe3d217544f9cbe001d7365b822d0'></a>
 
-<h4 id='local-heading-6'>Consistent prefix consistency</h4>
+#### Consistent prefix consistency {#local-heading-6}
 
 <a id='80984034401b4d07aa6ef5970573a89b'></a>
 
 <details open={true}>
-  <summary>Description</summary>
-  <section id='a4e724404aef40108c4a16145046a30f'>
-    <p>
-      In consistent prefix option, updates that are returned contain some prefix
-      of all the updates, with no gaps. Consistent prefix consistency level
-      guarantees that reads never see out-of-order writes.
-    </p>
-  </section>
-  <section id='05df0edddbc6498a87c6556f0c8000fe'>
-    <p>
-      If writes were performed in the order&nbsp;<code>A, B, C</code>, then a
-      client sees either&nbsp;<code>A</code>,&nbsp;<code>A,B</code>, or&nbsp;
-      <code>A,B,C</code>, but never out-of-order permutations like&nbsp;
-      <code>A,C</code>&nbsp;or&nbsp;<code>B,A,C</code>. Consistent Prefix
-      provides write latencies, availability, and read throughput comparable to
-      that of eventual consistency, but also provides the order guarantees that
-      suit the needs of scenarios where order is important.
-    </p>
-  </section>
-  <section id='c0012101f5f544cf94dca87cdbb649b9'>
-    <p>Below are the consistency guarantees for Consistent Prefix:</p>
-  </section>
-  <section id='7a90e351f06e403d8f4c4ea5d37bcf35'>
-    <ul>
-      <li>
-        Consistency for clients in same region for an account with single write
-        region = Consistent Prefix
-      </li>
-    </ul>
-  </section>
-  <section id='8f85836c434e4073919b0e4e920144be'>
-    <ul>
-      <li>
-        Consistency for clients in different regions for an account with single
-        write region = Consistent Prefix
-      </li>
-    </ul>
-  </section>
-  <section id='f582a6aa13524a8b92a380e2d796fb4c'>
-    <ul>
-      <li>
-        Consistency for clients writing to a single region for an account with
-        multiple write region = Consistent Prefix
-      </li>
-    </ul>
-  </section>
-  <section id='00f89d57915e4cc29373d264f7a6a00d'>
-    <ul>
-      <li>
-        Consistency for clients writing to multiple regions for an account with
-        multiple write region = Eventual
-      </li>
-    </ul>
-  </section>
-  <section id='2197dfdde4854edea9bfca08410df0ec'>
-    <p>
-      The following graphic illustrates the consistency prefix consistency with
-      musical notes. In all the regions, the reads never see out of order
-      writes:
-    </p>
-  </section>
+<summary>Description</summary>
+<section id='a4e724404aef40108c4a16145046a30f'>
+
+In consistent prefix option, updates that are returned contain some prefix of all the updates, with no gaps. Consistent prefix consistency level guarantees that reads never see out-of-order writes.
+
+</section>
+<section id='05df0edddbc6498a87c6556f0c8000fe'>
+
+If writes were performed in the order `A, B, C`, then a client sees either `A`, `A,B`, or  `A,B,C`, but never out-of-order permutations like  `A,C` or `B,A,C`. Consistent Prefix provides write latencies, availability, and read throughput comparable to that of eventual consistency, but also provides the order guarantees that suit the needs of scenarios where order is important.
+
+</section>
+<section id='c0012101f5f544cf94dca87cdbb649b9'>
+
+Below are the consistency guarantees for Consistent Prefix:
+
+</section>
+<section id='7a90e351f06e403d8f4c4ea5d37bcf35'>
+
+- Consistency for clients in same region for an account with single write region = Consistent Prefix
+
+</section>
+<section id='8f85836c434e4073919b0e4e920144be'>
+
+- Consistency for clients in different regions for an account with single write region = Consistent Prefix
+
+</section>
+<section id='f582a6aa13524a8b92a380e2d796fb4c'>
+
+- Consistency for clients writing to a single region for an account with multiple write region = Consistent Prefix
+
+</section>
+<section id='00f89d57915e4cc29373d264f7a6a00d'>
+
+- Consistency for clients writing to multiple regions for an account with multiple write region = Eventual
+
+</section>
+<section id='2197dfdde4854edea9bfca08410df0ec'>
+
+The following graphic illustrates the consistency prefix consistency with musical notes. In all the regions, the reads never see out of order writes:
+
+</section>
 </details>
 
 <a id='78d43fcb4cc34a3db4bc7a143ccaa31f'></a>
 
-<figure>
-  <img src='/content-assets/d3604f18f65470d38b97.gif' alt='' loading='lazy' />
-</figure>
+![](/content-assets/d3604f18f65470d38b97.gif)
 
 <a id='e628fd6751954e8caaf91cbbeb1aafa7'></a>
 
-<h4 id='local-heading-7'>Eventual consistency</h4>
+#### Eventual consistency {#local-heading-7}
 
 <a id='40958d1eb1f8428aa2139b626d4105d5'></a>
 
 <details open={true}>
-  <summary>Description</summary>
-  <section id='d2d948c48c404c96a9dd14cbb0ec7e3d'>
-    <p>
-      In eventual consistency, there's no ordering guarantee for reads. In the
-      absence of any further writes, the replicas eventually converge.Eventual
-      consistency is the weakest form of consistency because a client may read
-      the values that are older than the ones it had read before. Eventual
-      consistency is ideal where the application does not require any ordering
-      guarantees. Examples include count of Retweets, Likes, or non-threaded
-      comments. The following graphic illustrates the eventual consistency with
-      musical notes.
-    </p>
-  </section>
+<summary>Description</summary>
+<section id='d2d948c48c404c96a9dd14cbb0ec7e3d'>
+
+In eventual consistency, there's no ordering guarantee for reads. In the absence of any further writes, the replicas eventually converge.Eventual consistency is the weakest form of consistency because a client may read the values that are older than the ones it had read before. Eventual consistency is ideal where the application does not require any ordering guarantees. Examples include count of Retweets, Likes, or non-threaded comments. The following graphic illustrates the eventual consistency with musical notes.
+
+</section>
 </details>
 
 <a id='1598260dfb364454908a54dec52ec604'></a>
 
-<figure>
-  <img src='/content-assets/9835021287938690ba10.gif' alt='' loading='lazy' />
-</figure>
+![](/content-assets/9835021287938690ba10.gif)
 
 <a id='03b3604c4a5f43d988ec95b3a27d8d5d'></a>
 
-<h3 id='local-heading-8'>Multi-region Availability Concerns</h3>
+### Multi-region Availability Concerns {#local-heading-8}
 
 <a id='45ccbfc727a44da7ad332a7da4ccf95d'></a>
 
@@ -423,7 +302,7 @@ Multi-region accounts will experience different behaviors depending on the follo
 
 <a id='eb91defc72a04ec58be3f95f352da107'></a>
 
-<h3 id='local-heading-9'>Brewer&#39;s CAP Theorem</h3>
+### Brewer's CAP Theorem {#local-heading-9}
 
 <a id='851bd8316f214f05964ec5147cb571c0'></a>
 
@@ -431,7 +310,7 @@ Eric Brewer proposed a conjecture that states that if you want consistency, avai
 
 <a id='d643b46bddfc4b2cb3462b351fcd65e6'></a>
 
-<h4 id='local-heading-10'>Consistency</h4>
+#### Consistency {#local-heading-10}
 
 <a id='34eec7d560c24431ab3d71e8b751d9a8'></a>
 
@@ -439,7 +318,7 @@ Consistency in this discussion means that everyone sees the same view of the dat
 
 <a id='b8f0bece745246678c4be03ce7e65f7d'></a>
 
-<h4 id='local-heading-11'>Availability</h4>
+#### Availability {#local-heading-11}
 
 <a id='55dd306de02145c4baaa3ad541c28ccf'></a>
 
@@ -447,7 +326,7 @@ Availability refers to the system being highly available. Since commodity-built 
 
 <a id='6319a165357d412e99d8bc2d3c6c9ec7'></a>
 
-<h4 id='local-heading-12'>Partition Tolerance</h4>
+#### Partition Tolerance {#local-heading-12}
 
 <a id='c724a6feac7444b8bcc6e2dfa5e00f99'></a>
 
@@ -455,7 +334,7 @@ Partition tolerance means that the system performs correctly even if the network
 
 <a id='c10e1bf10262461d93deff87947c1f52'></a>
 
-<h3 id='local-heading-13'>BASE: Giving up on ACID</h3>
+### BASE: Giving up on ACID {#local-heading-13}
 
 <a id='ee8c79eecbe14b0f87667f4e017d6c37'></a>
 
@@ -471,13 +350,11 @@ An alternative to the strict requirements of **ACID** is **_BASE_**, which stan
 
 <a id='806b48be74dd411eb150962f51f019d2'></a>
 
-<h2 id='local-heading-14'>PACELC Theorem</h2>
+## PACELC Theorem {#local-heading-14}
 
 <a id='9182880a674440aba28dc8a672c4cb7f'></a>
 
-<figure>
-  <img src='/content-assets/ce92e28fb9841ac92447.jpg' alt='' loading='lazy' />
-</figure>
+![](/content-assets/ce92e28fb9841ac92447.jpg)
 
 <a id='54da14e57516414dbd817c9cd3b28d21'></a>
 
@@ -485,34 +362,7 @@ Daniel Abadi, author of the [PACELC Theorem](https://en.wikipedia.org/wiki/PACE
 
 <a id='8ef2c2a4f2604b0ab96aea6018743ac1'></a>
 
-<em>if there is a partition (</em>
-<em>
-  <strong>P</strong>
-</em>
-<em>), how does the system trade off availability and consistency (</em>
-<em>
-  <strong>A</strong>
-</em>
-<em>&nbsp;and&nbsp;</em>
-<em>
-  <strong>C</strong>
-</em>
-<em>); else (</em>
-<em>
-  <strong>E</strong>
-</em>
-<em>
-  ), when the system is running normally in the absence of partitions, how does
-  the system trade off latency (
-</em>
-<em>
-  <strong>L</strong>
-</em>
-<em>) and consistency (</em>
-<em>
-  <strong>C</strong>
-</em>
-<em>)?</em>
+*if there is a partition (**P**), how does the system trade off availability and consistency (**A** and **C**); else (**E**), when the system is running normally in the absence of partitions, how does the system trade off latency (**L**) and consistency (**C**)?*
 
 <a id='bc42fbf357654406845f5e55e1ce1027'></a>
 
@@ -520,7 +370,7 @@ PACELC extends CAP to normal conditions (i.e. when the system has no partitions)
 
 <a id='46033206d3a849578b60c5eb962f27ae'></a>
 
-<h4 id='local-heading-15'>Practical Implications</h4>
+#### Practical Implications {#local-heading-15}
 
 <a id='51e014c072de46b6914e2b637b9aac17'></a>
 
@@ -528,7 +378,7 @@ PACELC gives distributed database designers a more complete framework to reason 
 
 <a id='4331c4538f8140f18477c6f8f6c2e87c'></a>
 
-<h3 id='local-heading-16'>Comparisons</h3>
+### Comparisons {#local-heading-16}
 
 <a id='7ba5065d84bc4b5aa966d5589a7266f4'></a>
 
@@ -536,7 +386,7 @@ Note that both CAP and PACELC theorems help us better understand single-row line
 
 <a id='08c3190d0aff4502bdbfb47f8db3c7b9'></a>
 
-<h2 id='local-heading-17'>The Eight Fallacies of Distributed Computing</h2>
+## The Eight Fallacies of Distributed Computing {#local-heading-17}
 
 <a id='d180d2238d34463fa11a7205a94b7ae6'></a>
 

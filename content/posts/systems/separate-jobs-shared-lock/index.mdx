@@ -21,7 +21,7 @@ That was the important discovery in a file-processing investigation. One task se
 shared folders for new files. Another sent waiting files to workers. Separating the tasks
 looked like the right performance fix, but a shared lock kept the old delay alive.
 
-<h2 id="the-checkout-line-problem">The checkout-line problem</h2>
+## The checkout-line problem {#the-checkout-line-problem}
 
 Imagine a shop that will only serve the next customer after checking every shelf.
 
@@ -31,7 +31,7 @@ and stock checker different job titles does not help if they still share one key
 Our file scan played the stock checker. It could take several minutes. Dispatch, the
 step that hands a waiting job to a worker, needed to happen more frequently.
 
-<h2 id="what-the-first-change-missed">What the first change missed</h2>
+## What the first change missed {#what-the-first-change-missed}
 
 The plan separated scanning from dispatch. Existing backlog could then be sent to
 workers without waiting for another complete scan.
@@ -44,7 +44,7 @@ That is useful when two participants might otherwise interfere with each other.
 Here, a long scan held the lock that dispatch needed. The code had been separated,
 but the waiting relationship had survived.
 
-<h2 id="protect-the-right-things-separately">Protect the right things separately</h2>
+## Protect the right things separately {#protect-the-right-things-separately}
 
 The correction gave scanning and dispatch separate locks.
 
@@ -55,7 +55,7 @@ Those were different responsibilities and needed different protection.
 The historical session reports passing focused tests after this change. That supports
 the implementation, but it does not establish a measured production speedup.
 
-<h2 id="draw-the-waiting-chain-before-changing-code">Draw the waiting chain before changing code</h2>
+## Draw the waiting chain before changing code {#draw-the-waiting-chain-before-changing-code}
 
 The first useful picture is a sequence of events. Suppose a worker finishes at 10:00.
 A scan is already running and does not release its lock until 10:03. Dispatch then
@@ -72,7 +72,7 @@ capacity, and waiting for coordination. A slow system can contain plenty of idle
 For each transition, ask who is waiting, what they need, and who currently controls it.
 That question often narrows the investigation faster than reading every function involved.
 
-<h2 id="why-the-shared-lock-seemed-reasonable">Why the shared lock seemed reasonable</h2>
+## Why the shared lock seemed reasonable {#why-the-shared-lock-seemed-reasonable}
 
 A shared lock usually starts as protection against a real problem. If two scans discover
 the same file simultaneously, they may both try to schedule it. If two dispatchers choose
@@ -89,7 +89,7 @@ That history matters during a refactor. Removing the lock without understanding 
 original purpose can replace a performance problem with duplicate processing. The right
 question is which smaller sets of actions still need to happen together.
 
-<h2 id="separate-discovery-from-ownership">Separate discovery from ownership</h2>
+## Separate discovery from ownership {#separate-discovery-from-ownership}
 
 Discovery answers, "What work exists?" Dispatch answers, "Which worker should own the
 next available item?" Those answers change at different speeds.
@@ -107,7 +107,7 @@ items found inside an open scan transaction are not necessarily visible yet. Sep
 locks frees the existing backlog; it does not automatically make uncommitted discoveries
 available sooner.
 
-<h2 id="a-useful-test-must-include-overlap">A useful test must include overlap</h2>
+## A useful test must include overlap {#a-useful-test-must-include-overlap}
 
 A test that runs scanning, waits for it to finish, and then runs dispatch can pass even
 when the shared-lock problem remains. Nothing is competing in that test.
@@ -124,7 +124,7 @@ A second scenario should start two dispatchers together and check that they do n
 both own the same item. Speed and correctness are separate requirements. A good test
 set protects both rather than assuming that one passing scenario covers the other.
 
-<h2 id="watch-for-the-next-bottleneck">Watch for the next bottleneck</h2>
+## Watch for the next bottleneck {#watch-for-the-next-bottleneck}
 
 Once one delay is removed, another can become visible. Perhaps dispatch now runs quickly,
 but both workers compete for a single browser session. Perhaps a downstream service
@@ -140,7 +140,7 @@ dispatched jobs simply wait elsewhere.
 Watch failed attempts and duplicates as well. A higher apparent throughput that includes
 repeated work can look like progress while consuming more resources for the same result.
 
-<h2 id="make-the-operational-report-specific">Make the operational report specific</h2>
+## Make the operational report specific {#make-the-operational-report-specific}
 
 A useful report might say, "The old backlog can now be dispatched during a scan in the
 controlled concurrency test. Production observation is still required to measure the
@@ -162,7 +162,7 @@ Queue order deserves a separate check. Faster dispatch should not indefinitely s
 older eligible work in favor of newer arrivals. Observe which items are selected and
 whether any remain stuck, even while the aggregate completion count increases.
 
-<h2 id="measure-the-actual-wait">Measure the actual wait</h2>
+## Measure the actual wait {#measure-the-actual-wait}
 
 Useful follow-up measurements include:
 
@@ -177,12 +177,12 @@ When splitting work to make it faster, I now want to trace everything the tasks 
 locks, database connections, transactions, and worker capacity. The bottleneck may be
 in one of those relationships rather than in the function being rewritten.
 
-<h2 id="technical-deep-dive">Technical deep dive</h2>
+## Technical deep dive {#technical-deep-dive}
 
 **Plain-language bridge:** Moving work into two functions does not create concurrency
 if both still need the same key before they can start.
 
-<h3 id="diagram-different-functions-can-still-share-one-bottleneck">Diagram: Different functions can still share one bottleneck</h3>
+### Diagram: Different functions can still share one bottleneck {#diagram-different-functions-can-still-share-one-bottleneck}
 
 ```text
 BEFORE
@@ -202,7 +202,7 @@ The redesign separates slow discovery from the short ownership decision. The ato
 claim must still prevent two dispatchers from taking the same item.
 
 
-<h3 id="model-the-critical-section">Model the critical section</h3>
+### Model the critical section {#model-the-critical-section}
 
 A critical section is the work protected by a lock. In the problematic shape, discovery
 performs slow external operations while holding a lock also required by dispatch:
@@ -220,7 +220,7 @@ Splitting locks is safe only after identifying which shared invariants each prot
 If discovery and dispatch both modify ownership of the same item, two unrelated locks
 may remove waiting while introducing duplicate execution.
 
-<h3 id="move-ownership-into-an-atomic-claim">Move ownership into an atomic claim</h3>
+### Move ownership into an atomic claim {#move-ownership-into-an-atomic-claim}
 
 An illustrative alternative makes discovery an idempotent upsert and dispatch an
 atomic state transition:
@@ -243,7 +243,7 @@ Keep remote I/O outside the claim transaction where the design allows it. Databa
 row locks remain held until transaction completion; a network call inside that interval
 can lengthen contention. See the [PostgreSQL locking documentation](https://www.postgresql.org/docs/current/explicit-locking.html).
 
-<h3 id="test-the-overlap-deterministically">Test the overlap deterministically</h3>
+### Test the overlap deterministically {#test-the-overlap-deterministically}
 
 A sleep-based test is fragile because it guesses the scheduler's timing. Use a barrier:
 start discovery, pause it after entering the slow phase, then start dispatch. Verify
@@ -253,7 +253,7 @@ where two dispatchers race for one item and exactly one wins.
 That pair matters. The first checks independence; the second checks preserved ownership.
 A fix that passes only the first can be faster and incorrect.
 
-<h3 id="bound-the-operational-claim">Bound the operational claim</h3>
+### Bound the operational claim {#bound-the-operational-claim}
 
 Compare acquisition wait, claim latency, backlog age, and duplicate claims under a
 similar workload. Higher throughput alone can hide unfairness if one class of work

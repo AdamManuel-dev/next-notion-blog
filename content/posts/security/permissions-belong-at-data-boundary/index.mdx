@@ -28,7 +28,7 @@ The broader lesson is useful for any application that stores information for sep
 customers: ownership must be enforced where data is accessed, not merely where controls
 are displayed.
 
-<h2 id="a-tenant-is-an-ownership-boundary">A tenant is an ownership boundary</h2>
+## A tenant is an ownership boundary {#a-tenant-is-an-ownership-boundary}
 
 In a shared application, a tenant often means a customer organization. Several people
 may belong to that organization and share its records. Another organization uses the
@@ -44,7 +44,7 @@ belongs to that organization and can perform the requested action on the target 
 
 Those checks should agree, but they serve different purposes.
 
-<h2 id="authentication-answers-only-the-first-question">Authentication answers only the first question</h2>
+## Authentication answers only the first question {#authentication-answers-only-the-first-question}
 
 Authentication establishes who is making a request. Authorization establishes what
 that person is allowed to do.
@@ -61,7 +61,7 @@ This is why changing a button from visible to hidden cannot be the entire protec
 A client can send a request without using that button, and ordinary software mistakes
 can send a valid-looking request with the wrong record ID.
 
-<h2 id="keep-ownership-in-the-data-model">Keep ownership in the data model</h2>
+## Keep ownership in the data model {#keep-ownership-in-the-data-model}
 
 Records that belong to an organization need a clear relationship to that organization.
 The relationship should be difficult to omit accidentally when creating or querying data.
@@ -77,7 +77,7 @@ Relationships between records need attention too. A request should not be able t
 attach one customer's ticket to another customer's project simply because both IDs
 exist. Valid individual records do not automatically form a valid cross-record relationship.
 
-<h2 id="use-more-than-one-enforcement-point-deliberately">Use more than one enforcement point deliberately</h2>
+## Use more than one enforcement point deliberately {#use-more-than-one-enforcement-point-deliberately}
 
 An application can check permissions in its service layer before performing an operation.
 A database can also restrict which rows a connection is allowed to read or change.
@@ -94,7 +94,7 @@ The application layer can provide meaningful errors and handle action-specific r
 The database layer can constrain data access. Both need testing under realistic access
 conditions; simply having policy definitions in the repository is not proof of isolation.
 
-<h2 id="background-work-needs-an-identity-too">Background work needs an identity too</h2>
+## Background work needs an identity too {#background-work-needs-an-identity-too}
 
 Permissions are easy to discuss for a person clicking a button. They are easier to
 forget when a background job exports records, updates a report, or sends a notification.
@@ -110,7 +110,7 @@ Administrative operations may legitimately require broader access. They should b
 intentional paths with appropriate visibility, rather than the default permissions used
 by ordinary customer-facing work because that was easier during development.
 
-<h2 id="test-two-customers-not-just-one-happy-path">Test two customers, not just one happy path</h2>
+## Test two customers, not just one happy path {#test-two-customers-not-just-one-happy-path}
 
 A test that creates a record and reads it as its owner proves the allowed path works.
 It does not prove that another customer is blocked.
@@ -131,7 +131,7 @@ The exact response can vary by product. The invariant is that an unauthorized re
 does not reveal or change the protected data. Test the data afterward, not just the
 status code returned to the caller.
 
-<h2 id="test-the-real-enforcement-mechanism">Test the real enforcement mechanism</h2>
+## Test the real enforcement mechanism {#test-the-real-enforcement-mechanism}
 
 A mock repository can be useful for testing business decisions. It cannot establish
 that a real database policy behaves correctly under the application's database role.
@@ -147,7 +147,7 @@ answers the wrong question.
 This does not mean every test needs a database. Use fast local tests for local logic
 and targeted integration tests for the boundary whose real behavior matters.
 
-<h2 id="avoid-leaking-information-through-helpful-errors">Avoid leaking information through helpful errors</h2>
+## Avoid leaking information through helpful errors {#avoid-leaking-information-through-helpful-errors}
 
 An error can reveal more than intended. Saying "That record belongs to another customer"
 may confirm that a particular identifier exists even when the requester should not know.
@@ -162,7 +162,7 @@ appropriate boundaries, since diagnostic records can contain sensitive context.
 These choices belong in the design and tests so they remain consistent as new endpoints
 and background features are added.
 
-<h2 id="treat-isolation-as-an-ongoing-invariant">Treat isolation as an ongoing invariant</h2>
+## Treat isolation as an ongoing invariant {#treat-isolation-as-an-ongoing-invariant}
 
 Customer isolation is a rule that should remain true as the application changes.
 A new report, export, or administrative screen can introduce a new access path even
@@ -175,12 +175,12 @@ enforced? That question is more durable than any particular button or page layou
 The interface helps people understand what they can do. The data boundary makes sure
 the system honors that promise even when a request arrives in an unexpected way.
 
-<h2 id="technical-deep-dive">Technical deep dive</h2>
+## Technical deep dive {#technical-deep-dive}
 
 **Plain-language bridge:** Every data operation needs a trusted answer to "whose data?"
 and "which action?" The record ID supplied by a client answers neither question.
 
-<h3 id="diagram-enforce-access-beyond-the-visible-controls">Diagram: Enforce access beyond the visible controls</h3>
+### Diagram: Enforce access beyond the visible controls {#diagram-enforce-access-beyond-the-visible-controls}
 
 ```text
 [client: record ID + requested action]
@@ -207,7 +207,7 @@ This is a simplified access path. Database policies reinforce trusted applicatio
 checks; privileged bypasses and background-worker access need separate verification.
 
 
-<h3 id="carry-a-trusted-context-to-the-operation">Carry a trusted context to the operation</h3>
+### Carry a trusted context to the operation {#carry-a-trusted-context-to-the-operation}
 
 An illustrative request context contains authenticated principal, verified tenant
 membership, and allowed action. Construct it after authentication and membership checks;
@@ -218,7 +218,7 @@ might update an owned row to reference another customer's parent record. A compo
 relationship such as (tenant_id, project_id) referencing a matching unique pair can
 enforce tenant agreement between related records when that model fits the domain.
 
-<h3 id="understand-the-database-policy-boundary">Understand the database policy boundary</h3>
+### Understand the database policy boundary {#understand-the-database-policy-boundary}
 
 PostgreSQL distinguishes a policy's row visibility condition from its check on new
 row values. Table owners normally bypass row security; superusers and BYPASSRLS roles
@@ -230,7 +230,7 @@ That means a successful test run as an administrative role cannot establish the 
 of the application role. Test with the actual privilege shape intended for normal use,
 and review every applicable policy rather than checking that one reassuring policy exists.
 
-<h3 id="keep-pooled-connections-from-carrying-old-identity">Keep pooled connections from carrying old identity</h3>
+### Keep pooled connections from carrying old identity {#keep-pooled-connections-from-carrying-old-identity}
 
 A shared connection pool reuses database sessions. If tenant context is stored on a
 session, failure to reset it can expose the next request to the previous tenant's state.
@@ -241,7 +241,7 @@ This context is safe only if trusted application code derives it from verified i
 A setting that an untrusted caller can freely choose is not an authorization boundary.
 Connection-context handling complements permissions; it cannot replace them.
 
-<h3 id="test-a-matrix-of-operations-and-identities">Test a matrix of operations and identities</h3>
+### Test a matrix of operations and identities {#test-a-matrix-of-operations-and-identities}
 
 For tenants A and B, test reads, list filters, inserts, updates, deletes, and cross-tenant
 references. Repeat with missing context, an expired membership, and reuse of the same

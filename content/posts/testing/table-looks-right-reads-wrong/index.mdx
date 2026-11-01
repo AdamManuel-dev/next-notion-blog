@@ -23,7 +23,7 @@ My Pi history includes work on Word table accessibility checks and a request to 
 screen-reader output with the visible table. The history supports the investigation;
 it does not establish a completed test matrix across screen readers.
 
-<h2 id='try-reading-without-the-grid'>Try reading without the grid</h2>
+## Try reading without the grid {#try-reading-without-the-grid}
 
 Consider this small table:
 
@@ -39,9 +39,7 @@ what each value represents.
 The question is whether the structure helps someone understand those relationships
 while navigating the table.
 
-<h2 id='compare-intended-order-with-observed-behavior'>
-  Compare intended order with observed behavior
-</h2>
+## Compare intended order with observed behavior {#compare-intended-order-with-observed-behavior}
 
 Start with a small example and write down what a reader needs to learn: which item,
 which quantity, and which price.
@@ -52,9 +50,7 @@ is announced and compare it with those intended relationships.
 An exported text stream can help reveal ordering problems. It is not a complete substitute
 for testing actual navigation and header announcements.
 
-<h2 id='complicated-layouts-deserve-extra-attention'>
-  Complicated layouts deserve extra attention
-</h2>
+## Complicated layouts deserve extra attention {#complicated-layouts-deserve-extra-attention}
 
 Merged cells, blank cells used for spacing, and tables nested inside other tables can
 make relationships harder to follow.
@@ -63,9 +59,7 @@ Sometimes the best improvement is a simpler layout. Sometimes it is correcting t
 document's structural information. The right choice depends on the actual document
 format and the tools readers will use.
 
-<h2 id='understand-what-the-visible-grid-contributes'>
-  Understand what the visible grid contributes
-</h2>
+## Understand what the visible grid contributes {#understand-what-the-visible-grid-contributes}
 
 Sighted readers often use position to understand a table. A value under Price belongs
 to that column, and values on the same row belong to the same item. Lines and spacing
@@ -79,7 +73,7 @@ The accessibility question is therefore about meaning, not merely whether all th
 can be extracted. A document can expose every character and still make the relationships
 unnecessarily difficult to understand.
 
-<h2 id='test-one-question-at-a-time'>Test one question at a time</h2>
+## Test one question at a time {#test-one-question-at-a-time}
 
 Begin with a task such as finding the quantity of pens. Then try a comparison, such
 as determining which item has the higher unit price. Finally, try moving away and returning
@@ -93,7 +87,7 @@ Write the expected information for each task without prescribing exact wording f
 every tool. Different assistive technologies may announce the same meaningful relationship
 in different ways. The goal is successful understanding and navigation, not identical audio.
 
-<h2 id='keep-a-comparison-record'>Keep a comparison record</h2>
+## Keep a comparison record {#keep-a-comparison-record}
 
 A useful inspection table can include the intended relationship, the observed announcement,
 the navigation action, and the difficulty encountered. Use short excerpts rather than
@@ -108,9 +102,7 @@ settings. A finding from one combination should not automatically be claimed for
 combinations. Reproducible context makes the result useful to another person trying
 to confirm or fix it.
 
-<h2 id='distinguish-content-order-from-navigation-behavior'>
-  Distinguish content order from navigation behavior
-</h2>
+## Distinguish content order from navigation behavior {#distinguish-content-order-from-navigation-behavior}
 
 A text export can expose the order in which content is stored or extracted. That helps
 spot some problems, but a screen reader may also use structural information and navigation
@@ -124,9 +116,7 @@ the underlying document information where possible, and test actual use with the
 tools. Agreement among those checks provides stronger evidence than treating any one
 representation as the complete truth.
 
-<h2 id='simplify-complicated-headers-carefully'>
-  Simplify complicated headers carefully
-</h2>
+## Simplify complicated headers carefully {#simplify-complicated-headers-carefully}
 
 Some tables use several header rows, merged headings, or labels that change meaning
 partway through the table. Those designs may be necessary, but they increase the amount
@@ -140,7 +130,7 @@ The right revision follows the reader's task. It should not merely satisfy a che
 by removing structure that carried important meaning. Test the redesigned version with
 the same questions used to evaluate the original.
 
-<h2 id='be-careful-with-blank-cells'>Be careful with blank cells</h2>
+## Be careful with blank cells {#be-careful-with-blank-cells}
 
 A blank cell can mean zero, not applicable, unknown, or intentionally omitted. Those
 meanings are different, and the visual context may not resolve the ambiguity for everyone.
@@ -153,7 +143,7 @@ Also check repeated headings and page transitions in the actual output format. A
 that is understandable on one screen may become confusing when it spans pages or is
 converted to another format. The published artifact is the one the reader experiences.
 
-<h2 id='use-automated-checks-as-guides'>Use automated checks as guides</h2>
+## Use automated checks as guides {#use-automated-checks-as-guides}
 
 Automated inspection can identify missing structural information, inconsistent patterns,
 or suspicious layout choices. That can make a large document review more efficient.
@@ -167,9 +157,7 @@ questions requiring understanding. When a checker flags an intentional structure
 document the reason and confirm usability instead of assuming that either the checker
 or the author must always be right.
 
-<h2 id='explain-the-improvement-in-terms-of-use'>
-  Explain the improvement in terms of use
-</h2>
+## Explain the improvement in terms of use {#explain-the-improvement-in-terms-of-use}
 
 A useful change report says that readers can now identify the row and column associated
 with each value in the tested environment. It names the document version and the tasks
@@ -180,9 +168,7 @@ also gives future maintainers a small set of tasks to repeat after editing the t
 The objective is durable understanding of the information, with the visual and nonvisual
 experiences both supporting the same reader goals.
 
-<h2 id='keep-the-tests-grounded-in-a-task'>
-  Keep the tests grounded in a task
-</h2>
+## Keep the tests grounded in a task {#keep-the-tests-grounded-in-a-task}
 
 Ask a practical question: can someone determine how many notebooks were ordered without
 seeing the page?
@@ -194,14 +180,12 @@ The same principle applies beyond tables: information needs a usable order and m
 relationships, not just a good-looking arrangement. Testing with that goal gives accessibility
 work a concrete outcome to improve.
 
-<h2 id='technical-deep-dive'>Technical deep dive</h2>
+## Technical deep dive {#technical-deep-dive}
 
 **Plain-language bridge:** Visual position suggests relationships to a sighted reader.
 Assistive technology needs those relationships represented in the document structure.
 
-<h3 id='diagram-a-value-needs-its-headers-to-retain-meaning'>
-  Diagram: A value needs its headers to retain meaning
-</h3>
+### Diagram: A value needs its headers to retain meaning {#diagram-a-value-needs-its-headers-to-retain-meaning}
 
 ```text
 VISIBLE TABLE                 STRUCTURAL RELATIONSHIPS
@@ -218,7 +202,7 @@ Reading the value requires both: Notebook, quantity 2.
 The relationship diagram is conceptual. HTML, Word, and PDF express these associations
 differently, so inspect the delivered format and actual navigation behavior.
 
-<h3 id='model-the-header-relationship'>Model the header relationship</h3>
+### Model the header relationship {#model-the-header-relationship}
 
 For a simple HTML table, use header cells for labels and explicit scope when needed
 to associate row or column headers with data cells. An illustrative small table is:
@@ -245,7 +229,7 @@ This example concerns HTML. It is not a prescription for the internal format of 
 Word document or PDF. Those formats and their viewing applications have different
 structural mechanisms, and conversion can change what survives.
 
-<h3 id='inspect-the-delivered-format'>Inspect the delivered format</h3>
+### Inspect the delivered format {#inspect-the-delivered-format}
 
 For a Word source exported to another format, test the actual delivered artifact as
 well as the source. Correct source structure does not establish correct exported
@@ -260,9 +244,7 @@ The [W3C tables tutorial](https://www.w3.org/WAI/tutorials/tables/) explains the
 between data tables and layout tables. That conceptual distinction also helps decide
 whether a visually tabular arrangement genuinely needs table semantics.
 
-<h3 id='test-navigation-at-the-cell-level'>
-  Test navigation at the cell level
-</h3>
+### Test navigation at the cell level {#test-navigation-at-the-cell-level}
 
 Choose a task such as "find the notebook quantity." Navigate directly through cells,
 then enter a cell from different directions. Check whether the necessary row and column
@@ -272,7 +254,7 @@ Merged cells and multi-level headings require special attention because a value 
 need several labels to be understood. If the relationship is difficult to express and
 navigate, simplify the layout or split the information into clearer tables.
 
-<h3 id='preserve-meaning-during-repairs'>Preserve meaning during repairs</h3>
+### Preserve meaning during repairs {#preserve-meaning-during-repairs}
 
 Replacing a blank with zero changes data unless zero is the intended meaning.
 Likewise, rearranging cells solely to improve reading order can alter which labels

@@ -27,7 +27,7 @@ The history records specific investigation and repair work. It does not establis
 universal guarantee for every failure or storage environment. The useful lesson is
 that recovery needs its own design and evidence, beyond successful backup creation.
 
-<h2 id="define-what-recovery-is-supposed-to-restore">Define what recovery is supposed to restore</h2>
+## Define what recovery is supposed to restore {#define-what-recovery-is-supposed-to-restore}
 
 "Restore the database" sounds precise until you ask what else the application needs.
 There may be uploaded files, versioned configuration, external message records, or
@@ -43,7 +43,7 @@ available evidence, not a defect a restore button can magically solve.
 
 Writing down the intended recovery point makes the limits visible before an incident.
 
-<h2 id="stop-the-system-from-changing-underneath-you">Stop the system from changing underneath you</h2>
+## Stop the system from changing underneath you {#stop-the-system-from-changing-underneath-you}
 
 Restoring while another process continues writing creates a moving target. A background
 worker may still hold an open connection to the old database while the main application
@@ -60,7 +60,7 @@ Map the access paths. Which processes read, which write, and which can reopen st
 automatically? The coordination mechanism must cover the actual paths used by the
 application, including the less obvious maintenance and background paths.
 
-<h2 id="check-prerequisites-before-making-destructive-changes">Check prerequisites before making destructive changes</h2>
+## Check prerequisites before making destructive changes {#check-prerequisites-before-making-destructive-changes}
 
 A restore can fail for mundane reasons: insufficient permissions, unavailable space,
 an incompatible backup, or an unexpected file location. Discovering these problems
@@ -77,7 +77,7 @@ The sequence matters. "We validate the backup" is not enough if validation happe
 only after the existing database has been overwritten. A recovery plan should make
 the order of preparation, validation, replacement, and reopening explicit.
 
-<h2 id="related-files-can-be-part-of-the-database-state">Related files can be part of the database state</h2>
+## Related files can be part of the database state {#related-files-can-be-part-of-the-database-state}
 
 Some database configurations use journals or other companion files to coordinate
 changes. A plain copy of the main file may not represent a complete, consistent backup
@@ -94,7 +94,7 @@ than assuming that copying one familiar file captures everything important.
 The historical discussion's attention to sidecar files was valuable because those
 details sit exactly where a simple-looking recovery procedure can become unreliable.
 
-<h2 id="preserve-a-way-back">Preserve a way back</h2>
+## Preserve a way back {#preserve-a-way-back}
 
 Before replacing the current state, consider how to retain it safely enough for
 investigation or rollback. A failed restore should not automatically destroy the evidence
@@ -111,7 +111,7 @@ before the replacement is verified.
 Be equally clear about what rollback can accomplish. Restoring local data cannot undo
 an email already sent or a payment already accepted by an external system.
 
-<h2 id="imagine-a-crash-between-every-important-step">Imagine a crash between every important step</h2>
+## Imagine a crash between every important step {#imagine-a-crash-between-every-important-step}
 
 A restore procedure often looks safe when read from beginning to end. Real processes
 can stop halfway through.
@@ -128,7 +128,7 @@ This reasoning may lead to a small recovery marker or an explicit set of phases.
 The goal is not to invent an elaborate framework. It is to make interruption produce
 an understandable state instead of a mystery requiring guesses under pressure.
 
-<h2 id="verify-the-product-after-reopening-storage">Verify the product after reopening storage</h2>
+## Verify the product after reopening storage {#verify-the-product-after-reopening-storage}
 
 Successfully opening the database is an important check, but it is only the beginning.
 The application may still encounter missing relationships, incompatible schemas, or
@@ -145,7 +145,7 @@ the restored application works.
 Recovery verification should establish useful operation while respecting uncertainty
 about what happened outside the restored database after the backup was created.
 
-<h2 id="test-interruption-and-competing-access">Test interruption and competing access</h2>
+## Test interruption and competing access {#test-interruption-and-competing-access}
 
 A happy-path test proves that restoration can work under friendly conditions. More
 valuable boundary tests include an already-open connection, a competing writer, an
@@ -162,7 +162,7 @@ only copy of important data.
 The historical discovery of additional edge cases after passing tests illustrates
 why the choice of failure scenarios matters more than a bare count of green checks.
 
-<h2 id="make-the-recovery-explanation-usable">Make the recovery explanation usable</h2>
+## Make the recovery explanation usable {#make-the-recovery-explanation-usable}
 
 A recovery plan should identify the backup, the expected data age, the required access
 conditions, the verification steps, and the point at which normal operation can resume.
@@ -175,12 +175,12 @@ A backup preserves information. A recovery plan explains how to turn that inform
 back into a trustworthy product state. Testing the connection between those two things
 is what turns a comforting file into a credible reliability capability.
 
-<h2 id="technical-deep-dive">Technical deep dive</h2>
+## Technical deep dive {#technical-deep-dive}
 
 **Plain-language bridge:** Recovery replaces a live system's state. It must account
 for database consistency, active processes, interruption, and external effects.
 
-<h3 id="diagram-recovery-needs-checkpoints-and-a-way-back">Diagram: Recovery needs checkpoints and a way back</h3>
+### Diagram: Recovery needs checkpoints and a way back {#diagram-recovery-needs-checkpoints-and-a-way-back}
 
 ```text
 [prepare candidate] ----> [stop relevant access]
@@ -206,7 +206,7 @@ This is a conceptual recovery sequence, not a file-copy procedure. Durable phase
 records and database-specific guarantees determine how an interrupted step is resumed.
 
 
-<h3 id="choose-a-database-supported-snapshot-mechanism">Choose a database-supported snapshot mechanism</h3>
+### Choose a database-supported snapshot mechanism {#choose-a-database-supported-snapshot-mechanism}
 
 For SQLite, the online backup API is designed to copy a consistent database through
 the database engine rather than assuming a live main-file copy is sufficient.
@@ -221,7 +221,7 @@ See [SQLite's WAL documentation](https://www.sqlite.org/wal.html).
 Those details are specific to SQLite. Other databases require their own supported backup
 and restore procedures; the state-machine reasoning below is the transferable part.
 
-<h3 id="make-restoration-a-recoverable-operation">Make restoration a recoverable operation</h3>
+### Make restoration a recoverable operation {#make-restoration-a-recoverable-operation}
 
 An illustrative durable operation record tracks candidate identity, preserved old
 identity, intended destination, and the last completed phase:
@@ -240,7 +240,7 @@ happened. A single rename does not by itself prove multi-file crash durability.
 Filesystem, operating-system, and database requirements determine which operations
 and synchronization guarantees are needed.
 
-<h3 id="define-recovery-objectives-separately">Define recovery objectives separately</h3>
+### Define recovery objectives separately {#define-recovery-objectives-separately}
 
 The recovery point objective describes acceptable lost recent data. The recovery time
 objective describes acceptable time to restore useful service. A frequent backup can
@@ -249,7 +249,7 @@ improve the first without improving the second if restoration is slow or unteste
 Measure both during a drill. Include locating the correct backup, restoring, validating,
 and resuming the product. Do not report only the byte-copy duration as total recovery time.
 
-<h3 id="reconcile-actions-outside-the-restored-database">Reconcile actions outside the restored database</h3>
+### Reconcile actions outside the restored database {#reconcile-actions-outside-the-restored-database}
 
 A restored record may say a notification remains pending even though it was delivered
 after the backup. Preserve external identifiers or a separate durable reconciliation

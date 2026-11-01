@@ -24,7 +24,7 @@ the experience was clear or comfortable to use.
 My work with recorded E2E runs and interface improvements has made me interested in
 using both automated checks and a short visual review.
 
-<h2 id="a-test-asks-specific-questions">A test asks specific questions</h2>
+## A test asks specific questions {#a-test-asks-specific-questions}
 
 Imagine a test that books an appointment:
 
@@ -41,7 +41,7 @@ Those are possible examples, not findings from a particular recorded run.
 The test checked whether the booking appeared. It did not check whether a person would
 understand what was happening while they waited.
 
-<h2 id="watch-the-moments-between-actions">Watch the moments between actions</h2>
+## Watch the moments between actions {#watch-the-moments-between-actions}
 
 A recording can help you notice questions such as:
 
@@ -53,7 +53,7 @@ A recording can help you notice questions such as:
 
 These moments can be easy to overlook when reading a test report.
 
-<h2 id="turn-an-observation-into-a-checkable-problem">Turn an observation into a checkable problem</h2>
+## Turn an observation into a checkable problem {#turn-an-observation-into-a-checkable-problem}
 
 Suppose a recording appears to show a Save button staying active during a slow request.
 
@@ -68,7 +68,7 @@ Then describe the expected behavior clearly:
 Now the team can discuss and test a specific rule. You can also check what happens if
 the request fails: the user needs a clear error and a way to try again.
 
-<h2 id="keep-the-review-focused">Keep the review focused</h2>
+## Keep the review focused {#keep-the-review-focused}
 
 Watching every minute of every test run would be expensive. I would begin with a small
 set of important flows, especially after changes to forms, navigation, or loading states.
@@ -84,7 +84,7 @@ A practical loop is:
 Some observations are better handled through design review or testing with real users.
 They do not all need a new assertion.
 
-<h2 id="understand-what-the-test-actually-promised">Understand what the test actually promised</h2>
+## Understand what the test actually promised {#understand-what-the-test-actually-promised}
 
 A test is a set of questions encoded as checks. If it asks whether a confirmation
 element appears, a pass answers that question under the conditions of the run.
@@ -97,7 +97,7 @@ Read the important assertions before watching the recording. Then use the record
 to investigate the parts of the experience the assertions do not cover. This makes
 visual review purposeful instead of an unfocused search for anything that looks imperfect.
 
-<h2 id="pick-a-viewing-task">Pick a viewing task</h2>
+## Pick a viewing task {#pick-a-viewing-task}
 
 Choose a question for each pass through the recording. One pass might focus on feedback:
 can a person tell when the application is loading, saving, or finished? Another might
@@ -111,7 +111,7 @@ visible feedback until the result appears" is more useful than "The form feels s
 The first observation can be reproduced and discussed. The second needs more investigation
 before it can guide a change.
 
-<h2 id="distinguish-application-behavior-from-test-behavior">Distinguish application behavior from test behavior</h2>
+## Distinguish application behavior from test behavior {#distinguish-application-behavior-from-test-behavior}
 
 Automated scripts may click faster than a person, wait for conditions a person cannot
 see, or use direct setup steps that bypass part of the journey. A recording reflects
@@ -126,7 +126,7 @@ Understanding the script's actions helps avoid attributing its shortcuts or unus
 timing to the application itself. Reproduce a suspicious moment manually when that
 will clarify the cause.
 
-<h2 id="test-waiting-as-a-real-state">Test waiting as a real state</h2>
+## Test waiting as a real state {#test-waiting-as-a-real-state}
 
 Many interfaces are designed around before and after, while the waiting state receives
 little attention. Yet slow connections make waiting a substantial part of the experience.
@@ -139,7 +139,7 @@ Avoid adding arbitrary sleeps merely to make the test look realistic. Control th
 relevant response or condition so the scenario is repeatable. The point is to inspect
 the product's behavior under delay, not to slow down every test without learning anything new.
 
-<h2 id="make-error-review-task-specific">Make error review task-specific</h2>
+## Make error review task-specific {#make-error-review-task-specific}
 
 An error message should explain enough for the user to take the next step. "Something
 went wrong" may be unavoidable for an unexpected failure, but a known validation problem
@@ -153,7 +153,7 @@ A recording can reveal whether the error appears in a place the user is likely t
 Other checks should confirm that the error corresponds to the actual cause and does
 not expose internal or sensitive details. Presentation and correctness belong together.
 
-<h2 id="turn-confirmed-observations-into-acceptance-rules">Turn confirmed observations into acceptance rules</h2>
+## Turn confirmed observations into acceptance rules {#turn-confirmed-observations-into-acceptance-rules}
 
 Once a problem is reproduced, write the expected behavior in a short sentence. For
 example: "While a save request is pending, the form shows a saving state and cannot
@@ -167,7 +167,7 @@ Do not add a screenshot snapshot for every observation by default. Choose a chec
 protects the intended behavior and fails for a useful reason when that behavior regresses.
 The test should explain the rule rather than merely preserve today's pixels.
 
-<h2 id="understand-the-limits-of-visual-snapshots">Understand the limits of visual snapshots</h2>
+## Understand the limits of visual snapshots {#understand-the-limits-of-visual-snapshots}
 
 A screenshot comparison can catch unexpected layout changes. It can also fail because
 of dynamic content, font rendering, animation, or environment differences that do not
@@ -181,7 +181,7 @@ updating the expected image turns the check into a record of whatever happened m
 recently. A baseline should represent a reviewed expectation, not simply a way to make
 the test report green again.
 
-<h2 id="add-keyboard-and-assistive-technology-checks-separately">Add keyboard and assistive-technology checks separately</h2>
+## Add keyboard and assistive-technology checks separately {#add-keyboard-and-assistive-technology-checks-separately}
 
 A pointer-driven video cannot establish that a person can complete the same task using
 a keyboard. Check focus order, visible focus, activation, and where focus moves after
@@ -195,7 +195,7 @@ These checks do not all belong in the same automated test. They belong in the ov
 verification plan for the important journey. Keeping their scope distinct makes it
 harder to mistake one attractive recording for proof that the whole experience is accessible.
 
-<h2 id="keep-recordings-useful-and-proportionate">Keep recordings useful and proportionate</h2>
+## Keep recordings useful and proportionate {#keep-recordings-useful-and-proportionate}
 
 Capture the flows and failures that help diagnose real questions. An enormous archive
 of unlabeled recordings can be difficult to use and expensive to maintain.
@@ -208,7 +208,7 @@ A short clip of a known failure with a clear description is often more useful th
 hours of footage with no explanation. The artifact should help another person understand
 the evidence without requiring them to rediscover the entire investigation.
 
-<h2 id="verify-the-fix-at-the-same-moment">Verify the fix at the same moment</h2>
+## Verify the fix at the same moment {#verify-the-fix-at-the-same-moment}
 
 After changing the interface, rerun the scenario that exposed the problem and inspect
 the same transition. Then check the adjacent state: a disabled Save button should become
@@ -219,7 +219,7 @@ remains subjective, explain the design decision and any user validation still ne
 This closes the loop between seeing a problem, understanding its cause, and confirming
 that the user now receives clearer behavior at the point where confusion originally occurred.
 
-<h2 id="know-what-a-recording-cannot-show">Know what a recording cannot show</h2>
+## Know what a recording cannot show {#know-what-a-recording-cannot-show}
 
 A video alone cannot establish keyboard accessibility, screen-reader behavior, or
 whether the correct data was saved behind the scenes.
@@ -230,12 +230,12 @@ and interpret words in ways the test script does not.
 Recordings add a useful view of the experience. Combined with explicit checks and
 hands-on use, they help explain whether a working feature is also understandable.
 
-<h2 id="technical-deep-dive">Technical deep dive</h2>
+## Technical deep dive {#technical-deep-dive}
 
 **Plain-language bridge:** A recording shows the journey over time. Assertions check
 specific promises. A trace helps connect a visible problem to the event that caused it.
 
-<h3 id="diagram-combine-the-visible-symptom-with-execution-evidence">Diagram: Combine the visible symptom with execution evidence</h3>
+### Diagram: Combine the visible symptom with execution evidence {#diagram-combine-the-visible-symptom-with-execution-evidence}
 
 ```text
 [recording] ------------------> what the person saw
@@ -253,7 +253,7 @@ The three sources support different questions. Correlating them helps explain a
 visible failure without treating a screenshot or a passing assertion as the whole story.
 
 
-<h3 id="distinguish-actionability-from-business-readiness">Distinguish actionability from business readiness</h3>
+### Distinguish actionability from business readiness {#distinguish-actionability-from-business-readiness}
 
 A button may be clickable before the application has loaded the data required for the
 next decision. Browser automation can wait for actionability without knowing the business
@@ -267,7 +267,7 @@ Wait on a meaningful application condition, such as the correct record identity 
 a completed loading state. Avoid replacing this with an arbitrary delay: a fixed sleep
 can be both unnecessarily slow and too short under a different environment.
 
-<h3 id="correlate-visual-time-with-execution-evidence">Correlate visual time with execution evidence</h3>
+### Correlate visual time with execution evidence {#correlate-visual-time-with-execution-evidence}
 
 For a recorded issue, capture the scenario, build, viewport, fixture or live mode, and
 the time interval where the problem appears. Pair it with relevant requests, application
@@ -281,7 +281,7 @@ See [Playwright Trace Viewer](https://playwright.dev/docs/trace-viewer).
 The trace remains a diagnostic record, not automatic proof of root cause. Its contents
 also require appropriate handling because captured state can include private data.
 
-<h3 id="turn-the-observation-into-an-invariant">Turn the observation into an invariant</h3>
+### Turn the observation into an invariant {#turn-the-observation-into-an-invariant}
 
 Suppose a recording shows entered filters disappearing during a retry. A useful invariant
 is "retry preserves the user's current filter values until a successful intentional
@@ -294,7 +294,7 @@ isolates the state changes that a fast happy-path run may never make visible.
 Pair visual assertions with semantic checks. A screenshot may show text but cannot
 prove the accessible name, keyboard path, or persisted value is correct.
 
-<h3 id="choose-evidence-retention-deliberately">Choose evidence retention deliberately</h3>
+### Choose evidence retention deliberately {#choose-evidence-retention-deliberately}
 
 Keep enough successful examples to compare representative behavior and enough failed
 examples to diagnose regressions. Retaining only final retry passes can hide instability;

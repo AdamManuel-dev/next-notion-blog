@@ -21,7 +21,7 @@ without talking to me. That is a demanding and useful test for project documenta
 The history records preparation of handoff materials. It does not establish that a new
 developer successfully used them. That final check would be part of proving the handoff works.
 
-<h2 id="start-with-the-outcome">Start with the outcome</h2>
+## Start with the outcome {#start-with-the-outcome}
 
 A folder tour is difficult to follow when the reader does not know what the system is
 supposed to accomplish.
@@ -31,7 +31,7 @@ boundaries of the project. Define what finished delivery would mean.
 
 Then explain the main path through the system in ordinary language before listing files.
 
-<h2 id="separate-written-from-verified">Separate written from verified</h2>
+## Separate written from verified {#separate-written-from-verified}
 
 "Implemented" can mean several things. A feature may exist in code without having been
 tested against its real dependency.
@@ -48,7 +48,7 @@ A useful handoff distinguishes:
 Include dates where current state matters. Yesterday's working service may not explain
 today's deployment.
 
-<h2 id="give-the-next-person-a-safe-first-action">Give the next person a safe first action</h2>
+## Give the next person a safe first action {#give-the-next-person-a-safe-first-action}
 
 Describe how to set up the project, run a limited check, and recognize the expected result.
 Explain which commands affect external systems before someone uses them.
@@ -59,7 +59,7 @@ of copied secrets.
 For known problems, record the symptom, supporting evidence, attempted fixes, and the
 next useful investigation. That prevents the next developer from repeating abandoned work.
 
-<h2 id="preserve-decisions-not-every-conversation">Preserve decisions, not every conversation</h2>
+## Preserve decisions, not every conversation {#preserve-decisions-not-every-conversation}
 
 A long transcript can contain valuable evidence, but it also contains guesses and
 superseded plans. A handoff should identify the current decision and link to supporting
@@ -68,7 +68,7 @@ material when more detail is needed.
 Keep large recordings, logs, and other artifacts organized separately from the main
 guide. Explain what each is useful for.
 
-<h2 id="give-the-reader-a-first-hour-route">Give the reader a first-hour route</h2>
+## Give the reader a first-hour route {#give-the-reader-a-first-hour-route}
 
 A new maintainer should not need to read every document before doing anything useful.
 Start with a short route through the project: understand the purpose, locate the entry
@@ -81,7 +81,7 @@ Keep deeper references available for later. The first-hour route is a map throug
 material, not a replacement for the full details. It reduces the chance that someone
 starts with an old experiment simply because its filename looks important.
 
-<h2 id="document-a-real-path-through-the-system">Document a real path through the system</h2>
+## Document a real path through the system {#document-a-real-path-through-the-system}
 
 Choose one representative input and follow it to the expected output. Explain which
 component receives it, which rules apply, where it is stored, and which external systems
@@ -95,7 +95,7 @@ This path gives the repository map a purpose. Instead of memorizing folder names
 new developer connects files to behavior. Once they understand one path, they can use
 it as a reference when exploring another workflow.
 
-<h2 id="explain-why-unusual-decisions-exist">Explain why unusual decisions exist</h2>
+## Explain why unusual decisions exist {#explain-why-unusual-decisions-exist}
 
 A strange-looking rule may protect a customer requirement or work around an external
 system's limitation. Without that context, a well-meaning maintainer may remove it.
@@ -108,7 +108,7 @@ Avoid defending every historical decision. Some choices are known compromises or
 uncertain origins. Label those honestly. "We have not verified why this exists" is
 more useful than inventing a rationale that makes the current code sound deliberate.
 
-<h2 id="separate-current-instructions-from-historical-evidence">Separate current instructions from historical evidence</h2>
+## Separate current instructions from historical evidence {#separate-current-instructions-from-historical-evidence}
 
 Old runbooks, transcripts, and incident notes are valuable, but they may contain superseded
 commands. A handoff needs a clear place for the current procedure and a separate path
@@ -122,7 +122,7 @@ Do not delete useful history merely to make the folder look tidy. Instead, label
 material and link it from the current explanation when it provides relevant evidence.
 The reader should know what to follow and what to consult for context.
 
-<h2 id="write-a-known-problem-entry-that-saves-work">Write a known-problem entry that saves work</h2>
+## Write a known-problem entry that saves work {#write-a-known-problem-entry-that-saves-work}
 
 A useful issue note contains the observed symptom, the narrowest supported explanation,
 the evidence location, and the next useful check. It also records failed approaches
@@ -137,7 +137,7 @@ repeating an action that may already have succeeded and directs attention toward
 unresolved boundary. Keep guesses clearly separate from observations so the next engineer
 can challenge the explanation without losing the evidence.
 
-<h2 id="make-access-discoverable-without-copying-secrets">Make access discoverable without copying secrets</h2>
+## Make access discoverable without copying secrets {#make-access-discoverable-without-copying-secrets}
 
 Document which systems are required, what level of access is needed, and the approved
 process for obtaining it. Name the owner or team role responsible for granting access
@@ -151,7 +151,7 @@ If some access cannot yet be transferred, list it as a blocker with its impact. 
 lets the team resolve the dependency before it becomes an urgent incident. A complete
 folder of code cannot compensate for an undocumented permission needed to operate it.
 
-<h2 id="package-evidence-so-someone-can-inspect-it">Package evidence so someone can inspect it</h2>
+## Package evidence so someone can inspect it {#package-evidence-so-someone-can-inspect-it}
 
 Large artifacts need a small index. For each recording, log bundle, or sample input,
 explain what question it helps answer and whether it contains sensitive material.
@@ -165,7 +165,7 @@ channel. The historical handoff preparation included substantial packaging work,
 packaging success and understanding transfer remain different outcomes. The archive
 can be intact while the explanation is still difficult to use.
 
-<h2 id="define-maintenance-ownership">Define maintenance ownership</h2>
+## Define maintenance ownership {#define-maintenance-ownership}
 
 A document can be accurate on the day it is written and misleading a month later.
 Decide which changes should trigger an update: a new entry point, a changed deployment
@@ -178,7 +178,7 @@ The important part is that the handoff does not become a one-time ceremony. Its 
 useful pieces should become normal project documentation that stays close to the work
 people actually maintain.
 
-<h2 id="measure-independence-not-page-count">Measure independence, not page count</h2>
+## Measure independence, not page count {#measure-independence-not-page-count}
 
 The strongest check is a small task completed by someone who did not write the guide.
 Can they explain the system's purpose, run the safe example, find a known failure, and
@@ -188,7 +188,7 @@ Record where they hesitate. Those moments reveal missing context more reliably t
 adding another general architecture paragraph. Revise the guide around the observed
 gaps, then let them try again with a different small task.
 
-<h2 id="test-the-document-with-a-person">Test the document with a person</h2>
+## Test the document with a person {#test-the-document-with-a-person}
 
 Ask another developer to follow the setup and trace one workflow. Note where they need
 an explanation that is missing from the guide, then improve it.
@@ -196,12 +196,12 @@ an explanation that is missing from the guide, then improve it.
 The measure of a handoff is whether someone can act confidently with it. Creating the
 document is one step; transferring understanding is the result we want.
 
-<h2 id="technical-deep-dive">Technical deep dive</h2>
+## Technical deep dive {#technical-deep-dive}
 
 **Plain-language bridge:** A handoff works when another person can connect the source,
 the running system, the evidence, and the next safe action without relying on your memory.
 
-<h3 id="diagram-test-transfer-of-knowledge-through-independent-action">Diagram: Test transfer of knowledge through independent action</h3>
+### Diagram: Test transfer of knowledge through independent action {#diagram-test-transfer-of-knowledge-through-independent-action}
 
 ```text
 [source + configuration + decisions + evidence]
@@ -226,7 +226,7 @@ Completing one independent task verifies that path under the tested conditions.
 Preparing the guide alone does not establish that the handoff works.
 
 
-<h3 id="provide-a-reproducibility-manifest">Provide a reproducibility manifest</h3>
+### Provide a reproducibility manifest {#provide-a-reproducibility-manifest}
 
 An illustrative handoff manifest records:
 
@@ -248,7 +248,7 @@ A source revision alone may be insufficient if behavior depends on an external s
 feature flag, or generated asset. Identify those dependencies explicitly so a reader
 does not assume the repository completely defines the running state.
 
-<h3 id="link-decisions-to-consequences">Link decisions to consequences</h3>
+### Link decisions to consequences {#link-decisions-to-consequences}
 
 For each unusual design choice, record the problem it addressed, considered alternatives,
 and the condition under which it should be revisited. A decision note is most useful
@@ -257,7 +257,7 @@ when it explains what would break if someone "simplified" the design without con
 Keep historical rationale separate from current operating instructions. A workaround
 that was necessary last month may no longer be the correct startup procedure.
 
-<h3 id="design-a-first-independent-exercise">Design a first independent exercise</h3>
+### Design a first independent exercise {#design-a-first-independent-exercise}
 
 Choose one bounded task: start the application with test data, trace one request,
 reproduce one known issue, or make a harmless local change and verify it. State the
@@ -268,7 +268,7 @@ needs, which links are inaccessible, and where the instructions assume local kno
 Those failures are defects in the handoff, not evidence that the reader should have
 guessed better.
 
-<h3 id="measure-the-dependency-you-are-removing">Measure the dependency you are removing</h3>
+### Measure the dependency you are removing {#measure-the-dependency-you-are-removing}
 
 Useful observations include successful independent completion, author interventions,
 and unresolved access blockers. Elapsed time can help, but separate machine wait from
@@ -277,7 +277,7 @@ active work and avoid generalizing from a single person's first attempt.
 Do not use page count as the success measure. A shorter document with a verified path
 and precise evidence links can transfer more usable knowledge than a complete transcript.
 
-<h3 id="keep-the-evidence-fresh">Keep the evidence fresh</h3>
+### Keep the evidence fresh {#keep-the-evidence-fresh}
 
 Give volatile sections an owner and a review trigger, such as a deployment change or
 schema migration. Durable architecture rationale needs less frequent rewriting than

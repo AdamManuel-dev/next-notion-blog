@@ -22,7 +22,7 @@ My Claude history includes work on non-interactive workflow commands and JSON ou
 The surviving index establishes that topic, but not a complete implementation record.
 The design below describes the principles I would apply.
 
-<h2 id="remove-surprise-questions">Remove surprise questions</h2>
+## Remove surprise questions {#remove-surprise-questions}
 
 An interactive menu can be comfortable for a person. An automated process may stop
 indefinitely at "Choose an option" or "Press Enter to continue."
@@ -33,7 +33,7 @@ is missing, it should return a clear error that names the missing input.
 Sensitive values should come through a suitable protected mechanism, not be printed
 in command examples or diagnostic output.
 
-<h2 id="separate-readable-output-from-structured-output">Separate readable output from structured output</h2>
+## Separate readable output from structured output {#separate-readable-output-from-structured-output}
 
 People appreciate short explanations. Programs benefit from a stable structure.
 
@@ -50,7 +50,7 @@ A hypothetical response could look like this:
 The structure makes it clear that the request was accepted but the job has not finished.
 That distinction prevents an agent from reporting success too early.
 
-<h2 id="make-failure-understandable">Make failure understandable</h2>
+## Make failure understandable {#make-failure-understandable}
 
 Useful failures include a stable error code, a readable explanation, and whether retrying
 is appropriate. The command should also use a nonzero exit status when it fails.
@@ -58,7 +58,7 @@ is appropriate. The command should also use a nonzero exit status when it fails.
 Diagnostic logs should stay separate from machine-readable results. Otherwise, a harmless
 log line can make the structured response impossible to parse.
 
-<h2 id="give-long-jobs-a-follow-up-path">Give long jobs a follow-up path</h2>
+## Give long jobs a follow-up path {#give-long-jobs-a-follow-up-path}
 
 Starting a workflow and waiting for it are different operations. Return a job identifier,
 then provide a way to check that specific job's state.
@@ -67,7 +67,7 @@ If a request is retried after a connection drops, a request identifier can help 
 duplicate work. The server must actually enforce that behavior; adding a field alone
 does not provide the guarantee.
 
-<h2 id="treat-the-output-as-a-contract">Treat the output as a contract</h2>
+## Treat the output as a contract {#treat-the-output-as-a-contract}
 
 A person can often infer meaning from a sentence that changes slightly. A program may
 depend on an exact field name or value. If yesterday's response used queued and today's
@@ -80,7 +80,7 @@ required, which can be missing, and which values indicate that follow-up work is
 A structured output mode should also avoid decorative text before or after the result.
 A friendly banner becomes a parsing error when the caller expects only one JSON object.
 
-<h2 id="give-examples-of-failure-as-well-as-success">Give examples of failure as well as success</h2>
+## Give examples of failure as well as success {#give-examples-of-failure-as-well-as-success}
 
 Documentation often shows only the happy path. An agent operating a real system needs
 to understand rejected requests, unavailable services, missing records, and jobs that
@@ -95,7 +95,7 @@ outage may justify a delayed retry. Missing permission requires a different acti
 Examples for those cases help callers choose sensibly without scraping human prose
 for words such as error or failed.
 
-<h2 id="distinguish-acceptance-from-completion">Distinguish acceptance from completion</h2>
+## Distinguish acceptance from completion {#distinguish-acceptance-from-completion}
 
 A command that submits work may exit successfully because the server accepted the request.
 That does not mean the work is finished.
@@ -111,7 +111,7 @@ behavior and confirmation.
 These distinctions prevent an agent from announcing a completed task when it has only
 successfully placed the task in a queue.
 
-<h2 id="make-repeated-requests-predictable">Make repeated requests predictable</h2>
+## Make repeated requests predictable {#make-repeated-requests-predictable}
 
 Network failures create ambiguity. The server may have accepted a request even though
 the caller never received the reply. Retrying blindly can create a duplicate job.
@@ -125,7 +125,7 @@ different inputs should produce a clear conflict rather than silently running th
 request. These details matter because a retry feature is a correctness mechanism,
 not just a convenient flag on a command.
 
-<h2 id="make-the-target-visible">Make the target visible</h2>
+## Make the target visible {#make-the-target-visible}
 
 A command may operate on a local test system, a staging system, or production. It may
 also use one of several organizations or accounts.
@@ -140,7 +140,7 @@ elsewhere. For a write command, it helps prevent acting in the wrong place.
 Do not confuse this with printing sensitive configuration. Target identity can be visible
 without exposing access tokens, private keys, or other secrets.
 
-<h2 id="offer-previews-where-they-can-be-truthful">Offer previews where they can be truthful</h2>
+## Offer previews where they can be truthful {#offer-previews-where-they-can-be-truthful}
 
 A preview or dry-run mode can show the intended scope before a change. For example,
 it might list which jobs match a filter without cancelling them.
@@ -153,7 +153,7 @@ For consequential operations, an explicit set of identifiers or a verified revis
 can make the action more predictable. The important point is to avoid presenting a
 best-effort estimate as an exact promise about a later mutation.
 
-<h2 id="design-for-partial-output-and-interruption">Design for partial output and interruption</h2>
+## Design for partial output and interruption {#design-for-partial-output-and-interruption}
 
 Large listings may need pages or streaming output. Define how a caller knows that the
 result is complete and how it resumes without accidentally skipping or duplicating items.
@@ -171,7 +171,7 @@ For listings, document the default ordering and page limit. A caller that receiv
 the first 100 jobs should be able to tell that more exist. Otherwise, an agent may
 mistake a partial inventory for the complete system and make a decision from missing data.
 
-<h2 id="test-without-a-person-at-the-keyboard">Test without a person at the keyboard</h2>
+## Test without a person at the keyboard {#test-without-a-person-at-the-keyboard}
 
 Run the commands in a non-interactive environment. Check missing inputs, rejected access,
 timeouts, and repeated requests as well as the happy path.
@@ -179,12 +179,12 @@ timeouts, and repeated requests as well as the happy path.
 A good automation interface lets its caller answer: what did I request, what happened,
 and what should I do next? Those same qualities make the tool easier for people to use.
 
-<h2 id="technical-deep-dive">Technical deep dive</h2>
+## Technical deep dive {#technical-deep-dive}
 
 **Plain-language bridge:** An automated caller needs a protocol it can interpret
 without guessing what a sentence means or answering an unexpected prompt.
 
-<h3 id="diagram-keep-acceptance-separate-from-completion">Diagram: Keep acceptance separate from completion</h3>
+### Diagram: Keep acceptance separate from completion {#diagram-keep-acceptance-separate-from-completion}
 
 ```text
 [caller] ---- command ----> [CLI]
@@ -208,7 +208,7 @@ This shows an illustrative asynchronous command. A successful submission respons
 means accepted work; completion must be established through the documented status path.
 
 
-<h3 id="define-a-machine-facing-envelope">Define a machine-facing envelope</h3>
+### Define a machine-facing envelope {#define-a-machine-facing-envelope}
 
 An illustrative response has stable fields for schema version, operation, acceptance,
 terminal status, and structured errors:
@@ -234,7 +234,7 @@ If streaming is supported, define a record-framing format such as one JSON value
 line and a terminal record. A parser must be able to detect truncated output rather
 than mistaking the last progress event for completion.
 
-<h3 id="make-retries-depend-on-intent">Make retries depend on intent</h3>
+### Make retries depend on intent {#make-retries-depend-on-intent}
 
 For a mutating request, accept a request key scoped to the principal, target, and operation.
 Persist the key with a digest of the meaningful request payload and its outcome.
@@ -245,7 +245,7 @@ Idempotency means repeated requests produce the intended single logical effect.
 It does not follow merely from returning the same JSON. The actual side effect must
 be deduplicated or reconciled at the boundary where it occurs.
 
-<h3 id="design-noninteractive-failure-behavior">Design noninteractive failure behavior</h3>
+### Design noninteractive failure behavior {#design-noninteractive-failure-behavior}
 
 When required information is absent, return a structured validation failure promptly.
 Do not switch to a prompt based solely on a convenient default when the caller has
@@ -256,7 +256,7 @@ A preview should identify its assumptions and limitations: a read-only preview c
 guarantee a later write succeeds under changed state. If needed, use a revision or
 plan token to detect drift before applying the action.
 
-<h3 id="test-the-protocol-as-a-consumer">Test the protocol as a consumer</h3>
+### Test the protocol as a consumer {#test-the-protocol-as-a-consumer}
 
 Run the command with closed standard input, captured streams, malformed arguments,
 and an interrupted connection. Parse the output with an independent consumer and verify

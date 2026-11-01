@@ -22,7 +22,7 @@ My Claude history includes a Redis-removal and queue-consolidation plan. The ava
 index does not prove the migration outcome. This article explains the design questions
 that make that kind of change important.
 
-<h2 id="give-each-component-a-clear-job">Give each component a clear job</h2>
+## Give each component a clear job {#give-each-component-a-clear-job}
 
 Imagine a restaurant with an order book and a bell. The book records the order. The
 bell tells the kitchen that work is waiting.
@@ -33,7 +33,7 @@ an order is complete.
 Software can use a database to record durable job state and a message queue to notify
 workers. That is a valid design when their responsibilities and recovery rules are clear.
 
-<h2 id="messages-can-arrive-more-than-once">Messages can arrive more than once</h2>
+## Messages can arrive more than once {#messages-can-arrive-more-than-once}
 
 A worker might complete an action, then lose its connection before acknowledging the
 message. The queue may deliver that message again.
@@ -45,7 +45,7 @@ performing it once.
 Some actions need a unique request identifier enforced by the destination. Other actions
 need a check of the external result before retrying.
 
-<h2 id="a-simpler-diagram-can-hide-a-difficult-migration">A simpler diagram can hide a difficult migration</h2>
+## A simpler diagram can hide a difficult migration {#a-simpler-diagram-can-hide-a-difficult-migration}
 
 Removing a queue means deciding what happens to messages already waiting or running.
 
@@ -60,7 +60,7 @@ A migration plan should answer:
 Changing the architecture without settling those questions can leave work in neither
 system or execute it in both.
 
-<h2 id="separate-the-job-from-its-message">Separate the job from its message</h2>
+## Separate the job from its message {#separate-the-job-from-its-message}
 
 A job is the logical work someone requested. A message is one way to tell a worker
 about that work. A job may outlive several messages or execution attempts.
@@ -76,7 +76,7 @@ another notification, following the system's recovery rules.
 The notification mechanism and the durable record then have complementary responsibilities
 rather than competing definitions of completion.
 
-<h2 id="identify-the-dangerous-gaps">Identify the dangerous gaps</h2>
+## Identify the dangerous gaps {#identify-the-dangerous-gaps}
 
 Consider the sequence: save a job, publish its message, execute the action, record the
 result, acknowledge the message. A process can fail between any two steps.
@@ -92,7 +92,7 @@ Some designs record an outgoing notification alongside the job in the same datab
 transaction, then publish it separately. That can address one gap, but it does not make
 every external side effect automatically safe to repeat.
 
-<h2 id="claim-work-before-doing-it">Claim work before doing it</h2>
+## Claim work before doing it {#claim-work-before-doing-it}
 
 When several workers receive the same logical job, only the intended owner should proceed.
 A claim operation needs to check eligibility and assign ownership together according
@@ -107,7 +107,7 @@ after a replacement has legitimately taken over.
 
 These are design requirements, not features guaranteed merely by using a queue product.
 
-<h2 id="idempotency-is-about-the-actual-effect">Idempotency is about the actual effect</h2>
+## Idempotency is about the actual effect {#idempotency-is-about-the-actual-effect}
 
 Suppose a worker sends an email and crashes before saving that fact. Marking the job
 pending again does not undo the email. The next attempt may send a duplicate.
@@ -121,7 +121,7 @@ Define the duplicate behavior for each consequential action. A general instructi
 "make the worker idempotent" is not enough unless the implementation addresses the
 place where the irreversible effect actually occurs.
 
-<h2 id="keep-failed-work-inspectable">Keep failed work inspectable</h2>
+## Keep failed work inspectable {#keep-failed-work-inspectable}
 
 After a bounded number of unsuccessful attempts, a job may be set aside for review.
 That should preserve its input identity, attempts, useful errors, and current external-state
@@ -134,7 +134,7 @@ Avoid a retry button that forgets earlier effects or creates an unrelated duplic
 job with no trace back to the original request. Recovery should preserve the logical
 history so the team can explain what happened and count the work accurately.
 
-<h2 id="migrate-with-an-inventory">Migrate with an inventory</h2>
+## Migrate with an inventory {#migrate-with-an-inventory}
 
 Before replacing a queue path, count work by state: waiting, owned, running, completed,
 and uncertain. Decide which system remains authoritative during each migration phase.
@@ -148,7 +148,7 @@ Afterward, reconcile the inventory rather than relying only on a successful depl
 message. The deployment proves code changed; it does not prove every preexisting job
 arrived safely at its intended state.
 
-<h2 id="observe-the-user-visible-backlog">Observe the user-visible backlog</h2>
+## Observe the user-visible backlog {#observe-the-user-visible-backlog}
 
 A queue length can shrink because work completed, expired, failed, or moved elsewhere.
 The falling number alone does not prove improved delivery.
@@ -161,7 +161,7 @@ When several queues remain necessary, explain how their counts relate. Adding th
 lengths may double-count the same logical work if one queue is a notification channel
 for jobs represented in another store.
 
-<h2 id="practice-interruption-in-a-controlled-environment">Practice interruption in a controlled environment</h2>
+## Practice interruption in a controlled environment {#practice-interruption-in-a-controlled-environment}
 
 Tests should interrupt work at the handoff gaps, deliver a message twice, and let an
 old worker report after a new attempt begins. Check the external effect as well as
@@ -171,7 +171,7 @@ These scenarios make the architecture's promises concrete. They also reveal whet
 a simplification actually reduced the number of states the team must reason about,
 or merely moved the complexity behind a different component name.
 
-<h2 id="check-useful-invariants">Check useful invariants</h2>
+## Check useful invariants {#check-useful-invariants}
 
 An invariant is a rule that must remain true. For example: a completed job should not
 be restarted just because an old notification arrives.
@@ -182,12 +182,12 @@ the message queue and the durable job record.
 The goal is not automatically one technology or one queue. It is a clear answer to
 who owns the work and how the system recovers when delivery and execution disagree.
 
-<h2 id="technical-deep-dive">Technical deep dive</h2>
+## Technical deep dive {#technical-deep-dive}
 
 **Plain-language bridge:** A message tells a worker that work may exist. A durable
 job record decides what that work is and whether someone already owns it.
 
-<h3 id="diagram-a-notification-is-not-ownership">Diagram: A notification is not ownership</h3>
+### Diagram: A notification is not ownership {#diagram-a-notification-is-not-ownership}
 
 ```text
 [accept request]
@@ -209,7 +209,7 @@ The message points to a durable job. The claim grants ownership, and the generat
 check rejects stale completion writes; external effects need their own protection.
 
 
-<h3 id="separate-job-identity-from-delivery-identity">Separate job identity from delivery identity</h3>
+### Separate job identity from delivery identity {#separate-job-identity-from-delivery-identity}
 
 An illustrative model uses one logical job ID and many possible message deliveries.
 The job carries its current state, claim generation, lease expiry, and result reference.
@@ -219,7 +219,7 @@ An at-least-once delivery system can deliver the same message more than once. A 
 must therefore check and claim the job rather than interpreting delivery as exclusive
 ownership. Message acknowledgments and durable job completion have different meanings.
 
-<h3 id="close-the-acceptancepublication-gap">Close the acceptance/publication gap</h3>
+### Close the acceptance/publication gap {#close-the-acceptancepublication-gap}
 
 If the application writes a job and then publishes a message, a crash between those
 steps can leave a durable job that no worker hears about. Publishing first can produce
@@ -232,7 +232,7 @@ crashes after sending but before recording success, so consumers still need dedu
 The outbox solves a local atomicity gap; it does not create universal exactly-once
 execution across external systems.
 
-<h3 id="use-leases-with-fencing-where-necessary">Use leases with fencing where necessary</h3>
+### Use leases with fencing where necessary {#use-leases-with-fencing-where-necessary}
 
 A lease allows recovery if a worker disappears. Expiry alone cannot stop a paused old
 worker from resuming after a new worker takes over. A fencing generation, a monotonically
@@ -251,7 +251,7 @@ For an external effect that cannot enforce fencing, use provider-supported idemp
 or another explicit reconciliation strategy. A local lease check immediately before
 the call does not eliminate a race during the call.
 
-<h3 id="migrate-ownership-without-two-active-authorities">Migrate ownership without two active authorities</h3>
+### Migrate ownership without two active authorities {#migrate-ownership-without-two-active-authorities}
 
 During queue consolidation, identify which component may claim new work at each phase.
 Shadow observation can compare state, but two independent claim authorities can both

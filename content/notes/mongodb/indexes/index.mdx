@@ -14,7 +14,7 @@ coverPosition: null
 
 <a id="636d159f079c4ccd944be9ac72bb4e81"></a>
 
-<h2 id="local-heading-1">Follow the ESR rule</h2>
+## Follow the ESR rule {#local-heading-1}
 
 <a id="58859fe8bb9b40afbdb693552781ab0a"></a>
 
@@ -34,7 +34,7 @@ coverPosition: null
 
 <a id="c5df3e0a179148ea8a0fff74eccfeef8"></a>
 
-<h2 id="local-heading-2">Use Covered Queries When Possible</h2>
+## Use Covered Queries When Possible {#local-heading-2}
 
 <a id="be01f174b4d14d9da56a8650510cbc79"></a>
 
@@ -42,7 +42,7 @@ coverPosition: null
 
 <a id="383469d855ae4899a3a465c2dff0ab54"></a>
 
-**For a query to be covered all the fields needed for filtering, sorting and/or being returned to the client must be present in an index. To determine whether a query is a covered query, use the** [explain()](https://docs.mongodb.com/manual/reference/method/cursor.explain/) **method. If the** <code><strong>explain()</strong></code> **output displays** <code><strong>totalDocsExamined</strong></code> **as 0, this shows the query is covered by an index. Read more in the** [documentation for explain results](https://docs.mongodb.com/manual/reference/explain-results/#covered-queries)**.**
+**For a query to be covered all the fields needed for filtering, sorting and/or being returned to the client must be present in an index. To determine whether a query is a covered query, use the** [explain()](https://docs.mongodb.com/manual/reference/method/cursor.explain/) **method. If the** **`explain()`** **output displays** **`totalDocsExamined`** **as 0, this shows the query is covered by an index. Read more in the** [documentation for explain results](https://docs.mongodb.com/manual/reference/explain-results/#covered-queries)**.**
 
 <a id="1cb9a6345b234c05a9be4bb661babfa0"></a>
 
@@ -54,7 +54,7 @@ coverPosition: null
 
 <a id="6c3d192bb71841fe9f6f85d9f2812e16"></a>
 
-<h2 id="local-heading-3">Use Caution When Considering Indexes on Low-Cardinality Fields</h2>
+## Use Caution When Considering Indexes on Low-Cardinality Fields {#local-heading-3}
 
 <a id="f71e5d9496bc480c91e1c5c1a077a491"></a>
 
@@ -62,15 +62,15 @@ coverPosition: null
 
 <a id="55ae4ce099564d5fafa46192ddcf249a"></a>
 
-<h2 id="local-heading-4">Use Partial Indexes</h2>
+## Use Partial Indexes {#local-heading-4}
 
 <a id="98fe9b14fc0140fabd2e0f5a8554befe"></a>
 
-**Reduce the size and performance overhead of indexes by only including documents that will be accessed through the index. For example, create a** [partial index](https://docs.mongodb.com/manual/core/index-partial/) **on the** <code><strong>orderID</strong></code> **field that only includes order documents with an** <code><strong>orderStatus</strong></code> **of "In progress", or only indexes the** <code><strong>emailAddress</strong></code> **field for documents where it exists.**
+**Reduce the size and performance overhead of indexes by only including documents that will be accessed through the index. For example, create a** [partial index](https://docs.mongodb.com/manual/core/index-partial/) **on the** **`orderID`** **field that only includes order documents with an** **`orderStatus`** **of "In progress", or only indexes the** **`emailAddress`** **field for documents where it exists.**
 
 <a id="9735b0fd124b4d048b4a80fcee87c46c"></a>
 
-<h4 id="local-heading-5">Comparison with the <code><strong>sparse</strong></code> Index</h4>
+#### Comparison with the **`sparse`** Index {#local-heading-5}
 
 <a id="f033cadf5f1c4b5db35b2bd8bdbd42a7"></a>
 
@@ -112,7 +112,7 @@ db.contacts.find( { name: "xyz", email: { $regex: /\.org$/ } } )
 
 <a id="adf4aec52dea4c7db9da25135e56d6c9"></a>
 
-<h2 id="local-heading-6">Avoid Regular Expressions That Are Not Left Anchored or Rooted</h2>
+## Avoid Regular Expressions That Are Not Left Anchored or Rooted {#local-heading-6}
 
 <a id="05946b8ce0d043db910a798fcf6646a1"></a>
 
@@ -120,7 +120,7 @@ db.contacts.find( { name: "xyz", email: { $regex: /\.org$/ } } )
 
 <a id="c1afa9a501864e34bd805b269a40b090"></a>
 
-<h2 id="local-heading-7">Avoid Case Insensitive Regular Expressions</h2>
+## Avoid Case Insensitive Regular Expressions {#local-heading-7}
 
 <a id="77ec28aeecb346d9a4cba1901a8bd098"></a>
 

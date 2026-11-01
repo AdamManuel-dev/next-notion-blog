@@ -27,7 +27,7 @@ milestone shipped or that the plan produced a measured business result.
 The useful question was simple: what is the smallest complete promise this product
 can keep? Answering it changes both what gets built and how progress gets judged.
 
-<h2 id="write-the-promise-as-a-user-outcome">Write the promise as a user outcome</h2>
+## Write the promise as a user outcome {#write-the-promise-as-a-user-outcome}
 
 "Build an AI application" is not a useful scope boundary. It names a category of
 technology, not something a person can accomplish.
@@ -44,7 +44,7 @@ The exact promise will differ by project. What matters is that someone outside t
 implementation can tell whether it was fulfilled without reading a list of completed
 functions or counting the number of files created.
 
-<h2 id="a-vertical-slice-connects-the-whole-journey">A vertical slice connects the whole journey</h2>
+## A vertical slice connects the whole journey {#a-vertical-slice-connects-the-whole-journey}
 
 A vertical slice is a small path through all the layers needed for a useful result.
 It might connect one input form, one server operation, one stored record, and one
@@ -60,7 +60,7 @@ The slice does not have to support every possible user. A clearly labeled protot
 may support one file format or one task type. The important part is making the
 restriction explicit and completing the supported path end to end.
 
-<h2 id="write-exclusions-before-they-become-arguments">Write exclusions before they become arguments</h2>
+## Write exclusions before they become arguments {#write-exclusions-before-they-become-arguments}
 
 Scope is easier to protect when the team writes down what it is choosing to defer.
 Examples might include multi-user administration, an autonomous improvement loop,
@@ -77,7 +77,7 @@ demonstration small is to use appropriate synthetic examples instead.
 A written boundary also protects against small additions that accumulate. Each request
 may seem reasonable on its own while the combined project quietly doubles in size.
 
-<h2 id="separate-needed-now-from-needed-eventually">Separate needed now from needed eventually</h2>
+## Separate needed now from needed eventually {#separate-needed-now-from-needed-eventually}
 
 Engineers often notice real future problems early. A single-process design may not
 handle large traffic. A manual setup may not support a growing team. A narrow example
@@ -94,7 +94,7 @@ For example, keeping a model call behind a clear interface may be sensible. Buil
 a sophisticated provider marketplace is a separate decision. The interface earns its
 place if it simplifies today's testing or makes a likely change less disruptive.
 
-<h2 id="order-work-by-what-could-invalidate-the-idea">Order work by what could invalidate the idea</h2>
+## Order work by what could invalidate the idea {#order-work-by-what-could-invalidate-the-idea}
 
 The easiest feature is not always the best first feature. Start with the uncertainty
 that could make the whole project pointless.
@@ -111,7 +111,7 @@ A milestone such as "backend complete" hides those questions. A milestone such a
 "one supported conversation produces an inspectable comparison" makes progress much
 easier to evaluate.
 
-<h2 id="keep-a-budget-for-integration-and-explanation">Keep a budget for integration and explanation</h2>
+## Keep a budget for integration and explanation {#keep-a-budget-for-integration-and-explanation}
 
 A deadline plan that assigns every available minute to new features is already too
 large. The pieces need to be connected, failures need to be handled, and the result
@@ -128,7 +128,7 @@ cannot tell the difference between a slow operation and a broken feature.
 Choose a smaller feature set if that is what leaves enough time to finish the supported
 experience and explain its limits honestly.
 
-<h2 id="use-a-change-rule-when-new-ideas-arrive">Use a change rule when new ideas arrive</h2>
+## Use a change rule when new ideas arrive {#use-a-change-rule-when-new-ideas-arrive}
 
 Good ideas will appear during implementation. A scope document should not prevent
 learning, but it should make the cost of a change visible.
@@ -146,7 +146,7 @@ reveals that the current design cannot work, change the plan and explain the tra
 This turns scope control into a decision process rather than a contest between whoever
 wants more features and whoever feels most anxious about the deadline.
 
-<h2 id="show-the-difference-between-a-prototype-and-a-promise">Show the difference between a prototype and a promise</h2>
+## Show the difference between a prototype and a promise {#show-the-difference-between-a-prototype-and-a-promise}
 
 A prototype can use simplified infrastructure or a narrow dataset and still be useful.
 The problem is presenting those simplifications as proof of a broader capability.
@@ -159,7 +159,7 @@ This explanation is part of good engineering communication. It helps reviewers s
 an intentional scope choice from an overlooked requirement. It also makes follow-up
 work easier to prioritize because the remaining uncertainties are already visible.
 
-<h2 id="a-smaller-finished-result-can-carry-more-information">A smaller finished result can carry more information</h2>
+## A smaller finished result can carry more information {#a-smaller-finished-result-can-carry-more-information}
 
 An incomplete large product mostly tells you how much work remains. A complete small
 product can reveal whether the central idea is useful, where people get confused,
@@ -169,12 +169,12 @@ That is why scope control is a technical leadership skill. It connects implement
 effort to a decision someone needs to make. The objective is not to make the project
 look small. It is to make the learning and the result complete enough to trust.
 
-<h2 id="technical-deep-dive">Technical deep dive</h2>
+## Technical deep dive {#technical-deep-dive}
 
 **Plain-language bridge:** Scope becomes manageable when the promised outcome is
 translated into a small end-to-end contract with explicit evidence for completion.
 
-<h3 id="diagram-finish-a-narrow-path-through-the-whole-product">Diagram: Finish a narrow path through the whole product</h3>
+### Diagram: Finish a narrow path through the whole product {#diagram-finish-a-narrow-path-through-the-whole-product}
 
 ```text
                   ONE COMPLETE SLICE
@@ -193,7 +193,7 @@ The excluded items are illustrative scope choices, not universally optional feat
 Required correctness and access protections still belong inside the supported slice.
 
 
-<h3 id="define-a-slice-contract">Define a slice contract</h3>
+### Define a slice contract {#define-a-slice-contract}
 
 An illustrative slice for a conversation-review prototype is:
 
@@ -214,7 +214,7 @@ Classify assumptions separately from requirements. "One format is sufficient to 
 the idea" is an assumption to test. "Unsupported input must not be silently misread"
 is a correctness requirement for the supported prototype.
 
-<h3 id="order-work-by-dependency-and-uncertainty">Order work by dependency and uncertainty</h3>
+### Order work by dependency and uncertainty {#order-work-by-dependency-and-uncertainty}
 
 Create a small dependency graph for the slice. Identify which unknown could invalidate
 the promise: input parsing, evidence quality, external integration, or user comprehension.
@@ -225,7 +225,7 @@ A spike needs an exit condition. "Determine whether representative inputs can pr
 the required evidence links" is concrete. "Explore the model" has no natural stopping
 point and can consume the entire deadline.
 
-<h3 id="separate-scope-reduction-from-risk-transfer">Separate scope reduction from risk transfer</h3>
+### Separate scope reduction from risk transfer {#separate-scope-reduction-from-risk-transfer}
 
 Deferring multi-user administration may be reasonable for a local synthetic-data demo.
 Deferring essential access control while using real shared private data transfers risk
@@ -235,7 +235,7 @@ Similarly, a fixture can remove external unpredictability for an interface revie
 it changes the claim the prototype can support. Record that substitution in the acceptance
 evidence instead of treating the live integration as implicitly complete.
 
-<h3 id="reserve-time-for-assembly-and-inspection">Reserve time for assembly and inspection</h3>
+### Reserve time for assembly and inspection {#reserve-time-for-assembly-and-inspection}
 
 A delivery estimate should include implementation, integration, verification, and explanation.
 These activities overlap in practice, but omitting them from the estimate does not make
@@ -245,7 +245,7 @@ Use ranges where uncertainty is high and identify the cut line: which complete c
 can be removed if time runs short? Removing one coherent optional feature is usually
 easier to explain than leaving several mandatory paths half-finished.
 
-<h3 id="close-with-an-evidence-based-next-decision">Close with an evidence-based next decision</h3>
+### Close with an evidence-based next decision {#close-with-an-evidence-based-next-decision}
 
 At the deadline, compare the result against the slice contract. Record fulfilled
 requirements, failed assumptions, intentional exclusions, and the smallest next experiment

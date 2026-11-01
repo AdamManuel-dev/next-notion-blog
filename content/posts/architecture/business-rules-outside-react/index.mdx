@@ -28,7 +28,7 @@ The historical discussions establish an intended design, not proof that every bo
 was implemented perfectly. The lesson is how to decide where a rule belongs and how
 to migrate it without changing its meaning.
 
-<h2 id="start-with-the-question-the-code-answers">Start with the question the code answers</h2>
+## Start with the question the code answers {#start-with-the-question-the-code-answers}
 
 Consider an offer editor. Some code answers, "What should the button look like?" Other
 code answers, "Can this offer be submitted?" A third part answers, "How do we send the request?"
@@ -43,7 +43,7 @@ domain expert can inspect the policy without reading browser lifecycle code.
 The boundaries should follow those responsibilities, not the desire to use a particular
 architecture label.
 
-<h2 id="distinguish-input-shape-from-business-permission">Distinguish input shape from business permission</h2>
+## Distinguish input shape from business permission {#distinguish-input-shape-from-business-permission}
 
 An input check can establish that an amount is a valid number and an identifier has
 the expected format. It cannot alone establish that the current user may approve the offer.
@@ -61,7 +61,7 @@ A correctly formed request can still ask for an invalid transition.
 Naming these separately keeps a single vague validation function from accumulating
 responsibilities that are difficult to test and maintain.
 
-<h2 id="make-the-rule-understandable-without-a-browser">Make the rule understandable without a browser</h2>
+## Make the rule understandable without a browser {#make-the-rule-understandable-without-a-browser}
 
 A pure calculation receives inputs and returns a result without changing outside state.
 For example, calculating the difference between a budget and a price should not require
@@ -76,7 +76,7 @@ answer. Keep those dependencies explicit rather than pretending the operation ha
 The useful separation is between making the decision and obtaining or changing the
 outside information the decision depends on.
 
-<h2 id="keep-the-server-authoritative">Keep the server authoritative</h2>
+## Keep the server authoritative {#keep-the-server-authoritative}
 
 Sharing a rule with the frontend can give users fast feedback, but the server still
 needs to enforce the relevant checks. Requests can arrive without passing through
@@ -89,7 +89,7 @@ This is especially important for actions depending on current state. Two people 
 open the same record, and one may change it before the other submits. A local calculation
 based on the earlier snapshot does not resolve that conflict.
 
-<h2 id="give-external-effects-narrow-interfaces">Give external effects narrow interfaces</h2>
+## Give external effects narrow interfaces {#give-external-effects-narrow-interfaces}
 
 The product operation needs to save an offer, not know every detail of an HTTP client.
 A narrow interface can express the required capability in the language of the feature.
@@ -104,7 +104,7 @@ Keep the interface small and based on real use. A generic repository framework w
 dozens of unused methods can obscure the operation more than a direct, explicit dependency.
 The goal is clarity, not maximum abstraction.
 
-<h2 id="separate-saved-state-from-editing-state">Separate saved state from editing state</h2>
+## Separate saved state from editing state {#separate-saved-state-from-editing-state}
 
 A user may change a field and then cancel. The application therefore needs to distinguish
 the saved value from the local draft.
@@ -117,7 +117,7 @@ Define which state the user is editing, which state represents the server, and w
 happens when they disagree. The rule belongs in the feature's state coordination, not
 in a collection of unrelated component effects that each try to repair the latest symptom.
 
-<h2 id="keep-react-responsible-for-react-concerns">Keep React responsible for React concerns</h2>
+## Keep React responsible for React concerns {#keep-react-responsible-for-react-concerns}
 
 Subscriptions, focus, rendering, and component lifecycle are legitimate frontend responsibilities.
 Extracting business rules should not mean forcing those concerns into a browser-independent
@@ -130,7 +130,7 @@ This division lets a reader follow the operation without a large inheritance tre
 Plain functions and explicit results are often enough. Introduce more machinery only
 when a demonstrated need makes the additional structure worthwhile.
 
-<h2 id="migrate-through-one-representative-feature">Migrate through one representative feature</h2>
+## Migrate through one representative feature {#migrate-through-one-representative-feature}
 
 Choose a feature containing the important cases: a calculation, a request, an error,
 and a state transition. Record its current agreed behavior before moving the code.
@@ -143,7 +143,7 @@ Avoid changing the product policy and the architecture in the same unexplained p
 If an existing rule is wrong, give that correction its own clear requirement. Otherwise,
 reviewers cannot tell whether a difference is an intentional product change or a migration bug.
 
-<h2 id="use-tests-to-protect-meaning">Use tests to protect meaning</h2>
+## Use tests to protect meaning {#use-tests-to-protect-meaning}
 
 A test that merely verifies a new helper was called does not establish that the offer
 decision stayed correct. Test the important outcomes: valid input is accepted, invalid
@@ -156,7 +156,7 @@ The mix matters. Pure tests make the rule easy to inspect, while integrated chec
 show that the application actually uses it. Neither should be presented as complete
 proof of the other.
 
-<h2 id="judge-the-design-by-the-next-change">Judge the design by the next change</h2>
+## Judge the design by the next change {#judge-the-design-by-the-next-change}
 
 The strongest evidence for the refactor appears when a real requirement changes. Can
 the team locate the policy, update its examples, and adapt the interface without hunting
@@ -170,12 +170,12 @@ The leadership value is preserving the product while making future changes more 
 A UI rewrite should change how the interface is built. It should not silently rewrite
 the business decisions that people rely on.
 
-<h2 id="technical-deep-dive">Technical deep dive</h2>
+## Technical deep dive {#technical-deep-dive}
 
 **Plain-language bridge:** The screen collects a request. A separate rule decides
 whether it is allowed. Keeping those jobs apart makes the decision testable on its own.
 
-<h3 id="diagram-keep-product-decisions-behind-a-clear-boundary">Diagram: Keep product decisions behind a clear boundary</h3>
+### Diagram: Keep product decisions behind a clear boundary {#diagram-keep-product-decisions-behind-a-clear-boundary}
 
 ```text
 [screen: collect input]
@@ -197,7 +197,7 @@ The arrows show a simplified execution path, not imports. The domain rule evalua
 facts; the server and commit boundary enforce authoritative access and concurrency.
 
 
-<h3 id="give-the-domain-an-explicit-input-and-result">Give the domain an explicit input and result</h3>
+### Give the domain an explicit input and result {#give-the-domain-an-explicit-input-and-result}
 
 A domain function should receive the facts it needs instead of reading browser state,
 the current clock, or a global session implicitly. An illustrative contract is:
@@ -219,7 +219,7 @@ Reason codes belong to the domain contract. Human-facing wording and field place
 belong to presentation. That lets a web form and a background service interpret the
 same decision without sharing UI components.
 
-<h3 id="separate-evaluation-from-commitment">Separate evaluation from commitment</h3>
+### Separate evaluation from commitment {#separate-evaluation-from-commitment}
 
 A pure function cannot prevent another request from changing the offer after evaluation.
 The application service must load authoritative state, evaluate the rule, and commit
@@ -237,7 +237,7 @@ to the action, rather than assuming that a client-side permission snapshot is au
 For high-impact changes, the transaction boundary should cover the relevant authoritative
 checks and write.
 
-<h3 id="make-dependency-direction-enforceable">Make dependency direction enforceable</h3>
+### Make dependency direction enforceable {#make-dependency-direction-enforceable}
 
 A useful dependency rule is that the domain imports neither UI code nor network clients.
 Application services depend on narrow interfaces for persistence and external effects.
@@ -252,7 +252,7 @@ preexisting objects during render. Keeping business decisions outside rendering 
 on that separation; it does not make a client the authoritative decision-maker.
 See [React's purity explanation](https://react.dev/learn/keeping-components-pure).
 
-<h3 id="test-meaning-at-two-levels">Test meaning at two levels</h3>
+### Test meaning at two levels {#test-meaning-at-two-levels}
 
 Use table-driven domain tests for allowed, expired, unauthorized, and boundary-value
 cases. Then add service-level tests for stale revisions and persistence failures.

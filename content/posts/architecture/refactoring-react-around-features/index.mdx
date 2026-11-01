@@ -21,7 +21,7 @@ While working on a scheduler and planning frontend refactors, I kept returning t
 question: should related files live together because they have the same file type, or
 because they support the same feature?
 
-<h2 id="think-about-the-change-you-need-to-make">Think about the change you need to make</h2>
+## Think about the change you need to make {#think-about-the-change-you-need-to-make}
 
 Suppose you want to change how users edit working hours.
 
@@ -48,7 +48,7 @@ src/
 
 You can start at `availability` and follow the feature from there.
 
-<h2 id="keep-local-code-local-at-first">Keep local code local at first</h2>
+## Keep local code local at first {#keep-local-code-local-at-first}
 
 A function used only by the availability editor usually belongs with that editor.
 It does not need a shared home just because another feature might use it someday.
@@ -58,7 +58,7 @@ and future changes need to consider those features.
 
 That promise is easier to keep when the shared purpose is already clear.
 
-<h2 id="similar-code-may-represent-different-rules">Similar code may represent different rules</h2>
+## Similar code may represent different rules {#similar-code-may-represent-different-rules}
 
 Imagine two features that both check a date.
 
@@ -71,7 +71,7 @@ them into one clever function may hide the difference.
 The basic function that reads a date can be shared. The rules about which dates are
 allowed should stay near the features that own those decisions.
 
-<h2 id="share-a-rule-when-it-really-is-one-rule">Share a rule when it really is one rule</h2>
+## Share a rule when it really is one rule {#share-a-rule-when-it-really-is-one-rule}
 
 Suppose both the website and the server need to check whether an appointment duration
 is allowed. A common definition can help them agree.
@@ -82,7 +82,7 @@ but requests can reach the server without going through that screen.
 Also, shared code used in the browser must not contain server secrets or depend on
 server-only services.
 
-<h2 id="start-with-a-change-map">Start with a change map</h2>
+## Start with a change map {#start-with-a-change-map}
 
 Before moving files, choose a recent change and list the files it touched. Note why
 each file changed. Some belong to the feature itself, some supply shared display pieces,
@@ -96,7 +96,7 @@ Also ask what made the work difficult. Was finding the files the problem, or was
 business rule unclear? A new folder structure will not repair an ambiguous rule. The
 change map helps choose an intervention that addresses the actual source of confusion.
 
-<h2 id="give-each-rule-a-clear-owner">Give each rule a clear owner</h2>
+## Give each rule a clear owner {#give-each-rule-a-clear-owner}
 
 Suppose the scheduler rejects appointments longer than an hour. Where should that rule
 live? The answer depends on who owns the decision and which parts of the system need it.
@@ -112,7 +112,7 @@ the feature decides when that state is appropriate.
 This separation makes a future policy change easier to locate and less likely to produce
 different behavior across screens.
 
-<h2 id="define-what-other-features-may-import">Define what other features may import</h2>
+## Define what other features may import {#define-what-other-features-may-import}
 
 A feature can expose a small public interface: the component or function another part
 of the application is meant to use. Its internal helpers remain implementation details.
@@ -127,7 +127,7 @@ the feature's internals without unexpectedly breaking distant code that reached 
 
 If every internal file becomes public, the boundary provides little protection beyond its name.
 
-<h2 id="shared-code-should-have-a-specific-purpose">Shared code should have a specific purpose</h2>
+## Shared code should have a specific purpose {#shared-code-should-have-a-specific-purpose}
 
 A folder called shared can become a junk drawer because almost anything might be shared
 eventually. Prefer a meaningful category or a clear module purpose for code that really
@@ -141,7 +141,7 @@ Ask whether a change to the shared code should affect all its callers. If the an
 is often no, the callers may need separate rules built on a smaller common primitive.
 This question catches abstractions that combine similar-looking code with different meanings.
 
-<h2 id="keep-data-ownership-visible">Keep data ownership visible</h2>
+## Keep data ownership visible {#keep-data-ownership-visible}
 
 Moving a loading hook into a feature folder does not automatically solve data coordination.
 Two screens may still fetch the same data separately, keep inconsistent local copies,
@@ -156,7 +156,7 @@ If those are mixed together, cancelling an edit or receiving a background refres
 produce surprising behavior. Feature organization should make those states easier to
 understand rather than simply moving them into a new directory.
 
-<h2 id="avoid-circular-dependencies">Avoid circular dependencies</h2>
+## Avoid circular dependencies {#avoid-circular-dependencies}
 
 Suppose availability imports appointments to calculate a display label, while appointments
 imports availability to validate a booking. The features now depend on each other.
@@ -171,7 +171,7 @@ A useful direction is for features to depend on stable lower-level rules and for
 wiring to compose features. The exact boundaries should reflect the product, but their
 direction should be explainable.
 
-<h2 id="review-a-file-move-differently-from-a-behavior-change">Review a file move differently from a behavior change</h2>
+## Review a file move differently from a behavior change {#review-a-file-move-differently-from-a-behavior-change}
 
 During a structural refactor, keep the intended behavior stable. A reviewer should be
 able to see where the old implementation went and what references changed.
@@ -184,7 +184,7 @@ Check the important user flow after the move. Compilation catches broken imports
 it may not reveal that an editor no longer refreshes after saving or that an error
 message appears in the wrong place. Verification should follow behavior, not just the file tree.
 
-<h2 id="use-duplication-as-evidence-not-an-automatic-command">Use duplication as evidence, not an automatic command</h2>
+## Use duplication as evidence, not an automatic command {#use-duplication-as-evidence-not-an-automatic-command}
 
 Two similar functions are an invitation to compare meaning. They are not automatic proof
 that one should be deleted.
@@ -197,7 +197,7 @@ A small amount of clear duplication can be easier to maintain while the requirem
 are still evolving. Revisit it when a stable common concept emerges. The goal is reducing
 future mistakes, not minimizing the number of repeated lines at any cost.
 
-<h2 id="explain-the-structure-through-a-task">Explain the structure through a task</h2>
+## Explain the structure through a task {#explain-the-structure-through-a-task}
 
 A short contributor note can show where to add an availability field, where its server
 validation belongs, and which checks protect the change. That gives new developers a
@@ -211,7 +211,7 @@ After the refactor, ask someone unfamiliar with the move to locate the relevant 
 for a small modification. Their search path will reveal whether the new organization
 actually communicates the ownership you intended.
 
-<h2 id="decide-whether-the-refactor-earned-its-cost">Decide whether the refactor earned its cost</h2>
+## Decide whether the refactor earned its cost {#decide-whether-the-refactor-earned-its-cost}
 
 The strongest result is a change that becomes easier to explain and safer to make.
 Record concrete examples: fewer unrelated files need editing, a business rule now has
@@ -221,7 +221,7 @@ Do not claim faster development from a tidier tree alone. The improvement needs 
 up in real work. A good structure is one that continues to help when requirements change,
 not just one that looks orderly immediately after the files are moved.
 
-<h2 id="refactor-one-feature-at-a-time">Refactor one feature at a time</h2>
+## Refactor one feature at a time {#refactor-one-feature-at-a-time}
 
 A manageable process is:
 
@@ -237,12 +237,12 @@ business rule makes failures harder to explain.
 The useful outcome is that another developer can find, understand, and change a feature
 with less searching. Folder names are only one tool for reaching that outcome.
 
-<h2 id="technical-deep-dive">Technical deep dive</h2>
+## Technical deep dive {#technical-deep-dive}
 
 **Plain-language bridge:** Folder names help people navigate. Import rules determine
 whether features can actually change independently.
 
-<h3 id="diagram-give-imports-a-deliberate-direction">Diagram: Give imports a deliberate direction</h3>
+### Diagram: Give imports a deliberate direction {#diagram-give-imports-a-deliberate-direction}
 
 ```text
                     [route]
@@ -267,7 +267,7 @@ Here arrows mean imports or declared dependencies, not runtime execution order.
 The application is wired to an adapter without making domain rules import storage.
 
 
-<h3 id="treat-the-import-structure-as-a-directed-graph">Treat the import structure as a directed graph</h3>
+### Treat the import structure as a directed graph {#treat-the-import-structure-as-a-directed-graph}
 
 Each module is a node; an import is an edge toward a dependency. A feature boundary
 works best when consumers depend on a small public surface rather than reaching into
@@ -290,7 +290,7 @@ Moving both folders into "shared" renames the cycle without explaining the relat
 A lower-level common rule or a coordinating application service may provide a clearer
 boundary, depending on which decisions truly belong together.
 
-<h3 id="separate-public-types-from-internal-state">Separate public types from internal state</h3>
+### Separate public types from internal state {#separate-public-types-from-internal-state}
 
 Export the operations and values another feature needs. Avoid exposing the entire
 mutable state container when the consumer only needs a read model or one action.
@@ -305,7 +305,7 @@ A barrel file can offer a public entry point, but it is not automatic encapsulat
 Import restrictions need enforcement, and aggregate imports can also expose initialization
 or style-order side effects. Inspect the emitted behavior during migrations.
 
-<h3 id="migrate-through-a-compatibility-boundary">Migrate through a compatibility boundary</h3>
+### Migrate through a compatibility boundary {#migrate-through-a-compatibility-boundary}
 
 When changing internal structure, preserve the existing public contract where practical.
 Move one consumer at a time, with an adapter translating old inputs into the new domain
@@ -316,7 +316,7 @@ Separate structural moves from behavior edits in review. If both are necessary, 
 the intentional behavior changes independently so reviewers do not assume every difference
 is merely a consequence of moving files.
 
-<h3 id="check-whether-the-structure-earned-its-complexity">Check whether the structure earned its complexity</h3>
+### Check whether the structure earned its complexity {#check-whether-the-structure-earned-its-complexity}
 
 Choose a representative change, such as adding a booking rule. Inspect how many features
 must change, whether shared contracts expand unnecessarily, and whether tests can exercise

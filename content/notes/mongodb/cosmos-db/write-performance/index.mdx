@@ -22,7 +22,7 @@ The way you write data needs to be mindful of this by parallelizing and spreadin
 
 <a id="23600618f9a642a19ebffae282743d30"></a>
 
-<h3 id="local-heading-1">Spread the load across your shards</h3>
+### Spread the load across your shards {#local-heading-1}
 
 <a id="c7edda19f8534852ab1b2169a56c3dee"></a>
 
@@ -38,7 +38,7 @@ One example of doing this would be a product catalog application that is sharded
 
 <a id="38058217ebc44b0396c577ba2be0b538"></a>
 
-<h3 id="local-heading-2">Reduce the number of indexes</h3>
+### Reduce the number of indexes {#local-heading-2}
 
 <a id="f36d7087d38a4c79aaae9f8edb4dead0"></a>
 
@@ -58,7 +58,7 @@ Reducing the number of indexes to only the indexes you need to support your quer
 
 <a id="dcbd9fda2a19406b8d72a30615aa0cd2"></a>
 
-<h3 id="local-heading-3">Set ordered to false in the MongoDB drivers</h3>
+### Set ordered to false in the MongoDB drivers {#local-heading-3}
 
 <a id="eb8fa56b96fe41d9a20983d6205dff86"></a>
 
@@ -82,7 +82,7 @@ db.collection.insertMany(
 
 <a id="2712217bf3e645faaf8201bc3fcea77e"></a>
 
-<h3 id="local-heading-4">Tune for the optimal batch size and thread count</h3>
+### Tune for the optimal batch size and thread count {#local-heading-4}
 
 <a id="c17a11946e3349deb517739274d326cf"></a>
 

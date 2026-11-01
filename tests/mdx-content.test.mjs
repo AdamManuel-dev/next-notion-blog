@@ -49,6 +49,32 @@ const home = (fields = {}) =>
     ...fields
   })
 
+test('heading markers preserve literal image alt text and nonbreaking spaces', async () => {
+  const { root } = makeContent({
+    '': home(),
+    note: page(
+      { slug: 'literal-heading-markers' },
+      [
+        '',
+        '![Read {#prose-alt}](/image.png)',
+        '',
+        '## ![Heading {#nested-alt}](/image.png) {#image-heading}',
+        '',
+        '## Heading\u00a0{#nbsp-heading}'
+      ].join('\n')
+    )
+  })
+  try {
+    const rendered = await getLocalPage('literal-heading-markers', { root })
+    const $ = load(rendered.html)
+    assert.equal($('figure img').attr('alt'), 'Read {#prose-alt}')
+    assert.equal($('#image-heading img').attr('alt'), 'Heading {#nested-alt}')
+    assert.equal($('#nbsp-heading').text(), 'Heading\u00a0')
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true })
+  }
+})
+
 test('multiline retained HTML paragraphs render without nested or empty paragraphs', async () => {
   const { root } = makeContent({
     '': home(),
@@ -441,4 +467,367 @@ test('page content serializes as static props', async () => {
   ])
   assert.equal(page.coverPosition, 0.25)
   assert.equal(page.icon, '⚡')
+})
+
+test('a markdown heading adopts the id of the empty anchor directly above it', async () => {
+  const { root } = makeContent({
+    '': home(),
+    post: page(
+      { slug: 'folded' },
+      [
+        '',
+        '<a id="block-anchor"></a>',
+        '',
+        '<a id="stale-heading-id"></a>',
+        '',
+        '<a id="intro-7f3c"></a>',
+        '',
+        '## Intro with *emphasis*, a [link](/other) and `code`',
+        '',
+        'Body text.',
+        '',
+        '<a id="details-9a1b" />',
+        '',
+        '### Details',
+        '',
+        '#### Plain fallback',
+        ''
+      ].join('\n')
+    )
+  })
+  const { html } = await getLocalPage('folded', { root })
+  const $ = load(html)
+
+  assert.equal($('h2').attr('id'), 'intro-7f3c')
+  assert.equal($('h3').attr('id'), 'details-9a1b', 'self-closing anchors fold')
+  assert.equal($('h4').attr('id'), undefined, 'plain headings stay unchanged')
+  assert.equal($('h2 em').text(), 'emphasis')
+  assert.equal($('h2 a[href="/other"]').text(), 'link')
+  assert.equal($('h2 code').text(), 'code')
+
+  // Only the closest anchor folds; earlier block anchors keep their place.
+  assert.equal($('a#intro-7f3c').length, 0, 'the folded anchor is removed')
+  assert.equal($('a#details-9a1b').length, 0)
+  assert.equal($('a#block-anchor').length, 1, 'older block anchors remain')
+  assert.equal($('a#stale-heading-id').length, 1, 'adjacent duplicates remain')
+
+  const article = prepareLocalArticle(html)
+  assert.deepEqual(
+    article.entries.map((entry) => [entry.href, entry.text]),
+    [
+      ['#intro-7f3c', 'Intro with emphasis, a link and code'],
+      ['#details-9a1b', 'Details'],
+      ['#local-heading-1', 'Plain fallback']
+    ]
+  )
+  assert.match(article.html, /<h2 id="intro-7f3c"/)
+  assert.match(article.html, /<h4 id="local-heading-1">Plain fallback<\/h4>/)
+})
+
+test('only empty id-only anchors fold into the heading below them', async () => {
+  const { root } = makeContent({
+    '': home(),
+    post: page(
+      { slug: 'untouched-anchors' },
+      [
+        '',
+        '<a id="linked" href="/elsewhere"></a>',
+        '',
+        '## Href anchor',
+        '',
+        '<a id="labelled">Back to top</a>',
+        '',
+        '## Nonempty anchor',
+        '',
+        '<a id="tracked" className="jump"></a>',
+        '',
+        '## Extra attribute anchor',
+        '',
+        '<a id=""></a>',
+        '',
+        '## Empty id anchor',
+        '',
+        '<a id="before-native"></a>',
+        '',
+        '<h2 id="native-heading">Native heading</h2>',
+        '',
+        '<a id="fenced"></a>',
+        '',
+        '```html',
+        '<a id="in-fence"></a>',
+        '',
+        '## Not a heading',
+        '```',
+        ''
+      ].join('\n')
+    )
+  })
+  const { html } = await getLocalPage('untouched-anchors', { root })
+  const $ = load(html)
+
+  for (const id of ['linked', 'labelled', 'tracked', 'before-native']) {
+    assert.equal($(`a#${id}`).length, 1, `${id} anchor survives`)
+  }
+  assert.equal($('a[href="/elsewhere"]').attr('id'), 'linked')
+  assert.equal($('a#labelled').text(), 'Back to top')
+  assert.equal($('a#tracked').attr('class'), 'jump')
+  assert.equal($('h2#native-heading').text(), 'Native heading')
+
+  const ids = $('h2')
+    .map((_, element) => $(element).attr('id'))
+    .get()
+  assert.deepEqual(ids, ['native-heading'], 'no markdown heading absorbed one')
+
+  assert.equal($('a#fenced').length, 1, 'anchors above a fence stay put')
+  assert.equal($('pre code').text().includes('<a id="in-fence"></a>'), true)
+  assert.equal($('pre code').text().includes('## Not a heading'), true)
+})
+
+test('a standalone markdown image renders as a lazy figure', async () => {
+  const { root } = makeContent({
+    '': home(),
+    post: page(
+      { slug: 'images' },
+      [
+        '',
+        '![Alt text](/photo.png "Title text")',
+        '',
+        'Inline ![badge](/badge.svg) inside a sentence.',
+        '',
+        '[![linked](/linked.png)](/elsewhere)',
+        ''
+      ].join('\n')
+    )
+  })
+  const { html } = await getLocalPage('images', { root })
+  const $ = load(html)
+
+  assert.equal($('figure').length, 1)
+  assert.equal($('figure').attr('class'), undefined, 'figures carry no attrs')
+  assert.equal($('figure > img').length, 1)
+  assert.equal($('figure img').attr('src'), '/photo.png')
+  assert.equal($('figure img').attr('alt'), 'Alt text')
+  assert.equal($('figure img').attr('title'), 'Title text')
+  assert.equal($('figure img').attr('loading'), 'lazy')
+  assert.equal($('figure p').length, 0, 'the paragraph became the figure')
+
+  // Images sharing a paragraph keep their inline semantics.
+  assert.equal($('p img[src="/badge.svg"]').length, 1)
+  assert.equal($('p a[href="/elsewhere"] img').length, 1)
+  assert.equal($('p:has(img)').length, 2)
+})
+
+test('markdown images keep authored figures and native img attributes', async () => {
+  const { root } = makeContent({
+    '': home(),
+    post: page(
+      { slug: 'authored-images' },
+      [
+        '',
+        '<figure id="captioned">',
+        '',
+        '![Captioned](/captioned.png)',
+        '',
+        '<figcaption>A caption</figcaption>',
+        '</figure>',
+        '',
+        '<img id="hero" src="/hero.png" alt="Hero" loading="eager" />',
+        '',
+        '<p id="explicit">',
+        '',
+        '![Inside a paragraph](/inside.png)',
+        '',
+        '</p>',
+        ''
+      ].join('\n')
+    )
+  })
+  const { html } = await getLocalPage('authored-images', { root })
+  const $ = load(html)
+
+  assert.equal($('#captioned').length, 1)
+  assert.equal($('#captioned figure').length, 0, 'no figure inside a figure')
+  assert.equal($('#captioned > img').attr('src'), '/captioned.png')
+  assert.equal($('#captioned > img').attr('loading'), 'lazy')
+  assert.equal($('#captioned p').length, 0)
+  assert.equal($('#captioned figcaption').text(), 'A caption')
+
+  assert.equal($('#hero').attr('loading'), 'eager', 'native images are kept')
+  assert.equal($('figure #hero').length, 0)
+
+  assert.equal($('#explicit').prop('tagName'), 'P')
+  assert.equal($('#explicit figure').length, 0, 'no block figure inside a p')
+  assert.equal($('#explicit img').attr('src'), '/inside.png')
+})
+
+test('a trailing {#id} marker becomes the heading id for every level', async () => {
+  const { root } = makeContent({
+    '': home(),
+    post: page(
+      { slug: 'heading-ids' },
+      [
+        '',
+        '# Top {#top_level-1}',
+        '',
+        '## Intro with *emphasis*, a [link](/other) and `code` {#intro-7f3c}',
+        '',
+        'Body text.',
+        '',
+        '### Details   {#details-9a1b}',
+        '',
+        '#### Fourth {#a044322d56d1482da8b521736d56284c}',
+        '',
+        '##### Fifth {#fifth}',
+        '',
+        '###### Sixth {#sixth}',
+        '',
+        'Setext heading {#setext-id}',
+        '===',
+        '',
+        '## Plain fallback',
+        ''
+      ].join('\n')
+    )
+  })
+  const { html } = await getLocalPage('heading-ids', { root })
+  const $ = load(html)
+
+  assert.equal($('h1').first().attr('id'), 'top_level-1')
+  assert.equal($('h2').first().attr('id'), 'intro-7f3c')
+  assert.equal($('h3').attr('id'), 'details-9a1b')
+  assert.equal($('h4').attr('id'), 'a044322d56d1482da8b521736d56284c')
+  assert.equal($('h5').attr('id'), 'fifth')
+  assert.equal($('h6').attr('id'), 'sixth')
+  assert.equal($('h1').last().attr('id'), 'setext-id', 'setext headings too')
+  assert.equal($('h2').last().attr('id'), undefined, 'unmarked headings')
+
+  // Inline formatting survives, and the marker leaves no trace in the text.
+  assert.equal($('h2').first().find('em').text(), 'emphasis')
+  assert.equal($('h2').first().find('a[href="/other"]').text(), 'link')
+  assert.equal($('h2').first().find('code').text(), 'code')
+  assert.equal(
+    $('h2').first().text(),
+    'Intro with emphasis, a link and code',
+    'no marker text and no trailing space'
+  )
+  assert.equal($('h3').text(), 'Details', 'padding before the marker is gone')
+  assert.doesNotMatch(html, /\{#/, 'no marker survives in heading output')
+
+  const article = prepareLocalArticle(html)
+  assert.deepEqual(
+    article.entries.map((entry) => [entry.href, entry.text]),
+    [
+      ['#top_level-1', 'Top'],
+      ['#intro-7f3c', 'Intro with emphasis, a link and code'],
+      ['#details-9a1b', 'Details'],
+      ['#a044322d56d1482da8b521736d56284c', 'Fourth'],
+      ['#fifth', 'Fifth'],
+      ['#sixth', 'Sixth'],
+      ['#setext-id', 'Setext heading'],
+      ['#local-heading-1', 'Plain fallback']
+    ]
+  )
+  assert.match(article.html, /<h2 id="intro-7f3c"/)
+  assert.match(article.html, /<h2 id="local-heading-1">Plain fallback<\/h2>/)
+})
+
+test('{#id} markers work inside blockquotes and alongside legacy anchors', async () => {
+  const { root } = makeContent({
+    '': home(),
+    post: page(
+      { slug: 'heading-id-contexts' },
+      [
+        '',
+        '> ## Quoted heading {#quoted-1a2b}',
+        '>',
+        '> Quoted body.',
+        '',
+        '<a id="legacy-anchor"></a>',
+        '',
+        '## Folded anchor',
+        '',
+        '## Marked heading {#marked-3c4d}',
+        '',
+        '<details>',
+        '',
+        '## Nested in JSX {#nested-5e6f}',
+        '',
+        '</details>',
+        ''
+      ].join('\n')
+    )
+  })
+  const { html } = await getLocalPage('heading-id-contexts', { root })
+  const $ = load(html)
+
+  assert.equal($('blockquote h2').attr('id'), 'quoted-1a2b')
+  assert.equal($('blockquote h2').text(), 'Quoted heading')
+  assert.equal($('h2#legacy-anchor').text(), 'Folded anchor', 'old form works')
+  assert.equal($('h2#marked-3c4d').text(), 'Marked heading')
+  assert.equal($('details h2').attr('id'), 'nested-5e6f')
+  assert.equal($('details h2').text(), 'Nested in JSX')
+})
+
+test('{#id} is only heading syntax: code, escapes and prose keep it literal', async () => {
+  const { root } = makeContent({
+    '': home(),
+    post: page(
+      { slug: 'heading-id-literals' },
+      [
+        '',
+        '```md',
+        '## Fenced heading {#fenced-id}',
+        '```',
+        '',
+        '~~~md',
+        '## Tilde fenced heading {#tilde-id}',
+        '~~~',
+        '',
+        '> ```md',
+        '> ## Quoted fence {#quoted-fence-id}',
+        '> ```',
+        '',
+        'Inline `{#inline-id}` stays code.',
+        '',
+        '## Heading with `{#code-id}` inside',
+        '',
+        '## Escaped \\{#escaped-id} marker',
+        '',
+        '## Marker {#mid-id} in the middle',
+        '',
+        'A paragraph mentioning {#prose-id} literally.',
+        '',
+        '## Expression {1 + 1} heading',
+        ''
+      ].join('\n')
+    )
+  })
+  const { html } = await getLocalPage('heading-id-literals', { root })
+  const $ = load(html)
+
+  const fences = $('pre code')
+    .map((_, element) => $(element).text())
+    .get()
+  assert.equal(fences.length, 3)
+  assert.ok(fences[0].includes('## Fenced heading {#fenced-id}'))
+  assert.ok(fences[1].includes('## Tilde fenced heading {#tilde-id}'))
+  assert.ok(fences[2].includes('## Quoted fence {#quoted-fence-id}'))
+  assert.equal($('p code').first().text(), '{#inline-id}')
+
+  const marked = $('h2')
+    .map((_, element) => [[$(element).text(), $(element).attr('id')]])
+    .get()
+  assert.deepEqual(marked, [
+    ['Heading with {#code-id} inside', undefined],
+    ['Escaped {#escaped-id} marker', undefined],
+    ['Marker {#mid-id} in the middle', undefined],
+    ['Expression 2 heading', undefined]
+  ])
+  assert.equal($('h2 code').text(), '{#code-id}')
+  assert.ok(
+    $('p')
+      .map((_, element) => $(element).text())
+      .get()
+      .includes('A paragraph mentioning {#prose-id} literally.')
+  )
 })

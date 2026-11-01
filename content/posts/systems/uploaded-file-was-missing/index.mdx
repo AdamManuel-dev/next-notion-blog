@@ -21,7 +21,7 @@ Because the report came from Windows, the first suspicion involved the Windows c
 The investigation eventually found a more fundamental problem: the record existed,
 but it had no stored asset references to download.
 
-<h2 id='a-listing-is-not-a-file'>A listing is not a file</h2>
+## A listing is not a file {#a-listing-is-not-a-file}
 
 Think of a library catalog. A book can have a catalog entry even when the physical book
 is missing. The catalog proves that a record exists, not that the book is on the shelf.
@@ -34,7 +34,7 @@ Our application had a similar separation:
 
 The row's uploaded label was not enough to establish that the download could work.
 
-<h2 id='the-client-hid-important-clues'>The client hid important clues</h2>
+## The client hid important clues {#the-client-hid-important-clues}
 
 The investigation also found that the client replaced different backend errors with
 a generic message. That made several distinct problems look alike.
@@ -46,9 +46,7 @@ Checking the exact record eventually showed uploaded metadata without the expect
 asset references. A client update could explain this better, but could not recreate
 the absent files.
 
-<h2 id='improve-the-experience-without-overstating-the-repair'>
-  Improve the experience without overstating the repair
-</h2>
+## Improve the experience without overstating the repair {#improve-the-experience-without-overstating-the-repair}
 
 The recorded remediation included blocking obviously non-ready selections, preserving
 useful error details, and retaining successful downloads when another item in a batch failed.
@@ -58,9 +56,7 @@ Those are real improvements. They should be reported separately from storage rec
 For the missing recording, the remaining action was to recover or upload the original
 assets if they were still available. Better error handling did not make that step disappear.
 
-<h2 id='follow-the-request-one-boundary-at-a-time'>
-  Follow the request one boundary at a time
-</h2>
+## Follow the request one boundary at a time {#follow-the-request-one-boundary-at-a-time}
 
 A failed download can begin in several places. The interface may request the wrong record.
 The API may reject access. Storage may not contain the asset. A temporary download link
@@ -76,9 +72,7 @@ the request, record visibility, and available asset references.
 The useful question at each boundary is: what did this layer receive, what did it promise,
 and what evidence shows the next layer received it?
 
-<h2 id='a-status-code-is-a-clue-not-the-whole-diagnosis'>
-  A status code is a clue, not the whole diagnosis
-</h2>
+## A status code is a clue, not the whole diagnosis {#a-status-code-is-a-clue-not-the-whole-diagnosis}
 
 An HTTP response such as 404 often means the requested resource was not found. But the
 resource could be a metadata record, an asset reference, or the stored file itself.
@@ -94,7 +88,7 @@ as stronger evidence became available.
 
 That is healthy debugging: update the conclusion when the evidence supports a narrower cause.
 
-<h2 id='separate-upload-stages'>Separate upload stages</h2>
+## Separate upload stages {#separate-upload-stages}
 
 A file upload is often a sequence rather than one event. A possible design creates a
 record, accepts bytes, stores required assets, processes them, and finally marks the
@@ -111,9 +105,7 @@ needs a recoverable state. It should not look indistinguishable from a fully usa
 That also makes background reconciliation possible: find records whose promised state
 does not match their required resources.
 
-<h2 id='keep-different-failures-distinct-in-a-batch'>
-  Keep different failures distinct in a batch
-</h2>
+## Keep different failures distinct in a batch {#keep-different-failures-distinct-in-a-batch}
 
 Suppose someone selects five recordings. Three download successfully, one is still
 processing, and one has missing assets.
@@ -131,7 +123,7 @@ no useful explanation for the other two. A result per item is much clearer.
 These are illustrative categories. A real application should use its actual error
 contract and avoid revealing information the current user is not allowed to see.
 
-<h2 id='make-retryability-a-decision'>Make retryability a decision</h2>
+## Make retryability a decision {#make-retryability-a-decision}
 
 Retrying can help a temporary connection failure. It is unlikely to create a missing
 asset reference in a permanently incomplete record.
@@ -146,7 +138,7 @@ policy for replacing, resuming, or removing it.
 The user-facing message should reflect that policy. "Try later" is appropriate only
 when there is a plausible reason that later will be different.
 
-<h2 id='test-promises-not-only-buttons'>Test promises, not only buttons</h2>
+## Test promises, not only buttons {#test-promises-not-only-buttons}
 
 A useful test collection would include a ready record with all required assets, a
 processing record, a ready-looking record missing an asset, and a mixed-success batch.
@@ -160,9 +152,7 @@ cross-platform backend failure should not be mistaken for proof that the desktop
 is broken, and a passing backend test should not be treated as proof that every desktop
 build works.
 
-<h2 id='close-the-incident-at-the-right-layer'>
-  Close the incident at the right layer
-</h2>
+## Close the incident at the right layer {#close-the-incident-at-the-right-layer}
 
 The client fix can be complete while the original missing recording remains unrecovered.
 Those should be separate tracked outcomes.
@@ -175,7 +165,7 @@ That distinction is especially important when the original source might no longe
 Software should make the limitation visible rather than inviting someone to keep clicking
 a button that cannot produce the requested file.
 
-<h2 id='define-what-a-status-promises'>Define what a status promises</h2>
+## Define what a status promises {#define-what-a-status-promises}
 
 An uploaded status should have a documented meaning. Does it mean the upload request
 was accepted, every asset was stored, or every asset was verified and ready to download?
@@ -187,14 +177,12 @@ When debugging, I want to follow the complete chain from the visible promise to 
 underlying resource. The most useful question was not just "Why does download fail?"
 It was "What evidence says there is something available to download?"
 
-<h2 id='technical-deep-dive'>Technical deep dive</h2>
+## Technical deep dive {#technical-deep-dive}
 
 **Plain-language bridge:** A database row saying a file exists is a pointer. Readiness
 requires evidence that the bytes behind that pointer are usable.
 
-<h3 id='diagram-metadata-and-file-bytes-must-agree'>
-  Diagram: Metadata and file bytes must agree
-</h3>
+### Diagram: Metadata and file bytes must agree {#diagram-metadata-and-file-bytes-must-agree}
 
 ```text
 [upload request]
@@ -214,9 +202,7 @@ requires evidence that the bytes behind that pointer are usable.
 This illustrates one possible ordering. A database row alone cannot prove the object
 is ready, and interruptions between systems need a reconciliation path.
 
-<h3 id='model-the-upload-as-separate-durable-states'>
-  Model the upload as separate durable states
-</h3>
+### Model the upload as separate durable states {#model-the-upload-as-separate-durable-states}
 
 An illustrative state model is:
 
@@ -234,9 +220,7 @@ Do not treat a provider's generic object tag as a universal content checksum; it
 meaning depends on the provider and upload method. If byte identity matters, choose
 an explicit digest protocol and retain the expected value from a trusted stage.
 
-<h3 id='handle-the-databasestorage-boundary'>
-  Handle the database/storage boundary
-</h3>
+### Handle the database/storage boundary {#handle-the-databasestorage-boundary}
 
 Writing an object and committing a database transaction are usually separate operations.
 A crash between them can leave an unreferenced object or a record pointing to absent
@@ -250,9 +234,7 @@ that is still legitimately in progress.
 The exact order depends on the storage API and product requirements. The invariant is
 that a record does not claim readiness before the required evidence exists.
 
-<h3 id='classify-retrieval-failures-at-the-correct-boundary'>
-  Classify retrieval failures at the correct boundary
-</h3>
+### Classify retrieval failures at the correct boundary {#classify-retrieval-failures-at-the-correct-boundary}
 
 Separate missing metadata, absent object, rejected authorization, expired access link,
 and transient provider failure. An HTTP error at the client may be a translated symptom,
@@ -262,9 +244,7 @@ A retry should follow that classification. Retrying a missing asset forever wast
 time. Refreshing an expired link may help without touching the asset. An authorization
 failure requires checking the trusted account context, not widening permissions.
 
-<h3 id='exercise-interruption-and-recovery'>
-  Exercise interruption and recovery
-</h3>
+### Exercise interruption and recovery {#exercise-interruption-and-recovery}
 
 Use a fake storage boundary or disposable test storage to interrupt after object creation
 but before metadata commit, and after metadata creation but before verification.

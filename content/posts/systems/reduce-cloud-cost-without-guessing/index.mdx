@@ -22,7 +22,7 @@ changed in the reviewed session.
 That distinction matters. Finding something expensive is the beginning of the investigation,
 not proof that removing it is a good idea.
 
-<h2 id="understand-the-bill-before-changing-the-system">Understand the bill before changing the system</h2>
+## Understand the bill before changing the system {#understand-the-bill-before-changing-the-system}
 
 A cloud bill can include computing capacity, storage, network traffic, logs, and AI requests.
 Different charges grow for different reasons.
@@ -33,7 +33,7 @@ processed, requests served, or documents handled.
 Use actual usage and billing records. This article provides no current service prices
 or guaranteed savings estimates.
 
-<h2 id="ask-what-the-expensive-resource-is-doing">Ask what the expensive resource is doing</h2>
+## Ask what the expensive resource is doing {#ask-what-the-expensive-resource-is-doing}
 
 An idle resource may be unnecessary. It may also be spare capacity that makes recovery
 possible. A busy resource may be doing useful work or repeatedly retrying a broken task.
@@ -43,7 +43,7 @@ you whether it is healthy.
 
 That avoids cutting a visible cost while creating a less visible outage.
 
-<h2 id="run-a-bounded-experiment">Run a bounded experiment</h2>
+## Run a bounded experiment {#run-a-bounded-experiment}
 
 An illustrative experiment might reduce worker capacity during a low-traffic period.
 
@@ -57,7 +57,7 @@ Before starting, define what to observe:
 Also define the condition for returning to the previous setting. A rollback plan is
 more useful when it names the exact signal and action.
 
-<h2 id="compare-similar-periods">Compare similar periods</h2>
+## Compare similar periods {#compare-similar-periods}
 
 A quieter day can make a change look successful even if the configuration had no effect.
 Compare workload as well as money, and allow for billing delays.
@@ -65,7 +65,7 @@ Compare workload as well as money, and allow for billing delays.
 Cost per completed useful task can help, but only when the definition of completion
 is trustworthy. Cheap failed runs are not a product improvement.
 
-<h2 id="start-with-a-baseline-you-can-explain">Start with a baseline you can explain</h2>
+## Start with a baseline you can explain {#start-with-a-baseline-you-can-explain}
 
 Choose a period that includes the workload you expect to support. A single quiet night
 may tell you little about a service that peaks during business hours or runs large
@@ -79,7 +79,7 @@ Separate confirmed charges from estimates or delayed reporting. If the data is i
 mark that limitation. A baseline should make future comparisons more trustworthy, not
 give an early guess the appearance of financial certainty.
 
-<h2 id="distinguish-fixed-capacity-from-variable-usage">Distinguish fixed capacity from variable usage</h2>
+## Distinguish fixed capacity from variable usage {#distinguish-fixed-capacity-from-variable-usage}
 
 Some costs are tied to resources kept available. Others grow with work performed or
 data retained. The distinction suggests different experiments.
@@ -94,7 +94,7 @@ billing rules. Confirm the actual meters and configuration in the account before
 The same total bill can hide very different causes, so one universal cost-cutting recipe
 is unlikely to fit every system.
 
-<h2 id="look-for-work-that-should-not-exist">Look for work that should not exist</h2>
+## Look for work that should not exist {#look-for-work-that-should-not-exist}
 
 An expensive service may be doing unnecessary work repeatedly: scanning an unchanged
 folder, polling far more frequently than needed, retrying a permanent error, or processing
@@ -110,7 +110,7 @@ can make the system cheaper by quietly losing work.
 A good experiment preserves the required outcome while reducing avoidable work. Measure
 both sides of that sentence.
 
-<h2 id="give-each-change-a-hypothesis">Give each change a hypothesis</h2>
+## Give each change a hypothesis {#give-each-change-a-hypothesis}
 
 Instead of "reduce worker count," write a testable statement: "During this observed
 low-load period, fewer workers should keep waiting time within the agreed range while
@@ -126,7 +126,7 @@ or which one caused an operational regression.
 The hypothesis makes a cost experiment useful even when the result is that the cheaper
 configuration does not meet the product's needs.
 
-<h2 id="define-rollback-before-the-experiment">Define rollback before the experiment</h2>
+## Define rollback before the experiment {#define-rollback-before-the-experiment}
 
 A rollback plan should name the previous configuration, the signal that triggers a
 return, and how to verify that the return worked.
@@ -141,7 +141,7 @@ time, and the backlog created during the experiment may take longer to drain.
 The experiment's scope should leave room for that recovery rather than assuming the
 rollback command instantly restores the previous user experience.
 
-<h2 id="do-not-remove-the-evidence-you-need">Do not remove the evidence you need</h2>
+## Do not remove the evidence you need {#do-not-remove-the-evidence-you-need}
 
 Logs, traces, and metrics can be expensive, but removing them indiscriminately makes
 failures harder to investigate. The resulting manual effort and downtime may outweigh
@@ -155,7 +155,7 @@ Check whether useful errors remain visible after the change. A quieter monitorin
 is not evidence of a healthier service if the system stopped collecting the signals
 that would reveal its problems.
 
-<h2 id="report-savings-with-the-denominator">Report savings with the denominator</h2>
+## Report savings with the denominator {#report-savings-with-the-denominator}
 
 Suppose spending falls by half while completed useful work also falls by half. The
 total is lower, but efficiency may not have improved.
@@ -169,7 +169,7 @@ If workload mix changes, explain it. Processing fewer difficult cases can make a
 look cheaper even when the system itself is unchanged. The report should help someone
 assess that possibility instead of concealing it.
 
-<h2 id="keep-the-operating-burden-visible">Keep the operating burden visible</h2>
+## Keep the operating burden visible {#keep-the-operating-burden-visible}
 
 A configuration that saves a small amount but requires daily manual intervention may
 be a poor trade. Record the maintenance and on-call work created by the change.
@@ -179,7 +179,7 @@ observed charges, comparable workload, health results, and a clear account of op
 effort. Until those exist, the right deliverable is a bounded experiment with a clear
 decision point, not a headline claiming savings that have not happened.
 
-<h2 id="keep-the-plan-usable">Keep the plan usable</h2>
+## Keep the plan usable {#keep-the-plan-usable}
 
 The historical session produced a very long plan and then a shorter version with ordered
 phases. That is a useful reminder: a plan must be understandable enough to execute.
@@ -187,12 +187,12 @@ phases. That is a useful reminder: a plan must be understandable enough to execu
 Start with one measurable change, observe the result, and update the next decision.
 Savings become credible when both the bill and the product's behavior support the claim.
 
-<h2 id="technical-deep-dive">Technical deep dive</h2>
+## Technical deep dive {#technical-deep-dive}
 
 **Plain-language bridge:** A lower bill is useful only when it reflects cheaper delivery
 of the required service rather than fewer users, hidden failures, or deferred charges.
 
-<h3 id="diagram-check-cost-and-useful-output-together">Diagram: Check cost and useful output together</h3>
+### Diagram: Check cost and useful output together {#diagram-check-cost-and-useful-output-together}
 
 ```text
                       [bounded cost trial]
@@ -219,7 +219,7 @@ This is an experiment outline. Lower spending can hide lower completion or highe
 operating effort, so evaluate the service delivered as well as the bill.
 
 
-<h3 id="separate-fixed-and-variable-components">Separate fixed and variable components</h3>
+### Separate fixed and variable components {#separate-fixed-and-variable-components}
 
 An illustrative cost model is:
 
@@ -238,7 +238,7 @@ Compare cost per useful completed unit alongside total spend. Define the unit: a
 accepted request, completed export, or active customer may tell a different story.
 If completion falls, lower total cost can coexist with worse unit economics.
 
-<h3 id="normalize-the-comparison">Normalize the comparison</h3>
+### Normalize the comparison {#normalize-the-comparison}
 
 Suppose an illustrative baseline costs $120 for 1,000 successful exports, while a trial
 costs $90 for 500. Total spend falls, but cost per successful export rises from $0.12
@@ -251,7 +251,7 @@ at which every billing line reflects the new behavior.
 
 Avoid extrapolating one unusually quiet hour into a monthly savings claim.
 
-<h3 id="tie-the-change-to-a-resource-mechanism">Tie the change to a resource mechanism</h3>
+### Tie the change to a resource mechanism {#tie-the-change-to-a-resource-mechanism}
 
 For a suspected oversized worker pool, measure concurrency, queue delay, utilization,
 and failure behavior under representative demand. Reducing idle capacity can save
@@ -264,7 +264,7 @@ but only if the skipped work is truly redundant.
 Do not prescribe a utilization target without understanding workload shape. Bursty,
 latency-sensitive, and batch systems can need different headroom.
 
-<h3 id="define-guardrails-and-rollback">Define guardrails and rollback</h3>
+### Define guardrails and rollback {#define-guardrails-and-rollback}
 
 Before the trial, choose acceptable bounds for completion, latency, error rate, and
 backlog age. A rollout should be reversible within the failure window the product can

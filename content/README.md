@@ -35,7 +35,21 @@ Required frontmatter: nonempty `title`, URL-safe `slug`, `description`, `type` (
 
 Keep each page self-contained: Markdown, GFM, native JSX elements, and inline JSX expressions are supported. This pipeline does not bundle imported JSX/TSX components or watch imported helper modules; do not use MDX `import` statements for page content. Component imports would require a separate bundling/dependency-invalidation design.
 
-The layout owns the page title: do not repeat it as an H1 in the body. Preserve explicit heading and block IDs when editing, as existing fragment links depend on them. Raw HTML must be JSX-compatible (`className`, self-closing `<img />`, object-valued `style`, escaped literal braces). Native `<details><summary>…</summary>…</details>` and tables are supported. Keep asset paths under `/content-assets/` initially.
+Prefer native Markdown for headings, paragraphs, lists, emphasis, links, images, and tables with a real header row. The layout owns the page title: do not repeat it as an H1 in the body.
+
+Preserve imported heading IDs with a trailing `{#id}` on the Markdown heading:
+
+```mdx
+## Technical deep dive {#technical-deep-dive}
+```
+
+This build-time Markdown extension sets the heading's literal HTML ID, keeping existing fragment links and table-of-contents entries stable. IDs may contain ASCII letters, numbers, underscores, and hyphens; preserve their exact spelling. The marker must be the last heading content, outside links, emphasis, or inline code. Code examples and escaped markers are left literal. The older empty-anchor form still works for compatibility.
+
+Keep other block anchors intact; do not replace original IDs with newly generated slugs. Article and note headings without explicit markers still receive automatic outline IDs from the shared layout; use markers when a permalink must remain stable.
+
+Use `![Alt text](/content-assets/image.png)` for ordinary images. Standalone Markdown images render as lazy-loaded figures, preserving the reader's existing image spacing. Inline images remain inline; native `<img />` remains available for special attributes.
+
+Keep native HTML/JSX only where Markdown cannot faithfully express the structure or attributes: disclosures (`<details>`/`<summary>`), callout/section wrappers, headerless or merged-cell tables, and special inline formatting. HTML must remain JSX-compatible (`className`, self-closing void elements, object-valued `style`, escaped literal braces). Keep local asset paths unchanged.
 
 Retained native HTML headings, inline elements, and list items are normalized to avoid extra Markdown paragraph wrappers. Use explicit `<p>` tags for intentionally multi-paragraph HTML list items; ordinary Markdown paragraphs and lists are unchanged.
 
@@ -66,6 +80,6 @@ The migration preserves pre-existing source gaps: five conversion warnings acros
 
 ## Validation
 
-`npm run test:unit` checks recursive discovery, frontmatter, aliases, addition/moves without manifest edits, current internal links/fragments, and assets. These checks allow normal editorial edits and new pages.
+`npm run test:unit` checks recursive discovery, frontmatter, aliases, addition/moves without manifest edits, current internal links/fragments, assets, and Markdown-native headings/images. These checks allow normal editorial edits and new pages; HTML-only attributes and complex image structures remain supported.
 
 `npm run content:verify-migration` runs the separate, frozen historical comparison in `tests/migration/`: original 82-page coverage, heading/block anchors, prose, links, exact code, tables/disclosures, visual wrappers, artwork, and provenance. Run it when auditing this migration, not after intentional editorial changes (which naturally differ from the archive). Historical files are never read by the active pipeline or normal unit suite. Browser/export checks compare representative engineering articles, nested notes, and the homepage with the pre-migration export.

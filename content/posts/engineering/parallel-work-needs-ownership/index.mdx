@@ -28,7 +28,7 @@ The history does not provide a controlled measurement of parallel speedup. It do
 provide a useful design question: what needs to become stable before several people
 or agents can make independent progress?
 
-<h2 id="independence-is-about-decisions-not-file-counts">Independence is about decisions, not file counts</h2>
+## Independence is about decisions, not file counts {#independence-is-about-decisions-not-file-counts}
 
 Two contributors can edit different files while still depending on the same unresolved
 decision. One may assume a feature owns its loading state. Another may build a shared
@@ -45,7 +45,7 @@ boundary without repeatedly negotiating every internal choice.
 This is why architecture affects delivery speed. Clear boundaries reduce the amount
 of coordination required for ordinary changes.
 
-<h2 id="establish-one-representative-path-first">Establish one representative path first</h2>
+## Establish one representative path first {#establish-one-representative-path-first}
 
 Before spreading a new pattern across many features, implement it in one feature that
 contains the important kinds of behavior. A trivial example can make a weak pattern
@@ -63,7 +63,7 @@ The initial path acts as an executable example: a concrete reference others can 
 It does not eliminate judgment, but it reduces the number of choices each contributor
 must invent independently.
 
-<h2 id="separate-shared-decisions-from-feature-decisions">Separate shared decisions from feature decisions</h2>
+## Separate shared decisions from feature decisions {#separate-shared-decisions-from-feature-decisions}
 
 Some choices affect the entire application. Examples include error formats, authentication
 context, shared styling, and the meaning of common state. Those decisions need clear
@@ -79,7 +79,7 @@ bottleneck by reviewing every harmless local choice as if it were a global decis
 The goal is enough coordination to preserve agreement, with enough local authority
 for contributors to make real progress.
 
-<h2 id="define-completion-at-the-boundary">Define completion at the boundary</h2>
+## Define completion at the boundary {#define-completion-at-the-boundary}
 
 "Refactor this folder" is a weak assignment because it describes activity without
 explaining the result others can depend on.
@@ -96,7 +96,7 @@ contributors from changing the same component contract in incompatible ways.
 Completion then means the feature satisfies an agreed boundary, not merely that the
 assigned person has stopped editing it.
 
-<h2 id="shared-styling-is-a-dependency-too">Shared styling is a dependency too</h2>
+## Shared styling is a dependency too {#shared-styling-is-a-dependency-too}
 
 Dependencies are not limited to function calls and imports. A shared stylesheet can
 change screens whose feature code was untouched. An import-order change can alter which
@@ -114,7 +114,7 @@ A useful rule is to resolve the shared cause once where possible, then verify th
 affected consumers. Repeated local overrides can make the application look correct
 temporarily while leaving a more confusing dependency structure behind.
 
-<h2 id="integrate-before-assumptions-drift-too-far">Integrate before assumptions drift too far</h2>
+## Integrate before assumptions drift too far {#integrate-before-assumptions-drift-too-far}
 
 Long periods of isolated work allow assumptions to diverge. A contributor may build
 against a shared interface that changed several days earlier without realizing it.
@@ -130,7 +130,7 @@ checking compatibility frequently enough to correct the design while changes rem
 The right cadence depends on the work. Shared foundations require tighter coordination
 than independent content updates with stable interfaces.
 
-<h2 id="review-the-combined-product">Review the combined product</h2>
+## Review the combined product {#review-the-combined-product}
 
 Each contributor can satisfy a local checklist while the combined result still fails.
 Two features may use the same label differently. A shared component may behave correctly
@@ -145,7 +145,7 @@ tests and its own review criteria, a shared misunderstanding can survive all thr
 Existing behavior, product requirements, and representative user journeys provide
 additional reference points.
 
-<h2 id="limit-parallelism-when-uncertainty-is-shared">Limit parallelism when uncertainty is shared</h2>
+## Limit parallelism when uncertainty is shared {#limit-parallelism-when-uncertainty-is-shared}
 
 More contributors help most when there are several understandable pieces of work.
 They help less when everyone is waiting for the same unresolved architectural choice.
@@ -161,7 +161,7 @@ Watch for repeated questions about the same contract, frequent reversals of shar
 changes, and local fixes that fight one another. These are signs that the work needs
 a clearer common decision before it needs more simultaneous editing.
 
-<h2 id="evaluate-elapsed-time-and-integration-cost">Evaluate elapsed time and integration cost</h2>
+## Evaluate elapsed time and integration cost {#evaluate-elapsed-time-and-integration-cost}
 
 Counting completed assignments can make parallel work look successful while hiding
 the time required to assemble and repair them. A better assessment includes the path
@@ -176,12 +176,12 @@ Clear ownership, representative examples, and early integration create that cond
 The speed comes from reducing avoidable dependence, not merely increasing the number
 of people or agents active at the same time.
 
-<h2 id="technical-deep-dive">Technical deep dive</h2>
+## Technical deep dive {#technical-deep-dive}
 
 **Plain-language bridge:** Parallel work helps when contributors can make compatible
 decisions without waiting for one another to settle the same question.
 
-<h3 id="diagram-stabilize-the-shared-contract-before-splitting-work">Diagram: Stabilize the shared contract before splitting work</h3>
+### Diagram: Stabilize the shared contract before splitting work {#diagram-stabilize-the-shared-contract-before-splitting-work}
 
 ```text
 [representative slice]
@@ -204,7 +204,7 @@ The branches become useful after shared assumptions are clear. Integration remai
 a required step even when each feature passes its own checks.
 
 
-<h3 id="model-dependencies-before-assigning-work">Model dependencies before assigning work</h3>
+### Model dependencies before assigning work {#model-dependencies-before-assigning-work}
 
 Represent deliverables as nodes in a directed acyclic dependency graph when possible.
 An edge A -&gt; B means B requires A's contract or output. Tasks on the critical path,
@@ -219,7 +219,7 @@ For a feature migration, the common state interface and shared component contrac
 precede several independent feature conversions. Dispatching all conversions before
 those contracts settle distributes uncertainty along with the work.
 
-<h3 id="define-a-boundary-contract">Define a boundary contract</h3>
+### Define a boundary contract {#define-a-boundary-contract}
 
 An illustrative assignment includes:
 
@@ -235,7 +235,7 @@ Ownership concerns decisions as well as files. Two tasks touching separate direc
 can still disagree about nullability, error handling, or which layer initiates requests.
 List those shared semantics explicitly.
 
-<h3 id="use-a-compatible-sequence-for-shared-changes">Use a compatible sequence for shared changes</h3>
+### Use a compatible sequence for shared changes {#use-a-compatible-sequence-for-shared-changes}
 
 When a shared interface must change, first add a compatible form, then migrate consumers,
 then remove the obsolete form once usage is gone. This expand-migrate-contract sequence
@@ -245,7 +245,7 @@ Compatibility must include runtime behavior. Adding an optional type field is no
 compatible if the implementation now assumes it always exists. Verify old and new
 consumer examples during the overlap period.
 
-<h3 id="budget-integration-work-explicitly">Budget integration work explicitly</h3>
+### Budget integration work explicitly {#budget-integration-work-explicitly}
 
 Local completion is not integrated completion. Track when work is ready for integration,
 when it actually integrates, and what rework was needed because of boundary disagreements.
@@ -255,7 +255,7 @@ Use small integration batches when the coupling is high. Larger batches may be r
 for truly independent changes, but their review should still include any shared user
 journey they affect.
 
-<h3 id="measure-the-effect-cautiously">Measure the effect cautiously</h3>
+### Measure the effect cautiously {#measure-the-effect-cautiously}
 
 Compare end-to-end delivery time and integration defects for similar work. Assignment
 counts and contributor activity are poor substitutes: producing ten incompatible pieces

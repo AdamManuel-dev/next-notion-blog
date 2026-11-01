@@ -21,7 +21,7 @@ But a scheduling system can offer more working time while removing a specific st
 That behavior came up in my scheduling project. The explanation is about the order in
 which the system does its work.
 
-<h2 id="start-with-a-small-example">Start with a small example</h2>
+## Start with a small example {#start-with-a-small-example}
 
 Imagine a tutor who works from 9:00 to 10:00. Each appointment lasts 30 minutes.
 
@@ -48,7 +48,7 @@ The final 15 minutes are too short for another appointment.
 
 The tutor has added working time, but the 9:00 and 9:30 choices have disappeared.
 
-<h2 id="the-first-start-time-controls-the-rest">The first start time controls the rest</h2>
+## The first start time controls the rest {#the-first-start-time-controls-the-rest}
 
 Think of placing 30-minute blocks along a ruler. Wherever you place the first block
 determines where all the following blocks begin.
@@ -64,7 +64,7 @@ In this design, the rule is:
 Step four explains the surprise. Moving the beginning of the window moves the whole
 sequence of appointment starts.
 
-<h2 id="an-existing-booking-behaves-differently">An existing booking behaves differently</h2>
+## An existing booking behaves differently {#an-existing-booking-behaves-differently}
 
 Suppose the tutor works from 9:00 to noon and offers 60-minute appointments.
 
@@ -78,7 +78,7 @@ they do not restart the sequence.
 
 That distinction matters: **free time and offered appointment times are different things**.
 
-<h2 id="appointment-length-and-start-spacing-are-separate-choices">Appointment length and start spacing are separate choices</h2>
+## Appointment length and start spacing are separate choices {#appointment-length-and-start-spacing-are-separate-choices}
 
 It is easy to assume that a 60-minute appointment should start every 60 minutes. That
 is one design, but it is not the only one.
@@ -94,7 +94,7 @@ Keeping duration and spacing as separate concepts makes the product rule easier 
 discuss. Duration answers how long the appointment lasts. Spacing answers how often
 a new appointment is allowed to begin.
 
-<h2 id="the-anchor-is-a-third-choice">The anchor is a third choice</h2>
+## The anchor is a third choice {#the-anchor-is-a-third-choice}
 
 Even after choosing duration and spacing, you still need to decide where the sequence starts.
 
@@ -113,7 +113,7 @@ Neither rule is inherently more correct. A tutor may want to use every available
 A clinic may want starts aligned with its staffing schedule. The anchor should express
 that expectation rather than emerge accidentally from a loop in the code.
 
-<h2 id="touching-is-different-from-overlapping">Touching is different from overlapping</h2>
+## Touching is different from overlapping {#touching-is-different-from-overlapping}
 
 Suppose one appointment ends at 10:00 and another begins at 10:00. If no break is required,
 they can sit next to each other without conflict.
@@ -130,7 +130,7 @@ If the business requires five minutes for cleanup, model that buffer explicitly.
 not hide it inside an incorrect overlap rule, because the resulting behavior will be
 difficult to explain when appointment lengths change.
 
-<h2 id="combining-windows-can-remove-a-break">Combining windows can remove a break</h2>
+## Combining windows can remove a break {#combining-windows-can-remove-a-break}
 
 Consider working hours from 9:00 to noon and 1:00 to 3:00. There is a one-hour gap.
 Now add a special window from 11:30 to 1:30.
@@ -146,7 +146,7 @@ all available windows cannot preserve a break that another input explicitly fill
 This is why input labels matter. "Add available hours" and "Override a protected break"
 may deserve different controls even if they look similar on a calendar.
 
-<h2 id="explain-why-a-seemingly-free-time-is-missing">Explain why a seemingly free time is missing</h2>
+## Explain why a seemingly free time is missing {#explain-why-a-seemingly-free-time-is-missing}
 
 Users may see an empty calendar region and expect to book it. The system may exclude
 it because the start is off-grid, the remaining duration is too short, or a buffer applies.
@@ -161,7 +161,7 @@ predictable even when it offers fewer choices than a user initially expected.
 The server should apply the same agreed rules when the user actually books, because
 the displayed list may have become stale since it was loaded.
 
-<h2 id="availability-is-a-snapshot-not-a-reservation">Availability is a snapshot, not a reservation</h2>
+## Availability is a snapshot, not a reservation {#availability-is-a-snapshot-not-a-reservation}
 
 Two people can view the same available slot at the same time. Showing the slot does
 not reserve it for either person.
@@ -177,7 +177,7 @@ If the application later runs with multiple workers, revisit the booking boundar
 the storage guarantees. The algorithm that generates slots and the mechanism that
 prevents competing bookings solve related but different problems.
 
-<h2 id="keep-calendar-dates-separate-from-elapsed-time">Keep calendar dates separate from elapsed time</h2>
+## Keep calendar dates separate from elapsed time {#keep-calendar-dates-separate-from-elapsed-time}
 
 A recurring rule such as "every Monday at 9:00" usually describes local calendar time.
 Adding exactly 24 elapsed hours is not always the same as moving to the same local time
@@ -191,7 +191,7 @@ Before supporting those cases, define the intended behavior in the relevant time
 Should a nonexistent local time be rejected? Which occurrence of a repeated time is
 meant? Storing a wall-clock number alone does not answer those questions.
 
-<h2 id="build-a-test-table-before-building-more-features">Build a test table before building more features</h2>
+## Build a test table before building more features {#build-a-test-table-before-building-more-features}
 
 A small table of examples can protect the product's intended behavior:
 
@@ -208,7 +208,7 @@ Write the expected result in plain language first. Then make the automated check
 verify that agreement. Tests generated only from the current implementation can preserve
 an accidental rule just as faithfully as an intentional one.
 
-<h2 id="changing-a-rule-can-affect-existing-expectations">Changing a rule can affect existing expectations</h2>
+## Changing a rule can affect existing expectations {#changing-a-rule-can-affect-existing-expectations}
 
 Suppose the product switches from window-based starts to a fixed clock grid. Existing
 appointments should not silently move merely because future availability is calculated
@@ -221,7 +221,7 @@ outside the new hours, the product needs a clear policy and a visible explanatio
 The scheduling algorithm is only one part of that decision. The user's expectations,
 the saved data, and the interface all need to describe the same rule.
 
-<h2 id="choose-the-rule-your-users-expect">Choose the rule your users expect</h2>
+## Choose the rule your users expect {#choose-the-rule-your-users-expect}
 
 There are several reasonable designs:
 
@@ -237,12 +237,12 @@ What should happen when someone adds 15 minutes? What about a short booking in t
 Those examples give the team something concrete to agree on. They also become useful
 tests: the system should produce the times people agreed it ought to offer.
 
-<h2 id="technical-deep-dive">Technical deep dive</h2>
+## Technical deep dive {#technical-deep-dive}
 
 **Plain-language bridge:** A free stretch of time and a list of allowed appointment
 starts are different objects. The algorithm must define how it turns one into the other.
 
-<h3 id="diagram-two-appointments-can-touch-without-overlapping">Diagram: Two appointments can touch without overlapping</h3>
+### Diagram: Two appointments can touch without overlapping {#diagram-two-appointments-can-touch-without-overlapping}
 
 ```text
 Time ----------> 09:30            10:00            10:30
@@ -256,7 +256,7 @@ The brackets illustrate half-open intervals: the start is included and the end i
 excluded. A required cleanup buffer would change the occupied interval.
 
 
-<h3 id="specify-the-interval-model">Specify the interval model</h3>
+### Specify the interval model {#specify-the-interval-model}
 
 Represent an appointment as a half-open interval [start, end): it includes its start
 and excludes its end. Two intervals overlap exactly when:
@@ -274,7 +274,7 @@ For a fixed grid, let g be the anchor, s the start spacing, and d the duration.
 Candidate starts are g + k*s for integer k. Keep a candidate t only if [t, t+d)
 fits entirely inside available time and does not overlap an occupied interval.
 
-<h3 id="compare-the-two-algorithms">Compare the two algorithms</h3>
+### Compare the two algorithms {#compare-the-two-algorithms}
 
 A window-anchored implementation resets g to each free fragment's start. A fixed-grid
 implementation preserves g while filtering candidates. Subtracting a booking before
@@ -294,7 +294,7 @@ fixed 09:00 grid:  10:00, 10:30
 These are illustrative outputs under the stated policies, not a new historical trace.
 Neither policy should emerge accidentally from the order of helper calls.
 
-<h3 id="turn-the-policy-into-properties">Turn the policy into properties</h3>
+### Turn the policy into properties {#turn-the-policy-into-properties}
 
 A property test checks a rule across many generated examples. Every emitted candidate
 must fit availability, avoid occupied time, and obey the chosen grid. For a fixed
@@ -307,7 +307,7 @@ inputs, and fragments exactly one duration long. Keep local calendar-time genera
 separate from instant comparison. A daylight-saving transition requires an explicit
 choice for missing or repeated local times; arithmetic on clock labels alone is insufficient.
 
-<h3 id="enforce-the-decision-again-when-booking">Enforce the decision again when booking</h3>
+### Enforce the decision again when booking {#enforce-the-decision-again-when-booking}
 
 Candidate generation reads a snapshot. Two callers can both see the same free slot.
 Acceptance therefore needs a database-enforced conflict rule or a transaction that

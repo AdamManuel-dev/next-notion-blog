@@ -26,7 +26,7 @@ An LLM could help group the material, but the groups would need manual verificat
 This was an improvement plan, not a report of achieved results. Its most useful idea
 was to measure a specific problem before proposing a broad solution.
 
-<h2 id="start-with-a-recurring-cost-someone-recognizes">Start with a recurring cost someone recognizes</h2>
+## Start with a recurring cost someone recognizes {#start-with-a-recurring-cost-someone-recognizes}
 
 "Improve code quality" is a reasonable ambition and a difficult experiment. It includes
 too many different problems to tell whether a small change worked.
@@ -42,7 +42,7 @@ before it becomes worth investigating.
 Ask teammates whether the pattern matches their experience. A cluster in historical
 text is a lead to inspect, not a verdict about what the team should prioritize.
 
-<h2 id="count-affected-changes-not-just-comments">Count affected changes, not just comments</h2>
+## Count affected changes, not just comments {#count-affected-changes-not-just-comments}
 
 Suppose a reviewer leaves six comments about missing validation in one pull request.
 Counting six independent failures would exaggerate how often the problem occurs.
@@ -58,7 +58,7 @@ Deduplication means recognizing when multiple records describe the same underlyi
 event. It is unglamorous work, but without it a polished chart can give a misleading
 impression of the problem's size.
 
-<h2 id="choose-a-denominator-that-matches-the-question">Choose a denominator that matches the question</h2>
+## Choose a denominator that matches the question {#choose-a-denominator-that-matches-the-question}
 
 Imagine validation concerns appeared in four pull requests last month and two this
 month. That looks like an improvement until you learn that last month had 20 relevant
@@ -74,7 +74,7 @@ Define the population before comparing periods. Explain exclusions and keep the 
 size visible. With a small team, a few changes can move a percentage dramatically, so
 showing the underlying counts is often more informative than a precise-looking rate.
 
-<h2 id="use-an-llm-to-find-candidates-then-verify-them">Use an LLM to find candidates, then verify them</h2>
+## Use an LLM to find candidates, then verify them {#use-an-llm-to-find-candidates-then-verify-them}
 
 An LLM can help summarize a large collection of review comments and suggest recurring
 themes. It can also merge unrelated concerns or describe a pattern more confidently
@@ -91,7 +91,7 @@ Keep uncertain classifications visible. It is better to have a smaller verified 
 than a large category whose members do not share a useful cause. The model helps narrow
 attention; the team remains responsible for interpreting the evidence.
 
-<h2 id="prefer-a-small-intervention-with-a-clear-mechanism">Prefer a small intervention with a clear mechanism</h2>
+## Prefer a small intervention with a clear mechanism {#prefer-a-small-intervention-with-a-clear-mechanism}
 
 Once a pattern is understood, choose a change that plausibly addresses it. Repeated
 input parsing mistakes might justify a shared parser or a small set of worked examples.
@@ -107,7 +107,7 @@ specific question people keep getting wrong and be available where they need it.
 Avoid changing several major things at once if the goal is to learn which one helps.
 A smaller change is easier to adopt, inspect, reverse, and improve.
 
-<h2 id="measure-side-effects-as-well-as-the-target">Measure side effects as well as the target</h2>
+## Measure side effects as well as the target {#measure-side-effects-as-well-as-the-target}
 
 A new check might reduce one kind of defect while making routine changes much slower.
 A shared abstraction might reduce duplication while making exceptional cases harder
@@ -123,7 +123,7 @@ and a focused team conversation may be enough for an early trial.
 The objective is to learn whether the intervention improves the whole situation, not
 to make one number move in the preferred direction at any cost.
 
-<h2 id="do-not-turn-a-system-measure-into-a-people-ranking">Do not turn a system measure into a people ranking</h2>
+## Do not turn a system measure into a people ranking {#do-not-turn-a-system-measure-into-a-people-ranking}
 
 Pull-request counts, comments, and repair work reflect many factors beyond individual
 ability. Difficult assignments attract more discussion. Experienced engineers may take
@@ -139,7 +139,7 @@ aligned with that purpose.
 A useful finding should help the team change a condition. It should not reduce a
 person's contribution to a count stripped of context.
 
-<h2 id="label-estimates-and-uncertainty">Label estimates and uncertainty</h2>
+## Label estimates and uncertainty {#label-estimates-and-uncertainty}
 
 Historical records rarely contain perfect time measurements. Someone may remember that
 a repair took "most of the afternoon," while the pull request only shows elapsed days.
@@ -154,7 +154,7 @@ can provide encouraging evidence without supporting a strong causal claim.
 That distinction makes a report more useful. Leaders can decide whether the evidence
 warrants continued use, a broader trial, or another approach.
 
-<h2 id="make-the-result-a-decision">Make the result a decision</h2>
+## Make the result a decision {#make-the-result-a-decision}
 
 A practical experiment ends with a choice: keep the change, adjust it, expand it, or
 remove it. Agree on that review point before the intervention becomes permanent by habit.
@@ -168,12 +168,12 @@ real source of friction, establish a fair baseline, make a focused change, and i
 the consequences. The value lies in making the team's work easier to do correctly,
 not in producing a larger collection of process artifacts.
 
-<h2 id="technical-deep-dive">Technical deep dive</h2>
+## Technical deep dive {#technical-deep-dive}
 
 **Plain-language bridge:** A fair improvement experiment counts the same kind of
 problem, among the same kind of opportunities, before and after a focused change.
 
-<h3 id="diagram-keep-the-unit-of-measurement-stable">Diagram: Keep the unit of measurement stable</h3>
+### Diagram: Keep the unit of measurement stable {#diagram-keep-the-unit-of-measurement-stable}
 
 ```text
 [comments + bugs + review records]
@@ -201,7 +201,7 @@ The rate needs affected eligible changes over all eligible changes. Also inspect
 mix and side effects; favorable movement alone does not prove the intervention caused it.
 
 
-<h3 id="define-the-observation-schema">Define the observation schema</h3>
+### Define the observation schema {#define-the-observation-schema}
 
 Use one record per affected change or incident, with links to supporting evidence:
 
@@ -225,7 +225,7 @@ If an LLM proposes classifications, retain human-verified labels for a review sa
 and inspect disagreements. Agreement between two model runs does not independently
 establish that the category matches the intended engineering problem.
 
-<h3 id="calculate-a-rate-and-its-context">Calculate a rate and its context</h3>
+### Calculate a rate and its context {#calculate-a-rate-and-its-context}
 
 Let p be affected eligible changes divided by all eligible changes. Report p with its
 counts, time window, and work mix. A change from 4/20 to 2/4 is a decrease in incident
@@ -239,7 +239,7 @@ observation can produce unjustified confidence.
 Do not present an estimated time-saving figure as measured merely because it appears
 in a spreadsheet. Preserve the estimate's source and uncertainty.
 
-<h3 id="separate-intervention-from-changing-workload">Separate intervention from changing workload</h3>
+### Separate intervention from changing workload {#separate-intervention-from-changing-workload}
 
 A before/after comparison can be confounded by easier assignments, fewer releases, or
 a changed reviewer. Stratify by relevant work type, or use a comparable unaffected
@@ -250,7 +250,7 @@ Predefine a review window and the conditions for keeping, revising, or removing 
 intervention. Repeatedly stopping the experiment at the first favorable result makes
 the conclusion less trustworthy.
 
-<h3 id="add-balancing-measures">Add balancing measures</h3>
+### Add balancing measures {#add-balancing-measures}
 
 A validation helper may reduce omissions while increasing false rejections. A template
 may reduce repeated questions while increasing completion time. Inspect both the target

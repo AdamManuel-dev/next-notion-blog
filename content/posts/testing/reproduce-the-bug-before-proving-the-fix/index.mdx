@@ -20,9 +20,7 @@ Did your change solve the problem?
 
 Maybe. You need to know what happens when the original instructions face the same test.
 
-<h2 id='the-result-that-looked-encouraging'>
-  The result that looked encouraging
-</h2>
+## The result that looked encouraging {#the-result-that-looked-encouraging}
 
 In an AI improvement project, a historical conversation showed the original bot applying
 unwanted pressure. The system could identify that behavior in the recording.
@@ -32,7 +30,7 @@ prompt also behaved politely.
 
 Both versions passed. That left the central question unanswered: did the edit help?
 
-<h2 id='why-the-old-version-matters'>Why the old version matters</h2>
+## Why the old version matters {#why-the-old-version-matters}
 
 Imagine repairing a bicycle brake and testing it on a flat road without using the brake.
 The ride goes well, but it does not tell you whether the repair worked.
@@ -43,9 +41,7 @@ the failure, it may never exercise the behavior you wanted to change.
 The original version is the baseline: the comparison that tells you what the system
 would do without your proposed improvement.
 
-<h2 id='recreate-the-conditions-not-just-the-question'>
-  Recreate the conditions, not just the question
-</h2>
+## Recreate the conditions, not just the question {#recreate-the-conditions-not-just-the-question}
 
 A conversation depends on more than its final message. Earlier turns, available tools,
 system instructions, and the surrounding situation can all affect the answer.
@@ -60,9 +56,7 @@ I would compare the historical run with the replay:
 Repeated trials matter too. A model may produce different answers under the same setup.
 One good reply is weak evidence about a behavior that only appears sometimes.
 
-<h2 id='separate-detection-from-prevention'>
-  Separate detection from prevention
-</h2>
+## Separate detection from prevention {#separate-detection-from-prevention}
 
 The project could detect the unwanted pressure in the historical conversation. That
 was useful, but it tested a different ability from preventing that behavior in a new run.
@@ -79,7 +73,7 @@ the historical example, the replay generated a new conversation, and the propose
 did or did not produce an observable improvement. Collapsing those into one green check
 makes it too easy to overstate the result.
 
-<h2 id='build-a-small-comparison-table'>Build a small comparison table</h2>
+## Build a small comparison table {#build-a-small-comparison-table}
 
 Before running more experiments, define what each possible outcome would mean.
 
@@ -97,9 +91,7 @@ The second row is especially important. It can mean the task is already easy for
 versions, the failure is rare, or the recreation missed something important. Those are
 different explanations, so the next experiment should help distinguish them.
 
-<h2 id='preserve-the-conversations-pressure-points'>
-  Preserve the conversation&#39;s pressure points
-</h2>
+## Preserve the conversation's pressure points {#preserve-the-conversations-pressure-points}
 
 Recreating a conversation does not require copying every irrelevant detail. It does
 require preserving the details that may affect the behavior being studied.
@@ -115,9 +107,7 @@ into a test of a different situation.
 When the original context is unavailable, mark the gap explicitly. Reconstructed context
 can be a useful hypothesis, but it should not be described as an exact reproduction.
 
-<h2 id='decide-what-counts-as-pressure-before-scoring'>
-  Decide what counts as pressure before scoring
-</h2>
+## Decide what counts as pressure before scoring {#decide-what-counts-as-pressure-before-scoring}
 
 Words such as rude, pushy, and helpful can be interpreted differently. An evaluator
 needs concrete behavior rules.
@@ -133,9 +123,7 @@ If another model supplies the score, manually inspect a sample of its decisions.
 judge can misunderstand the same conversation being evaluated. A readable explanation
 and the relevant excerpt make disagreements easier to resolve.
 
-<h2 id='change-one-variable-when-possible'>
-  Change one variable when possible
-</h2>
+## Change one variable when possible {#change-one-variable-when-possible}
 
 Suppose the revised run uses a different model, a shorter conversation, and a new prompt.
 If it improves, which change helped?
@@ -151,7 +139,7 @@ it definitively repaired the historical incident.
 Keep a set of ordinary conversations too. An instruction that prevents pressure by
 making the bot refuse every request would solve one metric while breaking the product.
 
-<h2 id='use-a-stopping-rule'>Use a stopping rule</h2>
+## Use a stopping rule {#use-a-stopping-rule}
 
 Repeatedly editing a prompt until one replay looks good invites accidental self-deception.
 The experiment starts selecting for that one example rather than the behavior people
@@ -171,9 +159,7 @@ historical failure. Inspect its turns against the intended scenario, and keep it
 configuration stable during the prompt comparison so two changing participants do
 not obscure which change caused the observed result.
 
-<h2 id='report-what-the-experiment-actually-showed'>
-  Report what the experiment actually showed
-</h2>
+## Report what the experiment actually showed {#report-what-the-experiment-actually-showed}
 
 The honest conclusion in this case was that the improvement pipeline ran, but the
 proposed behavior fix remained unproven. The replay had not reproduced the original failure.
@@ -184,14 +170,12 @@ before making claims about the fix.
 Good evaluation sometimes ends with a smaller claim than we hoped for. That keeps us
 from shipping confidence that the evidence has not earned.
 
-<h2 id='technical-deep-dive'>Technical deep dive</h2>
+## Technical deep dive {#technical-deep-dive}
 
 **Plain-language bridge:** A comparison can show improvement only if the test exposes
 a meaningful difference between the original and revised behavior.
 
-<h3 id='diagram-compare-both-versions-under-the-same-conditions'>
-  Diagram: Compare both versions under the same conditions
-</h3>
+### Diagram: Compare both versions under the same conditions {#diagram-compare-both-versions-under-the-same-conditions}
 
 ```text
                     [same scenario + rubric]
@@ -212,7 +196,7 @@ a meaningful difference between the original and revised behavior.
 Both versions passing a case does not show that the edit fixed the historical failure.
 Keep scenario coverage and repeated runs of the same scenario separate.
 
-<h3 id='define-the-unit-of-evaluation'>Define the unit of evaluation</h3>
+### Define the unit of evaluation {#define-the-unit-of-evaluation}
 
 For conversational behavior, the unit is often a complete scenario rather than one
 isolated reply. Preserve the system instructions, available tools, conversation prefix,
@@ -223,7 +207,7 @@ and instructions all change at once, attribution becomes difficult even when the
 looks better. A fixed random seed, where available, does not universally guarantee
 identical behavior across infrastructure or version changes.
 
-<h3 id='use-a-paired-comparison'>Use a paired comparison</h3>
+### Use a paired comparison {#use-a-paired-comparison}
 
 Run original and revised versions against the same scenario set and record outcomes
 side by side. An illustrative result table is:
@@ -243,9 +227,7 @@ Repeated runs of one scenario probe response variability. They do not create the
 coverage as independently selected scenarios. Report both the number of distinct cases
 and repetitions per case rather than collapsing them into one impressive sample count.
 
-<h3 id='make-the-scoring-rule-independent'>
-  Make the scoring rule independent
-</h3>
+### Make the scoring rule independent {#make-the-scoring-rule-independent}
 
 Define observable failure criteria before examining the revised outputs. For example,
 distinguish asking a clarifying question from applying unwanted pressure after a clear
@@ -256,9 +238,7 @@ adjudicated against the written rubric. A model-based judge can help triage, but
 needs its own calibration against human-labeled examples; agreement with the candidate
 model is not independent proof of correctness.
 
-<h3 id='preserve-a-holdout-and-a-stopping-rule'>
-  Preserve a holdout and a stopping rule
-</h3>
+### Preserve a holdout and a stopping rule {#preserve-a-holdout-and-a-stopping-rule}
 
 Keep some scenarios out of the editing loop. Once a case informs an edit, it becomes
 development evidence rather than a clean holdout. Repeatedly checking the same holdout

@@ -42,7 +42,7 @@ For loading data as fast as possible, hashed shard keys are the best option. A h
 
 <a id="255285c4dd1b424694426be5bfbf3dd3"></a>
 
-<h3 id="local-heading-1">High Randomness Shard Key (Write Scaling) ​</h3>
+### High Randomness Shard Key (Write Scaling) ​ {#local-heading-1}
 
 <a id="e26643a1ed93433197f2b53fd3d6cfd4"></a>
 
@@ -50,7 +50,7 @@ A key with high randomness will evenly distribute the writes and reads across al
 
 <a id="b14a693589f54ba98ddd25ddf892d925"></a>
 
-<h3 id="local-heading-2">Single Shard Targeted Key (Query Isolation) ​</h3>
+### Single Shard Targeted Key (Query Isolation) ​ {#local-heading-2}
 
 <a id="5ef708b02b1946bc81ed68ad5e8f8069"></a>
 
@@ -62,7 +62,7 @@ The UK postcode works as it has a lot of possible values due to the resolution o
 
 <a id="7f496e6e99794219a6e65505e5eb67fe"></a>
 
-<h2 id="local-heading-3">Sharding Anti-Patterns ​</h2>
+## Sharding Anti-Patterns ​ {#local-heading-3}
 
 <a id="167932112a724ef79c8511963e394a09"></a>
 
@@ -70,7 +70,7 @@ There are a couple of sharding anti-patterns that you should keep in mind to avo
 
 <a id="f74601e3427f434cb8b0408db555dabe"></a>
 
-<h3 id="local-heading-4">Monotonically increasing shard key ​</h3>
+### Monotonically increasing shard key ​ {#local-heading-4}
 
 <a id="03b1524bd64d44a89c4d0cc31d12ec6c"></a>
 
@@ -78,7 +78,7 @@ A monotonically increasing shard key, is an increasing function such as a counte
 
 <a id="14f71639e05d43eea37e38426c0920d8"></a>
 
-<h4 id="local-heading-5">Hashing the shard key ​</h4>
+#### Hashing the shard key ​ {#local-heading-5}
 
 <a id="7ca1efd6707543a2948498e993564a43"></a>
 
@@ -94,7 +94,7 @@ Shard using hashed _id
 
 <a id="ab2d6b13535c4474b9c5f64dc03a8210"></a>
 
-<h4 id="local-heading-6">Pre-split the chunks ​</h4>
+#### Pre-split the chunks ​ {#local-heading-6}
 
 <a id="a1dc161f80e84483909cf54fea11639f"></a>
 

@@ -14,7 +14,17 @@ coverPosition: null
 
 <a id="10ed3ab259bd4a7a9e8f6f77625b8da3"></a>
 
-<details open={true}><summary>Source</summary><section id="84522dbf134941e885bccafec7ed9db8"><p><a href="https://12factor.net/">{"https://12factor.net/"}</a></p></section></details>
+<details open={true}>
+
+<summary>Source</summary>
+
+<section id="84522dbf134941e885bccafec7ed9db8">
+
+[{"https://12factor.net/"}](<https://12factor.net/>)
+
+</section>
+
+</details>
 
 <a id="051c6830d67f4633b888b50342c3bbdb"></a>
 
@@ -22,7 +32,7 @@ coverPosition: null
 
 <a id="6b2ce46e9a5a4b84863db65846fa24b5"></a>
 
-<h3 id="local-heading-1">I. Codebase</h3>
+### I. Codebase {#local-heading-1}
 
 <a id="81f90a679b6f40028e702358aebcd344"></a>
 
@@ -38,7 +48,7 @@ A *codebase* is any single repo (in a centralized revision control system like
 
 <a id="73ad956428e045cc8d4e5aa744531b87"></a>
 
-<figure><img src="/content-assets/2c289a3544f53bac18c6.png" alt="" loading="lazy" /></figure>
+![](/content-assets/2c289a3544f53bac18c6.png)
 
 <a id="99c06aa4eb7a44668683a1a48172f029"></a>
 
@@ -62,7 +72,7 @@ The codebase is the same across all deploys, although different versions may be 
 
 <a id="1d70df07f5ed433b8384274d76de5f04"></a>
 
-<h3 id="local-heading-2">II. Dependencies</h3>
+### II. Dependencies {#local-heading-2}
 
 <a id="e237bf3938324801b8352c949ba9afdf"></a>
 
@@ -90,7 +100,7 @@ Twelve-factor apps also do not rely on the implicit existence of any system tool
 
 <a id="52f4c4ebdf04466798b1528749734898"></a>
 
-<h3 id="local-heading-3">III. Config</h3>
+### III. Config {#local-heading-3}
 
 <a id="e10d122f79724cc9b53e8ab92742a5e3"></a>
 
@@ -142,7 +152,7 @@ In a twelve-factor app, env vars are granular controls, each fully orthogonal to
 
 <a id="398cb19e0f544beab737cf54c47684c3"></a>
 
-<h3 id="local-heading-4">IV. Backing services</h3>
+### IV. Backing services {#local-heading-4}
 
 <a id="ac1ddce7ba094f9fac26c41bc2f6576a"></a>
 
@@ -166,7 +176,7 @@ Each distinct backing service is a *resource*. For example, a MySQL database is
 
 <a id="f54e67c831684e22a178c31b0c91b9ef"></a>
 
-<figure><img src="/content-assets/cb4522c4579211757cf2.png" alt="" loading="lazy" /></figure>
+![](/content-assets/cb4522c4579211757cf2.png)
 
 <a id="f405f1d6b7d5440fb3f0eeb002e11dd4"></a>
 
@@ -174,7 +184,7 @@ Resources can be attached to and detached from deploys at will. For example, if 
 
 <a id="2f0f51e8fcb94e3eb74b1010f634189a"></a>
 
-<h3 id="local-heading-5">V. Build, release, run</h3>
+### V. Build, release, run {#local-heading-5}
 
 <a id="d1272c0db3164247ae1ced0c70172edc"></a>
 
@@ -198,7 +208,7 @@ A [codebase](https://12factor.net/codebase) is transformed into a (non-develop
 
 <a id="d1c5dab3e49945e2a74fb8938258183c"></a>
 
-<figure><img src="/content-assets/d997853b54707bb0fef5.png" alt="" loading="lazy" /></figure>
+![](/content-assets/d997853b54707bb0fef5.png)
 
 <a id="f8e84f6f327846f29897a8b1a35c16e2"></a>
 
@@ -218,7 +228,7 @@ Builds are initiated by the app’s developers whenever new code is deployed. Ru
 
 <a id="68b8693bc22744f78fdb557ad07ffe04"></a>
 
-<h3 id="local-heading-6">VI. Processes</h3>
+### VI. Processes {#local-heading-6}
 
 <a id="51783c780e4e418d95757388d0e80e97"></a>
 
@@ -250,7 +260,7 @@ Some web systems rely on [“sticky sessions”](http://en.wikipedia.org/wiki/L
 
 <a id="8ba0ab7aa57942a486d7c8c6319fce8e"></a>
 
-<h3 id="local-heading-7">VII. Port binding</h3>
+### VII. Port binding {#local-heading-7}
 
 <a id="21cb1a998ae74220921aca9d44116459"></a>
 
@@ -282,7 +292,7 @@ Note also that the port-binding approach means that one app can become the [bac
 
 <a id="18f5bec667e949e1a6f311c0abe6b37e"></a>
 
-<h3 id="local-heading-8">VIII. Concurrency</h3>
+### VIII. Concurrency {#local-heading-8}
 
 <a id="c7e2a040b2e64c84b46e5f48a3a73a12"></a>
 
@@ -294,7 +304,7 @@ Any computer program, once run, is represented by one or more processes. Web app
 
 <a id="7ed75d9ce13a4a058853c2a498487c2b"></a>
 
-<figure><img src="/content-assets/cb0d7a84aa63a56f76a0.png" alt="" loading="lazy" /></figure>
+![](/content-assets/cb0d7a84aa63a56f76a0.png)
 
 <a id="cdda2caec00d46a48bd30976f1a77090"></a>
 
@@ -314,7 +324,7 @@ Twelve-factor app processes [should never daemonize](http://dustin.github.com/2
 
 <a id="5660de29f7144923a0d0a08a03af8987"></a>
 
-<h3 id="local-heading-9">IX. Disposability</h3>
+### IX. Disposability {#local-heading-9}
 
 <a id="5b85f24a65fc4647a5ad94d879491e6f"></a>
 
@@ -342,7 +352,7 @@ Processes should also be **robust against sudden death**, in the case of a fail
 
 <a id="6ba1b894697b4c629c9e986c14b8b365"></a>
 
-<h3 id="local-heading-10">X. Dev/prod parity</h3>
+### X. Dev/prod parity {#local-heading-10}
 
 <a id="10acfa7f771a44d2a48ee6b51803246c"></a>
 
@@ -414,7 +424,7 @@ Adapters to different backing services are still useful, because they make porti
 
 <a id="bbe5a2f1361e404c9ae5b6e9ca3ed2cf"></a>
 
-<h3 id="local-heading-11">XI. Logs</h3>
+### XI. Logs {#local-heading-11}
 
 <a id="bbfe6b0d45114552b6fd66368b84a689"></a>
 
@@ -454,7 +464,7 @@ The event stream for an app can be routed to a file, or watched via realtime tai
 
 <a id="f009c711c099466eb595d4e88220bd46"></a>
 
-<h3 id="local-heading-12">XII. Admin processes</h3>
+### XII. Admin processes {#local-heading-12}
 
 <a id="3ef517e9ab09466493d1f48f46cc7eb8"></a>
 

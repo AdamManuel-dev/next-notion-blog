@@ -3,7 +3,6 @@
   "parserOptions": {
     "ecmaVersion": 2020,
     "ecmaFeatures": {
-      "legacyDecorators": true,
       "jsx": true
     }
   },

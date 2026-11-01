@@ -1,46 +1,5 @@
 /* prism theme adjustments */
 
-/* Coy's curled-paper shadows overlap our flat code panels on desktop. */
-pre.notion-code[class*='language-']::before,
-pre.notion-code[class*='language-']::after {
-  content: none;
-  display: none;
-}
-
-.notion-code {
-  background-color: rgba(249, 250, 251, 1);
-  border: 1px solid rgba(229, 231, 235, 1);
-  border-radius: 0.375rem;
-  padding: 1.5em !important;
-}
-
-.dark-mode .notion-code {
-  background-color: rgba(17, 24, 39, 1);
-  border-color: rgba(55, 65, 81, 1);
-}
-.notion code {
-  color: rgba(31, 41, 55, 1);
-  border: 0 none !important;
-  box-shadow: none !important;
-  background: none !important;
-  padding: 0 !important;
-}
-.dark-mode .notion code {
-  color: rgba(229, 231, 235, 1);
-}
-
-.dark-mode .notion .notion-inline-code {
-  background: rgb(71,76,80) !important;
-  color: #d7fdc4;
-  padding: .2em .4em !important;
-}
-
-.light-mode .notion .notion-inline-code {
-  color: #000000;
-  background: rgba(55,53,47, .1) !important;
-  padding: .2em .4em !important;
-}
-
 .token.cdata,
 .token.doctype,
 .token.prolog {

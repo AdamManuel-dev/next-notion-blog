@@ -18,8 +18,8 @@
     "deploy": "vercel --prod",
     "analyze": "cross-env ANALYZE=true next build",
     "test": "run-s test:*",
-    "test:lint": "eslint .",
-    "test:prettier": "prettier '**/*.{js,jsx,ts,tsx}' --check",
+    "test:lint": "eslint --ext .ts,.tsx,.mjs,.cjs components lib pages scripts tests",
+    "test:prettier": "prettier '**/*.{js,jsx,ts,tsx,mjs,cjs,css,json,yml,yaml}' --check",
     "posttest": "run-s build",
     "test:types": "next typegen && tsc --noEmit",
     "test:unit": "node --experimental-strip-types --test tests/*.test.mjs"

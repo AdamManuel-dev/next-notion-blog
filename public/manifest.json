@@ -4,8 +4,8 @@
   "icons": [
     {
       "src": "/avatar.jpeg",
-      "sizes": "512x512",
-      "type": "image/png"
+      "sizes": "600x600",
+      "type": "image/jpeg"
     }
   ],
   "theme_color": "#F898B9",

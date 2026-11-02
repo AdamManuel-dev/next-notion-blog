@@ -32,6 +32,39 @@ export function isReadingAnchor(value: unknown): value is string {
   )
 }
 
+/** The minimal DOM surface a capture needs, so positions stay testable. */
+export type ReadingBlock = {
+  id?: string
+  classList?: Iterable<string>
+  getBoundingClientRect(): { top: number; bottom: number }
+}
+
+const legacyBlockAnchor = /^notion-block-[a-f0-9]{32}$/
+
+/**
+ * Captures the position of the first block still visible below the header.
+ * Blocks are walked lazily so a long article only measures what it must.
+ */
+export function captureReadingPosition(
+  y: number,
+  blocks: Iterable<ReadingBlock>,
+  now = Date.now()
+): ReadingPosition | null {
+  if (!Number.isFinite(y) || y < 200) return null
+  for (const block of blocks) {
+    const rect = block.getBoundingClientRect()
+    if (!(rect.bottom > 80)) continue
+    const id = block.id
+    if (id && isReadingAnchor(id))
+      return { y, anchor: id, offset: rect.top, updated: now }
+    const legacy = [...(block.classList || [])].find((name) =>
+      legacyBlockAnchor.test(name)
+    )
+    if (legacy) return { y, anchor: legacy, offset: rect.top, updated: now }
+  }
+  return { y, anchor: '', offset: 0, updated: now }
+}
+
 export function parseReadingPosition(
   raw: string | null,
   now = Date.now()

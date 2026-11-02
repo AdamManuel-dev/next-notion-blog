@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
+  captureReadingPosition,
   isReadingAnchor,
   parseReadingPreferences,
   parseReadingPosition
@@ -72,6 +73,108 @@ test('resume anchor IDs cannot contain selectors, fragments or unbounded input',
     null
   ])
     assert.equal(isReadingAnchor(anchor), false)
+})
+
+const block = (rect, { id, classList = [] } = {}, measured) => ({
+  id,
+  classList,
+  getBoundingClientRect() {
+    measured?.push(id || classList[0] || 'anonymous')
+    return rect
+  }
+})
+
+test('captured positions anchor to the first block still visible below the header', () => {
+  const now = 1000
+  const measured = []
+  const blocks = [
+    block({ top: -400, bottom: -120 }, { id: 'local-heading-1' }, measured),
+    block({ top: -30, bottom: 240 }, { id: 'local-heading-2' }, measured),
+    block({ top: 300, bottom: 600 }, { id: 'local-heading-3' }, measured)
+  ]
+  assert.deepEqual(captureReadingPosition(1200, blocks, now), {
+    y: 1200,
+    anchor: 'local-heading-2',
+    offset: -30,
+    updated: now
+  })
+  // Measuring stops at the match instead of laying out the whole article.
+  assert.deepEqual(measured, ['local-heading-1', 'local-heading-2'])
+})
+
+test('a captured position is independent of later page geometry', () => {
+  const rect = { top: -30, bottom: 400 }
+  const source = block(rect, { id: 'old-page-heading' })
+  const captured = captureReadingPosition(1200, [source], 5000)
+
+  source.id = 'new-page-heading'
+  rect.top = 600
+  rect.bottom = 900
+
+  assert.deepEqual(captured, {
+    y: 1200,
+    anchor: 'old-page-heading',
+    offset: -30,
+    updated: 5000
+  })
+})
+
+test('captured positions fall back to legacy block classes and skip unsafe IDs', () => {
+  const legacy = 'notion-block-' + 'a'.repeat(32)
+  assert.deepEqual(
+    captureReadingPosition(
+      900,
+      [block({ top: 12, bottom: 400 }, { classList: ['notion-text', legacy] })],
+      5
+    ),
+    { y: 900, anchor: legacy, offset: 12, updated: 5 }
+  )
+  assert.deepEqual(
+    captureReadingPosition(
+      900,
+      [
+        block({ top: 12, bottom: 400 }, { id: 'body > script' }),
+        block({ top: 90, bottom: 500 }, { id: 'footnote-1' })
+      ],
+      5
+    ),
+    { y: 900, anchor: 'footnote-1', offset: 90, updated: 5 }
+  )
+})
+
+test('captured positions keep the scroll offset when no block is visible', () => {
+  assert.deepEqual(
+    captureReadingPosition(
+      900,
+      [block({ top: -900, bottom: -200 }, { id: 'local-heading-1' })],
+      5
+    ),
+    { y: 900, anchor: '', offset: 0, updated: 5 }
+  )
+  assert.deepEqual(captureReadingPosition(900, [], 5), {
+    y: 900,
+    anchor: '',
+    offset: 0,
+    updated: 5
+  })
+})
+
+test('captured positions below the resume threshold are discarded', () => {
+  for (const y of [0, 199, Number.NaN])
+    assert.equal(
+      captureReadingPosition(
+        y,
+        [block({ top: 10, bottom: 400 }, { id: 'local-heading-1' })],
+        5
+      ),
+      null
+    )
+  const captured = captureReadingPosition(
+    200,
+    [block({ top: 10, bottom: 400 }, { id: 'local-heading-1' })],
+    5
+  )
+  assert.deepEqual(parseReadingPosition(JSON.stringify(captured), 5), captured)
 })
 
 test('related articles rank shared topics, deduplicate and exclude self or unsafe URLs', () => {

@@ -46,8 +46,15 @@ http
       })
       response.end(request.method === 'HEAD' ? undefined : bytes)
     } catch {
+      let notFound
+      try {
+        notFound = await fs.readFile(path.join(root, '404.html'))
+      } catch {
+        notFound =
+          '<!doctype html><title>404 Not Found</title><h1>404 Not Found</h1>'
+      }
       response.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' })
-      response.end(await fs.readFile(path.join(root, '404.html')))
+      response.end(request.method === 'HEAD' ? undefined : notFound)
     }
   })
   .listen(Number(process.env.PORT || 3000), '127.0.0.1', () => {

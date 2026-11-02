@@ -1,6 +1,12 @@
 export type LocalSearchPage = { id: string; slug: string; title: string }
 export type LocalSearchResult = { id: string; title: string; href: string }
 
+export function isSearchShortcut(
+  event: Pick<KeyboardEvent, 'key' | 'metaKey' | 'ctrlKey'>
+): boolean {
+  return (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k'
+}
+
 const normalize = (text: string) =>
   text
     .normalize('NFKD')

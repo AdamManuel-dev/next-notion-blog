@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {
-  isReadingAnchor,
+  captureReadingPosition,
   parseReadingPosition,
   ReadingPosition
 } from 'lib/reading-storage'
@@ -20,49 +20,52 @@ export function ReadingResume({ pageId }: { pageId: string }) {
     } catch {
       // Storage is optional; a blocked store must not interrupt reading.
     }
+    // This effect owns one article element; a route change mounts a new one,
+    // so every measurement happens while this article is still connected and
+    // writes only ever replay that captured snapshot.
+    const article = document.querySelector('article')
+    const blocks = article
+      ? [
+          ...article.querySelectorAll<HTMLElement>(
+            '[id], [class*="notion-block-"]'
+          )
+        ]
+      : []
+    const end = article?.closest('main')?.querySelector('.article-end')
     let timer: ReturnType<typeof setTimeout>
-    let dirty = false
+    let snapshot: ReadingPosition | null = null
+    let finished = false
+    const capture = () => {
+      if (!article?.isConnected) return
+      if (window.scrollY < 200) {
+        finished = false
+        snapshot = null
+        return
+      }
+      const rect = end?.getBoundingClientRect()
+      finished = !!rect && rect.top <= window.innerHeight
+      snapshot = finished
+        ? null
+        : captureReadingPosition(window.scrollY, blocks)
+    }
     const save = () => {
       clearTimeout(timer)
-      if (!dirty || pending.current || window.scrollY < 200) return
-      const end = document
-        .querySelector('.article-end')
-        ?.getBoundingClientRect()
+      if (!finished && !snapshot) return
       try {
-        if (end && end.top <= window.innerHeight) {
-          localStorage.removeItem(key)
-          return
-        }
-        const blocks = document.querySelectorAll<HTMLElement>(
-          'article [id], article [class*="notion-block-"]'
-        )
-        const anchor = [...blocks].find(
-          (block) =>
-            block.getBoundingClientRect().bottom > 80 &&
-            ((!!block.id && isReadingAnchor(block.id)) ||
-              [...block.classList].some((name) =>
-                /^notion-block-[a-f0-9]{32}$/.test(name)
-              ))
-        )
-        const anchorId =
-          anchor?.id && isReadingAnchor(anchor.id)
-            ? anchor.id
-            : [...(anchor?.classList || [])].find((name) =>
-                /^notion-block-[a-f0-9]{32}$/.test(name)
-              ) || ''
-        const value: ReadingPosition = {
-          y: window.scrollY,
-          anchor: anchorId,
-          offset: anchor?.getBoundingClientRect().top || 0,
-          updated: Date.now()
-        }
-        localStorage.setItem(key, JSON.stringify(value))
+        if (finished) localStorage.removeItem(key)
+        else localStorage.setItem(key, JSON.stringify(snapshot))
       } catch {
         // Quotas and privacy settings can prevent position persistence.
       }
     }
     const scroll = () => {
-      dirty = true
+      // Reading on past the banner is an implicit answer to it.
+      if (pending.current) {
+        if (window.scrollY < 200) return
+        pending.current = false
+        setSaved(null)
+      }
+      capture()
       clearTimeout(timer)
       timer = setTimeout(save, 600)
     }

@@ -1,7 +1,11 @@
 import Link from 'next/link'
 import * as React from 'react'
 
-import { LocalSearchPage, searchLocalPages } from 'lib/local-search'
+import {
+  isSearchShortcut,
+  LocalSearchPage,
+  searchLocalPages
+} from 'lib/local-search'
 
 export interface LocalSearchProps {
   /** The static page index shipped with the build. */
@@ -36,11 +40,7 @@ export function LocalSearch({ pages, rootPageId }: LocalSearchProps) {
 
   React.useEffect(() => {
     const shortcut = (event: KeyboardEvent) => {
-      if (
-        (event.metaKey || event.ctrlKey) &&
-        (event.key.toLowerCase() === 'k' ||
-          (event.metaKey && event.key.toLowerCase() === 'p'))
-      ) {
+      if (isSearchShortcut(event)) {
         // Another modal owns the viewport; leave its own shortcuts alone.
         if (document.querySelector('dialog[open]') && !dialog.current?.open)
           return

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { searchLocalPages } from '../lib/local-search.ts'
+import { isSearchShortcut, searchLocalPages } from '../lib/local-search.ts'
 import { getLocalPages } from '../lib/local-content.ts'
 
 const page = (id, title, slug = id) => ({ id, title, slug })
@@ -12,6 +12,30 @@ const pages = [
   page('cafe', 'Café notes'),
   page('japanese', '日本語の記事')
 ]
+
+test('search opens only with its documented Command or Control K shortcut', () => {
+  for (const key of ['k', 'K']) {
+    assert.equal(isSearchShortcut({ key, metaKey: true, ctrlKey: false }), true)
+    assert.equal(isSearchShortcut({ key, metaKey: false, ctrlKey: true }), true)
+    assert.equal(
+      isSearchShortcut({ key, metaKey: false, ctrlKey: false }),
+      false
+    )
+  }
+})
+
+test('search leaves printing and other browser shortcuts alone', () => {
+  for (const key of ['p', 'P', 'f', 'l', 'Escape']) {
+    assert.equal(
+      isSearchShortcut({ key, metaKey: true, ctrlKey: false }),
+      false
+    )
+    assert.equal(
+      isSearchShortcut({ key, metaKey: false, ctrlKey: true }),
+      false
+    )
+  }
+})
 
 test('every exported article is discoverable by its full title without a search service', () => {
   const index = getLocalPages()

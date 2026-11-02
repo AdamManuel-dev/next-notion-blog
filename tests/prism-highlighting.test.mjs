@@ -4,12 +4,14 @@ import { test } from 'node:test'
 import Prism from 'prismjs'
 import 'prismjs/components/prism-typescript.js'
 import 'prismjs/components/prism-bash.js'
+import 'prismjs/components/prism-json.js'
 
 test('reader code languages still produce syntax highlighting tokens', () => {
   for (const [language, code] of [
     ['javascript', 'const answer = 42'],
     ['typescript', 'const answer: number = 42'],
     ['bash', 'echo "$HOME"'],
+    ['json', '{"answer": 42, "ready": true, "missing": null}'],
     ['markup', '<p>Hello</p>']
   ]) {
     const html = Prism.highlight(code, Prism.languages[language], language)
@@ -25,6 +27,7 @@ test('the app highlights code on hard loads and client-side navigation', () => {
   assert.match(app, /\[router\.asPath\]/)
   assert.match(app, /import 'prismjs\/components\/prism-typescript'/)
   assert.match(app, /import 'prismjs\/components\/prism-bash'/)
+  assert.match(app, /import 'prismjs\/components\/prism-json'/)
   assert.match(app, /import 'prismjs\/themes\/prism-coy\.css'/)
   assert.match(app, /import 'styles\/prism-theme\.css'/)
 })

@@ -30,6 +30,7 @@ import 'prismjs/components/prism-markup'
 import 'prismjs/components/prism-javascript'
 import 'prismjs/components/prism-typescript'
 import 'prismjs/components/prism-bash'
+import 'prismjs/components/prism-json'
 
 import React from 'react'
 import { useRouter } from 'next/router'

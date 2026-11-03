@@ -32,6 +32,17 @@ const Link = ({ href, children }) => React.createElement('a', { href }, children
 const prepareLocalArticle = (html) => ({ html, entries: [] })
 const selectRelatedPages = (_page, candidates) => candidates
 const useDarkMode = () => ({ value: false, toggle: () => {} })
+const useLegacyFragments = () => {}
+const LiveBlocks = ({ blocks }) => React.createElement(
+  React.Fragment,
+  null,
+  blocks.map(({ id, moduleId, props }) => React.createElement('live-block-stub', {
+    key: id,
+    'data-live-id': id,
+    'data-module-id': moduleId,
+    'data-props': JSON.stringify(props)
+  }))
+)
 const ArticleOutline = () => null
 const Footer = () => null
 const FootnotePreview = () => null
@@ -178,6 +189,22 @@ test('articles never render the homepage section', () => {
   const markup = render({ page: article, isHome: false, pages })
   assert.ok(!markup.includes('engineering-articles'))
   assert.ok(markup.includes('<p>Body copy.</p>'))
+})
+
+test('the layout passes instance props and shared module IDs to the portal renderer', () => {
+  const markup = render({
+    page: {
+      ...article,
+      liveBlocks: [
+        { id: 'counter', moduleId: 'Counter', props: { initialCount: 3 } }
+      ]
+    },
+    isHome: false,
+    pages
+  })
+  assert.match(markup, /data-live-id="counter"/)
+  assert.match(markup, /data-module-id="Counter"/)
+  assert.match(markup, /data-props="\{&quot;initialCount&quot;:3\}"/)
 })
 
 test('frontmatter descriptions drive the document meta description', () => {

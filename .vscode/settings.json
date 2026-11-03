@@ -1,5 +1,12 @@
 {
   "typescript.tsdk": "./node_modules/typescript/lib",
+  "files.associations": { "*.mdx": "mdx" },
+  "[mdx]": {
+    "editor.defaultFormatter": "local-blog.mdx-content-tools",
+    "editor.formatOnSave": true,
+    "files.trimTrailingWhitespace": false
+  },
+  "blogMdx.previewPort": 3100,
   "files.exclude": {
     "**/logs": true,
     "**/*.log": true,

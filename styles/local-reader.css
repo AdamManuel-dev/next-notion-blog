@@ -561,6 +561,32 @@
   min-height: 108px;
 }
 
+/* Remove Prism Coy's dog-eared paper decorations from reader code blocks. */
+.local-reader pre[class*='language-']::before,
+.local-reader pre[class*='language-']::after {
+  content: none;
+  display: none;
+}
+
+/* React portals own only the mount; source and no-JS fallback stay static. */
+.local-reader .live-block {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border: 1px solid var(--blog-control-border);
+  border-radius: 8px;
+  min-width: 0;
+  scroll-margin-top: 80px;
+}
+.local-reader .live-block [data-live-mount] {
+  min-height: 6rem;
+}
+.local-reader .live-block [data-live-source] {
+  margin-top: 1rem;
+}
+.local-reader .live-block[data-live-active] > [data-live-fallback] {
+  display: none;
+}
+
 /* ---------------------------------------------------------------------------
  * 10. Local dialogs are flat and opaque
  *

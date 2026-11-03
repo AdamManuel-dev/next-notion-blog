@@ -12,23 +12,13 @@ icon: null
 coverPosition: null
 ---
 
-<a id="522c295297fc4ffea253f4372ceabd85"></a>
+[Documentation - Utility TypesTypeScript provides several utility types to facilitate common type transformations. These utilities are available globally. Constructs a type with all properties of Type set to optional. This utility will return a type that represents all subsets of a given type. Constructs a type consisting of all properties of Type set to required.https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype](https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype) {#documentation-utility-typestypescript-provides-several-utility-types-to-facilita}
 
-[Documentation - Utility TypesTypeScript provides several utility types to facilitate common type transformations. These utilities are available globally. Constructs a type with all properties of Type set to optional. This utility will return a type that represents all subsets of a given type. Constructs a type consisting of all properties of Type set to required.https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype](https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype)
+## Type Extraction from CommonJS {#type-extraction-from-commonjs}
 
-<a id="64af3cd4559f458da4eed1c5fb4581d3"></a>
+### When using a CommonJS export where there are named exports and a default class export {#when-using-a-commonjs-export-where-there-are-named-exports}
 
-## Type Extraction from CommonJS {#local-heading-1}
-
-<a id="abf1eb5f56b640b5b6f4d523481d29ae"></a>
-
-### When using a CommonJS export where there are named exports and a default class export {#local-heading-2}
-
-<a id="d351ffdcf8dd47ff89f28dabbb40f809"></a>
-
-To access the type of the class instance and not the constructor, you must use the `prototype` named export
-
-<a id="f19b03a1a1b34f7d8465b42b971a1641"></a>
+To access the type of the class instance and not the constructor, you must use the `prototype` named export {#to-access-the-type-of-the-class-instance-and-not}
 
 ```
 class Example {
@@ -45,15 +35,9 @@ class Example {
 {
 ```
 
-<a id="1d0be9ad40de46849f968e16052e6ae9"></a>
+### When using a CommonJS factory method {#when-using-a-commonjs-factory-method}
 
-### When using a CommonJS factory method {#local-heading-3}
-
-<a id="000c528f447f4c468cefa8be555bcd14"></a>
-
-To access the type of the instance the factory creates, you must use `ReturnType<typeof Logger>` where Logger is the factory method.
-
-<a id="26020e7d54724e3ebd556c663dad0a57"></a>
+To access the type of the instance the factory creates, you must use `ReturnType<typeof Logger>` where Logger is the factory method. {#to-access-the-type-of-the-instance-the-factory-creates}
 
 ```
 class Example {
@@ -68,37 +52,21 @@ class Example {
 {
 ```
 
-<a id="8dac33eb6c8247f9bd811256a6096f43"></a>
+### Importing the type without the actaul code {#importing-the-type-without-the-actaul-code}
 
-### Importing the type without the actaul code {#local-heading-4}
-
-<a id="08827c26c3a44153957fd31eb0b0d0ba"></a>
-
-When using the `import` syntax you can import the type **ONLY** by using the `type` keyword after `import`
-
-<a id="8701dec35f8b44849cedb20a80adadb6"></a>
+When using the `import` syntax you can import the type **ONLY** by using the `type` keyword after `import` {#when-using-the-import-syntax-you-can-import-the-type}
 
 ```
 import type { UserRef } from '../../../generic_company/domain/common';
 ```
 
-<a id="0ee322fd246841fcafdfe8b3946828e5"></a>
+When the typescript gets compiled to JS, it will **NOT** import the code from that import, and will instead ignore the import completely since JS cannot use types. It **WILL** still include the JSDoc typings, allowing you to have code completion without increasing the load time of the file {#when-the-typescript-gets-compiled-to-js-it-will-not}
 
-When the typescript gets compiled to JS, it will **NOT** import the code from that import, and will instead ignore the import completely since JS cannot use types. It **WILL** still include the JSDoc typings, allowing you to have code completion without increasing the load time of the file
+### Defining reusable types within a CommonJS files {#defining-reusable-types-within-a-commonjs-files}
 
-<a id="c3b3557e72144b18b04a95945d812323"></a>
+To defined a reusable type definition within a CommonJS file, you must use `@typedef` and define the type as if it's a normal JSDoc comment. {#to-defined-a-reusable-type-definition-within-a-commonjs-file}
 
-### Defining reusable types within a CommonJS files {#local-heading-5}
-
-<a id="8279ae3fb636423b9e72d58d5665e538"></a>
-
-To defined a reusable type definition within a CommonJS file, you must use `@typedef` and define the type as if it's a normal JSDoc comment.
-
-<a id="ef513383c8a4481a96573e692dcebe25"></a>
-
-When importing from that CommonJS file in Typescript, it will let you import the type definition explicitly.
-
-<a id="83bc9284c1434de1a81760e3837ba4f3"></a>
+When importing from that CommonJS file in Typescript, it will let you import the type definition explicitly. {#when-importing-from-that-commonjs-file-in-typescript-it-will}
 
 ```
 /**
@@ -112,11 +80,7 @@ When importing from that CommonJS file in Typescript, it will let you import the
  */
 ```
 
-<a id="770dcc17c772489f87ccd362e8cbfddb"></a>
-
-### Defining dependencies type when using a constructor based dependency injection in CommonJS {#local-heading-6}
-
-<a id="5c10a13cc6cc433183f46f2c0cade473"></a>
+### Defining dependencies type when using a constructor based dependency injection in CommonJS {#defining-dependencies-type-when-using-a-constructor-based-dependency-injection}
 
 ```
 /**
@@ -128,15 +92,9 @@ constructor(companyRepository) {
 }
 ```
 
-<a id="30e90d6f36de47f1a7f823b5c12ead9e"></a>
+### Exporting the Type of a CommonJS class with the class itself {#exporting-the-type-of-a-commonjs-class-with-the-class}
 
-### Exporting the Type of a CommonJS class with the class itself {#local-heading-7}
-
-<a id="1b525c92f07e4b8fad04ed57eb1e27fd"></a>
-
-This is a nice pattern to use, because it allows you to more easily import the type without the class in TS. You don't need to use typeof all over your codebase, and the `tsc` has an easier time with it.
-
-<a id="2395991a7aa64072ba9257f69e1d15a7"></a>
+This is a nice pattern to use, because it allows you to more easily import the type without the class in TS. You don't need to use typeof all over your codebase, and the `tsc` has an easier time with it. {#this-is-a-nice-pattern-to-use-because-it-allows}
 
 ```
 /////////////////////////////////////////////////////////////////////
@@ -155,24 +113,15 @@ module.exports = CompanyRepository;
 import { CompanyRepository, CompanyRepositoryI } from './lib/CompanyRepository'
 ```
 
-<a id="069ce06751d2468a91c0315edabe89b5"></a>
+### Using Typescripts ability to declare a property inside the constructor {#using-typescripts-ability-to-declare-a-property-inside-the-constructor}
 
-### Using Typescripts ability to declare a property inside the constructor {#local-heading-8}
+#### Why is this useful? {#why-is-this-useful}
 
-<a id="38babce92d3240adb3b9456ce0330077"></a>
-
-#### Why is this useful? {#local-heading-9}
-
-<a id="b09982d82d094bd789402677c49a3d7d"></a>
-
-This allows you to eaily dependency inject any of the required dependencies of the class while keeping the type information for the newly defined property. While that might seem like a decent trade-off already the other aspect is the ability to inject mock dependencies during Unit Tests to have full control of the dependencies when testing this classes functionality.
-
-<a id="078c7d5b1b0e436abc8251ad7399cb25"></a>
-
+This allows you to eaily dependency inject any of the required dependencies of the class while keeping the type information for the newly defined property. While that might seem like a decent trade-off already the other aspect is the ability to inject mock dependencies during Unit Tests to have full control of the dependencies when testing this classes functionality. {#this-allows-you-to-eaily-dependency-inject-any-of-the}
 
 <details open={true}>
 <summary>CommonJS</summary>
-<section id="9a75711f78794e8ba6540668d37f5472">
+:::callout{#why-is-this-useful-callout}
 
 
 ```
@@ -222,21 +171,15 @@ This allows you to eaily dependency inject any of the required dependencies of t
 ```
 
 
-</section>
+:::
 
 </details>
 
-
-<a id="e3714658ae564ccbb75f4e34c7ebfe66"></a>
-
-**VS**
-
-<a id="95725adf8c2e4d6eb8e38e55ef7d9374"></a>
-
+**VS** {#vs}
 
 <details open={true}>
 <summary>Typescript</summary>
-<section id="d149326619094e75ba82365dc37940ec">
+:::callout{#why-is-this-useful-callout-2}
 
 
 ```
@@ -254,6 +197,6 @@ This allows you to eaily dependency inject any of the required dependencies of t
 ```
 
 
-</section>
+:::
 
 </details>

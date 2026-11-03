@@ -2,6 +2,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import * as React from 'react'
 
+import type { LiveBlockInstance } from 'lib/live-block-types'
 import { prepareLocalArticle } from 'lib/local-article-outline'
 import { selectRelatedPages } from 'lib/related-pages'
 import { useDarkMode } from 'lib/use-dark-mode'
@@ -10,9 +11,11 @@ import { Footer } from './Footer'
 import { FootnotePreview } from './FootnotePreview'
 import { ImageReveal } from './ImageReveal'
 import { LocalReaderHeader } from './LocalReaderHeader'
+import { LiveBlocks } from './LiveBlocks'
 import { ReaderDelight } from './ReaderDelight'
 import { ReadingResume } from './ReadingResume'
 import { RelatedArticles } from './RelatedArticles'
+import { useLegacyFragments } from './useLegacyFragments'
 import styles from './LocalPage.module.css'
 
 /** Hover/focus affordance; decorative, so it stays out of the a11y tree. */
@@ -59,6 +62,10 @@ export interface LocalPageIndexEntry {
 export interface LocalPageData extends LocalPageIndexEntry {
   /** MDX compiled to static HTML at build time. */
   html: string
+  /** Legacy fragment IDs mapped to canonical IDs on actual article blocks. */
+  fragmentAliases?: Record<string, string>
+  /** Component definitions and literal props for this article's live instances. */
+  liveBlocks?: LiveBlockInstance[]
   cover: string | null
   /** Original Notion URL, when the page was migrated from one. */
   sourceUrl?: string | null
@@ -235,13 +242,15 @@ export function LocalPage({ page, isHome, pages }: LocalPageProps) {
     [isHome, page.id, title, pages]
   )
 
-  // Heading anchors are injected once per article; the homepage has no outline.
+  // Read compiler-owned heading anchors; the homepage has no outline.
   const article = React.useMemo(
     () => (isHome ? { html, entries: [] } : prepareLocalArticle(html)),
     [html, isHome]
   )
 
   const bodyHtml = engineeringArticlesHtml + article.html
+  const articleRef = React.useRef<HTMLElement>(null)
+  useLegacyFragments(articleRef, page.id, bodyHtml, page.fragmentAliases)
 
   return (
     <>
@@ -304,7 +313,13 @@ export function LocalPage({ page, isHome, pages }: LocalPageProps) {
               {title}
             </h1>
 
-            {isHome ? null : <ReadingResume pageId={page.id} />}
+            {isHome ? null : (
+              <ReadingResume
+                pageId={page.id}
+                articleRef={articleRef}
+                fragmentAliases={page.fragmentAliases}
+              />
+            )}
 
             {isHome ? null : <ArticleOutline entries={article.entries} />}
 
@@ -314,9 +329,16 @@ export function LocalPage({ page, isHome, pages }: LocalPageProps) {
                 as JSX children) so the body stays a direct child of the
                 article element and the content styles cascade unchanged. */}
             <article
+              ref={articleRef}
               className={`${styles.content} lr-article`}
               // pi-lens-ignore: dangerously-set-inner-html -- build-time MDX
               dangerouslySetInnerHTML={{ __html: bodyHtml }}
+            />
+            <LiveBlocks
+              articleRef={articleRef}
+              pageId={page.id}
+              bodyHtml={bodyHtml}
+              blocks={page.liveBlocks || []}
             />
 
             {indexEntries ? (

@@ -3,12 +3,13 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { test } from 'node:test'
 import { createProcessor } from '@mdx-js/mdx'
+import { remarkBlockDirectives } from '../lib/remark-block-ids.mjs'
 import remarkGfm from 'remark-gfm'
 import { readContentIndex } from '../lib/mdx-content.mjs'
 import remarkHeadingIds from '../lib/remark-heading-ids.mjs'
 
 const processor = createProcessor({
-  remarkPlugins: [remarkGfm, remarkHeadingIds]
+  remarkPlugins: [remarkGfm, remarkBlockDirectives, remarkHeadingIds]
 })
 
 function contentTrees() {
@@ -42,6 +43,35 @@ function plainChildren(node) {
     )
     .filter((child) => child.type !== 'text' || child.value.trim())
 }
+
+test('editable fragment identities use readable pinned slugs instead of migration IDs', () => {
+  const remaining = []
+  for (const { file, headerLines, tree } of contentTrees()) {
+    visit(tree, (node) => {
+      const id =
+        node.type === 'headingId'
+          ? node.id
+          : node.type.endsWith('Directive')
+          ? node.attributes?.id
+          : null
+      if (
+        id &&
+        (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id) ||
+          /^[0-9a-f]{32}$/.test(id) ||
+          /^local-heading-\d+$/.test(id))
+      ) {
+        remaining.push(
+          `${file}:${headerLines + node.position.start.line}: ${id}`
+        )
+      }
+    })
+  }
+  assert.deepEqual(
+    remaining,
+    [],
+    'Keep legacy identities in fragment-aliases.json'
+  )
+})
 
 test('editable headings use Markdown when no HTML-only attributes are needed', () => {
   const remaining = []
@@ -95,6 +125,34 @@ test('heading IDs use trailing attributes instead of separate empty anchors', ()
     })
   }
   assert.deepEqual(remaining, [], 'Put the stable ID on the heading as {#id}')
+})
+
+test('editable content avoids standalone anchors and uses Markdown callouts', () => {
+  const remaining = []
+  for (const { file, headerLines, tree } of contentTrees()) {
+    visit(tree, (node) => {
+      if (node.type === 'leafDirective' && node.name === 'anchor') {
+        remaining.push(`${file}:${headerLines + node.position.start.line}`)
+        return
+      }
+      if (!isJsx(node, 'a') && !isJsx(node, 'section')) return
+      const attributes = node.attributes ?? []
+      if (
+        attributes.length !== 1 ||
+        attributes[0].type !== 'mdxJsxAttribute' ||
+        attributes[0].name !== 'id' ||
+        typeof attributes[0].value !== 'string'
+      )
+        return
+      if (node.name === 'a' && plainChildren(node).length) return
+      remaining.push(`${file}:${headerLines + node.position.start.line}`)
+    })
+  }
+  assert.deepEqual(
+    remaining,
+    [],
+    'Generate targets on content blocks; use :::callout for callouts'
+  )
 })
 
 test('simple inline code and whole-code emphasis use Markdown syntax', () => {

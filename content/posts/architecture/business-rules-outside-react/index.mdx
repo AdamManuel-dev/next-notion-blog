@@ -51,12 +51,12 @@ the expected format. It cannot alone establish that the current user may approve
 That second question may depend on ownership, role, and the offer's current state.
 A correctly formed request can still ask for an invalid transition.
 
-| Question | Kind of decision |
-| --- | --- |
-| Is the amount expressed in supported units? | Input validation. |
-| Is the offer still open for review? | Business rule. |
-| May this person review this offer? | Access decision. |
-| Which message should appear beside the field? | Presentation. |
+| Question                                      | Kind of decision  |
+| --------------------------------------------- | ----------------- |
+| Is the amount expressed in supported units?   | Input validation. |
+| Is the offer still open for review?           | Business rule.    |
+| May this person review this offer?            | Access decision.  |
+| Which message should appear beside the field? | Presentation.     |
 
 Naming these separately keeps a single vague validation function from accumulating
 responsibilities that are difficult to test and maintain.
@@ -195,7 +195,6 @@ whether it is allowed. Keeping those jobs apart makes the decision testable on i
 
 The arrows show a simplified execution path, not imports. The domain rule evaluates
 facts; the server and commit boundary enforce authoritative access and concurrency.
-
 
 ### Give the domain an explicit input and result {#give-the-domain-an-explicit-input-and-result}
 

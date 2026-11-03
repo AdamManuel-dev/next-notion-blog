@@ -36,50 +36,33 @@ function headingText(html: string): string {
     .trim()
 }
 
-/** Adds stable anchor targets to the migration's already-sanitized HTML. */
+/** Keeps outline presentation separate from compilation's canonical ID allocation. */
 export function prepareLocalArticle(html: string): {
   html: string
   entries: LocalOutlineEntry[]
 } {
   const entries: LocalOutlineEntry[] = []
-  const usedIds = new Set(
-    [...html.matchAll(/\s+id\s*=\s*["']([^"']+)["']/gi)].map(
-      (match) => match[1]
-    )
-  )
   const levels = [{ actual: 0, effective: -1 }]
-  let sequence = 0
-  const anchoredHtml = html.replace(
-    /<h([1-6])\b([^>]*)>([\s\S]*?)<\/h\1\s*>/gi,
-    (heading, level: string, attributes: string, content: string) => {
-      const text = headingText(content)
-      if (!text) return heading
-      const existingId = attributes.match(/\s+id\s*=\s*["']([^"']+)["']/i)?.[1]
-      let id = existingId
-      if (!id) {
-        do {
-          id = `local-heading-${++sequence}`
-        } while (usedIds.has(id))
-        usedIds.add(id)
-      }
-      const actual = Number(level)
-      while (levels.length > 1 && actual < levels[levels.length - 1].actual)
-        levels.pop()
-      const previous = levels[levels.length - 1]
-      const indentLevel =
-        actual === previous.actual ? previous.effective : previous.effective + 1
-      if (actual > previous.actual)
-        levels.push({ actual, effective: indentLevel })
-      entries.push({
-        id,
-        href: `#${encodeURIComponent(id)}`,
-        text,
-        indentLevel
-      })
-      return existingId
-        ? heading
-        : `<h${level}${attributes} id="${id}">${content}</h${level}>`
-    }
-  )
-  return { html: anchoredHtml, entries: entries.length >= 3 ? entries : [] }
+  for (const [, level, attributes, content] of html.matchAll(
+    /<h([1-6])\b([^>]*)>([\s\S]*?)<\/h\1\s*>/gi
+  )) {
+    const id = attributes.match(/\s+id\s*=\s*["']([^"']+)["']/i)?.[1]
+    const text = headingText(content)
+    if (!id || !text) continue
+    const actual = Number(level)
+    while (levels.length > 1 && actual < levels[levels.length - 1].actual)
+      levels.pop()
+    const previous = levels[levels.length - 1]
+    const indentLevel =
+      actual === previous.actual ? previous.effective : previous.effective + 1
+    if (actual > previous.actual)
+      levels.push({ actual, effective: indentLevel })
+    entries.push({
+      id,
+      href: `#${encodeURIComponent(id)}`,
+      text,
+      indentLevel
+    })
+  }
+  return { html, entries: entries.length >= 3 ? entries : [] }
 }

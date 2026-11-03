@@ -136,7 +136,8 @@ test('all internal routes, fragments and local images resolve', () => {
         'main',
         ...$('[id]')
           .map((_, element) => $(element).attr('id'))
-          .get()
+          .get(),
+        ...Object.keys(page.fragmentAliases ?? {})
       ])
     )
   }
@@ -190,7 +191,7 @@ test('all internal routes, fragments and local images resolve', () => {
   }
 })
 
-test('legacy heading targets, block anchors, code, tables and disclosures remain present', () => {
+test('legacy fragments resolve to real blocks while code, tables and disclosures remain present', () => {
   for (const original of manifest.pages) {
     if (original.id === manifest.rootId) continue // Homepage engineering list is now metadata-driven.
     const before = load(
@@ -209,7 +210,8 @@ test('legacy heading targets, block anchors, code, tables and disclosures remain
     for (const id of before('[id]')
       .map((_, element) => before(element).attr('id'))
       .get()) {
-      assert.ok(ids.has(id), `${original.slug}: lost anchor ${id}`)
+      const canonical = compiled.get(original.slug).fragmentAliases?.[id] ?? id
+      assert.ok(ids.has(canonical), `${original.slug}: lost fragment ${id}`)
     }
     for (const selector of [
       'table',
@@ -268,7 +270,13 @@ test('migration warnings and original provenance remain visible', () => {
     )
     const page = compiled.get(slug)
     assert.equal(page.sourceUrl, metadata.sourceUrl)
-    for (const warning of metadata.warnings)
-      assert.ok(page.html.includes(warning.id), warning.id)
+    for (const warning of metadata.warnings) {
+      const canonical = page.fragmentAliases?.[warning.id]
+      assert.ok(
+        page.html.includes(warning.id) ||
+          (canonical && page.html.includes(`id="${canonical}"`)),
+        warning.id
+      )
+    }
   }
 })

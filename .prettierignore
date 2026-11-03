@@ -4,12 +4,14 @@ dist/
 out/
 node_modules/
 .next/
+.generated/
 .vercel/
 
 .demo/
 .renderer/
 
-# Preserve migrated code samples and historical evidence byte-for-byte.
+# MDX uses content:format to preserve custom syntax and code samples.
+# Historical evidence is never formatted.
 content/**/*.mdx
 legacy/content/
 legacy/blog-drafts/

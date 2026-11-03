@@ -1,0 +1,73 @@
+{
+  "name": "mdx-content-tools",
+  "displayName": "Blog MDX: Format and Preview",
+  "description": "Source-preserving formatting and real-site live previews for this blog's MDX schema.",
+  "version": "0.1.0",
+  "publisher": "local-blog",
+  "license": "MIT",
+  "repository": "https://github.com/AdamManuel-dev/next-notion-blog",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Formatters",
+    "Other"
+  ],
+  "main": "./extension.cjs",
+  "activationEvents": [
+    "onLanguage:mdx",
+    "onLanguage:markdown"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false
+    },
+    "virtualWorkspaces": {
+      "supported": false
+    }
+  },
+  "contributes": {
+    "languages": [
+      {
+        "id": "mdx",
+        "aliases": [
+          "MDX"
+        ],
+        "extensions": [
+          ".mdx"
+        ]
+      }
+    ],
+    "commands": [
+      {
+        "command": "blogMdx.previewEditor",
+        "title": "Blog MDX: Preview Current Page in VS Code"
+      },
+      {
+        "command": "blogMdx.previewBrowser",
+        "title": "Blog MDX: Preview Current Page in Browser"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "blogMdx.previewEditor",
+          "when": "resourceExtname == .mdx",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Blog MDX",
+      "properties": {
+        "blogMdx.previewPort": {
+          "type": "number",
+          "default": 3000,
+          "minimum": 1,
+          "maximum": 65535,
+          "description": "Local Next.js preview port. Choose a free port if another app uses 3000."
+        }
+      }
+    }
+  }
+}

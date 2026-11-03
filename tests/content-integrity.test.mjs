@@ -33,7 +33,26 @@ test('current MDX content has working internal routes, fragments and local asset
       ids.length,
       `${page.slug}: duplicate HTML IDs`
     )
-    targets.set(page.slug, new Set(['top', 'main', ...ids]))
+    const aliases = page.fragmentAliases ?? {}
+    for (const [legacy, canonical] of Object.entries(aliases)) {
+      assert.ok(
+        ids.includes(canonical),
+        `${page.slug}: dangling alias ${legacy}`
+      )
+      assert.ok(
+        !ids.includes(legacy),
+        `${page.slug}: redundant alias element ${legacy}`
+      )
+    }
+    assert.equal(
+      $('a[id]:not([href])').length,
+      0,
+      `${page.slug}: standalone anchor tags`
+    )
+    targets.set(
+      page.slug,
+      new Set(['top', 'main', ...ids, ...Object.keys(aliases)])
+    )
     if (page.type === 'home')
       targets.get(page.slug).add('engineering-articles').add('all-pages')
   }

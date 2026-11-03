@@ -37,12 +37,12 @@ The producer and consumer had different interpretations of the same field.
 
 A clearer progress message could separate:
 
-| Field | Purpose |
-| --- | --- |
-| Current step identifier | Locate the exact action for debugging. |
+| Field                     | Purpose                                     |
+| ------------------------- | ------------------------------------------- |
+| Current step identifier   | Locate the exact action for debugging.      |
 | Completed top-level steps | Count finished stages of the main workflow. |
-| Total top-level steps | Provide a comparable denominator. |
-| Current stage label | Explain what the workflow is doing. |
+| Total top-level steps     | Provide a comparable denominator.           |
+| Current stage label       | Explain what the workflow is doing.         |
 
 The services need an agreed contract: a precise definition of every field, including
 what happens inside loops and retries.
@@ -194,7 +194,6 @@ count tells you how far the job has progressed. They need separate fields and ru
 
 This is an illustrative contract. Nested location belongs in diagnostics; comparable
 completed and total units belong in the progress calculation.
-
 
 ### Define a versioned event contract {#define-a-versioned-event-contract}
 

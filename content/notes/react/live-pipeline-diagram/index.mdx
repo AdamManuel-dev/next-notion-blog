@@ -1,0 +1,18 @@
+---
+title: "React live block: pipeline diagram"
+slug: react-live-pipeline-diagram
+description: An interactive pipeline diagram using a shared React component inside Markdown.
+type: note
+tags: [react, architecture, examples]
+order: 1001
+---
+
+Live blocks use approved components from the repository's registry. This example uses a responsive SVG diagram. Select a stage with the mouse or keyboard to follow a request through the application.
+
+## Follow a request {#follow-a-request}
+
+<Diagram id='pipeline' />
+
+The article, headings, and [diagram permalink](#pipeline) are static HTML. Only the diagram's interactive area mounts as React when it approaches the viewport. Its source is available even when JavaScript is disabled.
+
+See the [counter example](/react-live-counter) for the smallest live block.

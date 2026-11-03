@@ -12,178 +12,80 @@ icon: '🕸️'
 coverPosition: null
 ---
 
-<a id='4666508e5f8e4b4891fcd054b5968075'></a>
-
 ![](/content-assets/8055dc73f88de8156b5c.png)
 
-<a id='827a3047da6848848b4678a3ce18f7bb'></a>
+The most powerful part about aggregates is that they dispatch Domain Events which can be used to co-locate business logic in the appropriate subdomain. {#the-most-powerful-part-about-aggregates-is-that-they-dispatch}
 
-The most powerful part about aggregates is that they dispatch Domain Events which can be used to co-locate business logic in the appropriate subdomain.
+Domain events are simply objects that define some sort of event that occurs in the domain that domain experts care about. {#domain-events-are-simply-objects-that-define-some-sort-of}
 
-<a id='45bea4c3492f43b886b3110372a68d5e'></a>
+Typically [when we're dealing with CRUD apps](https://khalilstemmler.com/articles/enterprise-typescript-nodejs/when-crud-mvc-isnt-enough/), we add new domain logic that we've identified by adding more `if/else` statements. {#typically-when-we-re-dealing-with-crud-apps-we-add}
 
-Domain events are simply objects that define some sort of event that occurs in the domain that domain experts care about.
+However, in complex applications that can become very cumbersome (think [Gitlab](https://gitlab.com/) or [Netflix](https://netflix.com/)). {#however-in-complex-applications-that-can-become-very-cumbersome-think}
 
-<a id='0e8ebcda89a14cce862661c9eba89ce7'></a>
-
-Typically [when we're dealing with CRUD apps](https://khalilstemmler.com/articles/enterprise-typescript-nodejs/when-crud-mvc-isnt-enough/), we add new domain logic that we've identified by adding more `if/else` statements.
-
-<a id='5cc60636b72641a2a4625703b1a0734e'></a>
-
-However, in complex applications that can become very cumbersome (think [Gitlab](https://gitlab.com/) or [Netflix](https://netflix.com/)).
-
-<a id='428982613909489a9838351749cb9c45'></a>
-
-Using Domain Events, instead of *adding more and more* *`if/else`* *blocks*
-
-<a id='5a53e7a06522448287e89628276d15d5'></a>
+Using Domain Events, instead of *adding more and more* *`if/else`* *blocks* {#using-domain-events-instead-of-adding-more-and-more-if}
 
 ---
 
-<a id='427c612de471427d981f2d6290330fc3'></a>
+[https://stackoverflow.com/questions/2268699/domain-driven-design-domain-service-application-service](https://stackoverflow.com/questions/2268699/domain-driven-design-domain-service-application-service) {#stackoverflow-com-questions-2268699-domain-driven-design-domain-service-applicat}
 
-[https://stackoverflow.com/questions/2268699/domain-driven-design-domain-service-application-service](https://stackoverflow.com/questions/2268699/domain-driven-design-domain-service-application-service)
+Services come in 3 flavours: **Domain Services**, **Application Services**, and **Infrastructure Services**. {#services-come-in-3-flavours-domain-services-application-services-and}
 
-<a id='1f809c2d2f5640ed8608e77efff092f1'></a>
+- {#application-services-used-by-external-consumers-to-talk-to-your} **Application Services** : Used by external consumers to talk to your system (think *Web Services*). If consumers need access to CRUD operations, they would be exposed here.
+- {#infrastructure-services-used-to-abstract-technical-concerns-e-g-msmq} **Infrastructure Services** : Used to abstract technical concerns (e.g. MSMQ, email provider, etc).
+- {#domain-services-encapsulates-business-logic-that-doesn-t-naturally-fit} **Domain Services** : Encapsulates *business logic* that doesn't naturally fit within a domain object, and are **NOT** typical CRUD operations – those would belong to a *Repository*.
 
-Services come in 3 flavours: **Domain Services**, **Application Services**, and **Infrastructure Services**.
+Keeping Domain Services along with your Domain Objects is sensible – they are all focused on domain logic. And yes, you can inject Repositories into your Services. {#keeping-domain-services-along-with-your-domain-objects-is-sensible}
 
-<a id='53e96ead27b442de8fd521687182a113'></a>
-
-- **Application Services** : Used by external consumers to talk to your system (think *Web Services*). If consumers need access to CRUD operations, they would be exposed here.
-
-<a id='3b8b0218fe484c2695797b6026286786'></a>
-
-- **Infrastructure Services** : Used to abstract technical concerns (e.g. MSMQ, email provider, etc).
-
-<a id='6a4794bd23db4a23ab22dc5dba7da855'></a>
-
-- **Domain Services** : Encapsulates *business logic* that doesn't naturally fit within a domain object, and are **NOT** typical CRUD operations – those would belong to a *Repository*.
-
-<a id='0bc80435c4f84253a8de466a4e30c83a'></a>
-
-Keeping Domain Services along with your Domain Objects is sensible – they are all focused on domain logic. And yes, you can inject Repositories into your Services.
-
-<a id='c0d91ff475564b9e851bf0544a170a53'></a>
-
-Application Services will typically use both Domain Services *and* Repositories to deal with external requests.
-
-<a id='54d22ee86d964055beb727a9cbc0649e'></a>
+Application Services will typically use both Domain Services *and* Repositories to deal with external requests. {#application-services-will-typically-use-both-domain-services-and-repositories}
 
 ---
 
-<a id='dd158453fff749609a9d96e230b50ff0'></a>
+The differences between a domain service and an application services are subtle but critical: {#the-differences-between-a-domain-service-and-an-application-services}
 
-The differences between a domain service and an application services are subtle but critical:
+- {#domain-services-are-very-granular-where-as-application-services-are} Domain services are very granular where as application services are a facade purposed with providing an API.
+- {#domain-services-contain-domain-logic-that-can-t-naturally-be} Domain services contain domain logic that can’t naturally be placed in an entity or value object whereas application services orchestrate the execution of domain logic and don’t themselves implement any domain logic.
+- {#domain-service-methods-can-have-other-domain-elements-as-operands} Domain service methods can have other domain elements as operands and return values whereas application services operate upon trivial operands such as identity values and primitive data structures.
+- {#application-services-declare-dependencies-on-infrastructural-services-required-t} Application services declare dependencies on infrastructural services required to execute domain logic.
+- {#command-handlers-are-a-flavor-of-application-services-which-focus} Command handlers are a flavor of application services which focus on handling a single command typically in a CQRS architecture.
 
-<a id='6a5ea9a3110842c4a9876560e6a9943b'></a>
+In a complete application, a domain model does not stand alone. Applications with GUIs contain a presentation layer which facilitates interaction between the domain and a user. Application services form the API which encapsulate the application core and in the case of Domain-Driven Design they ultimately orchestrate and delegate to the underlying entities, value objects and domain services. The application service isn’t strictly necessary since each adapter implementation can orchestrate the required domain elements, however encapsulating the domain layer provides a fitting demarcation allowing each component of the entire application to be viewed in isolation. Conversely, the DDD-based domain layer isn’t strictly necessary and the application service could delegate to a transaction script. As seen from this perspective, DDD is an implementation detail. {#in-a-complete-application-a-domain-model-does-not-stand}
 
-- Domain services are very granular where as application services are a facade purposed with providing an API.
-
-<a id='5ac6a4e289174e329997e9434a67475e'></a>
-
-- Domain services contain domain logic that can’t naturally be placed in an entity or value object whereas application services orchestrate the execution of domain logic and don’t themselves implement any domain logic.
-
-<a id='7919963ff5a14c96adcced5cc880c9d1'></a>
-
-- Domain service methods can have other domain elements as operands and return values whereas application services operate upon trivial operands such as identity values and primitive data structures.
-
-<a id='45ba5e4c6e094107a51f89e4d6c3520f'></a>
-
-- Application services declare dependencies on infrastructural services required to execute domain logic.
-
-<a id='b586d15f6f224034848453eb8412db25'></a>
-
-- Command handlers are a flavor of application services which focus on handling a single command typically in a CQRS architecture.
-
-<a id='50e23d3b3ff140c0a6c9e103e5095ee5'></a>
-
-In a complete application, a domain model does not stand alone. Applications with GUIs contain a presentation layer which facilitates interaction between the domain and a user. Application services form the API which encapsulate the application core and in the case of Domain-Driven Design they ultimately orchestrate and delegate to the underlying entities, value objects and domain services. The application service isn’t strictly necessary since each adapter implementation can orchestrate the required domain elements, however encapsulating the domain layer provides a fitting demarcation allowing each component of the entire application to be viewed in isolation. Conversely, the DDD-based domain layer isn’t strictly necessary and the application service could delegate to a transaction script. As seen from this perspective, DDD is an implementation detail.
-
-<a id='38a0afd98c514dc0aca7d1b23e714231'></a>
-
-- **handling the API request (**[controller](https://khalilstemmler.com/articles/enterprise-typescript-nodejs/clean-consistent-expressjs-controllers/) **responsibility)**
-
-<a id='6c7f7520a6cd4ef795509e411baab6e2'></a>
-
-- **performing validation on the domain object (not present here, but a** [domain entity](https://khalilstemmler.com/articles/typescript-domain-driven-design/entities/) **or** [value object](https://khalilstemmler.com/articles/typescript-value-object/) **responsibility)**
-
-<a id='dc28fc60e30d407cbcc41c329c5b8fe4'></a>
-
-- **persisting a domain entity to the database (repository responsibility)**
-
-<a id='6f187dc4765449f980987db3d1a66e24'></a>
+- {#handling-the-api-request-controller-responsibility} **handling the API request (**[controller](https://khalilstemmler.com/articles/enterprise-typescript-nodejs/clean-consistent-expressjs-controllers/) **responsibility)**
+- {#performing-validation-on-the-domain-object-not-present-here-but} **performing validation on the domain object (not present here, but a** [domain entity](https://khalilstemmler.com/articles/typescript-domain-driven-design/entities/) **or** [value object](https://khalilstemmler.com/articles/typescript-value-object/) **responsibility)**
+- {#persisting-a-domain-entity-to-the-database-repository-responsibility} **persisting a domain entity to the database (repository responsibility)**
 
 > think of DTOs as View Models because they're faux models
 
-<a id='35cec2958dfb46e395ab430f40f82bbe'></a>
-
-Our DTO is a data contract. We're telling anyone who uses this API, "hey, this is going to be the format that you can always expect to see from this API call".
-
-<a id='02e8cde783444abfb32ce58642cd9801'></a>
+Our DTO is a data contract. We're telling anyone who uses this API, "hey, this is going to be the format that you can always expect to see from this API call". {#our-dto-is-a-data-contract-we-re-telling-anyone}
 
 - Repositories are Facades to persistence technologies (such as ORMs)
 
-<a id='3b426f736960484a9c5833a0e86b9c11'></a>
+**The responsibility of a Mapper is to make all the transformations:** {#the-responsibility-of-a-mapper-is-to-make-all-the}
 
-**The responsibility of a Mapper is to make all the transformations:**
-
-<a id='294498fd5a3540d3a0fe2320af3ee958'></a>
-
-- **From Domain to DTO**
-
-<a id='56169fcf7c2249ddbba481d2579f5b12'></a>
-
-- **From Domain to Persistence**
-
-<a id='b5fe59037c9446a6b469680305fb59a3'></a>
-
-- **From Persistence to Domain**
-
-<a id='5408ccbcece646df872c0d0f45d52133'></a>
+- {#from-domain-to-dto} **From Domain to DTO**
+- {#from-domain-to-persistence} **From Domain to Persistence**
+- {#from-persistence-to-domain} **From Persistence to Domain**
 
 ![](/content-assets/d99b9da41990b73e8ee1.png)
 
-<a id='4baefd1d11e041a6a15460e4ffef168d'></a>
-
 ---
 
-<a id='785acac9592d4171abc0f64c0d302a34'></a>
+#### Domain Model Layer {#domain-model-layer}
 
-#### Domain Model Layer {#local-heading-1}
+Responsible for representing concepts of the business, information about the business situation, and business rules. State that reflects the business situation is controlled and used here, even though the technical details of storing it are delegated to the infrastructure. This layer is the heart of business software. {#responsible-for-representing-concepts-of-the-business-information-about-the}
 
-<a id='73cb5361966a4ed9a196a54684321fe4'></a>
+Domain entities should not have any direct dependency (like deriving from a base class) on any data access infrastructure framework like Entity Framework or NHibernate. Ideally, your domain entities should not derive from or implement any type defined in any infrastructure framework. {#domain-entities-should-not-have-any-direct-dependency-like-deriving}
 
-Responsible for representing concepts of the business, information about the business situation, and business rules. State that reflects the business situation is controlled and used here, even though the technical details of storing it are delegated to the infrastructure. This layer is the heart of business software.
+#### Application Layer {#application-layer}
 
-<a id='113c34eefc1d4d99a9feae03cd8e6282'></a>
+Application Layer: Defines the jobs the software is supposed to do and directs the expressive domain objects to work out problems. The tasks this layer is responsible for are meaningful to the business or necessary for interaction with the application layers of other systems. This layer is kept thin. It does not contain business rules or knowledge, but only coordinates tasks and delegates work to collaborations of domain objects in the next layer down. It does not have state reflecting the business situation, but it can have state that reflects the progress of a task for the user or the program. {#application-layer-defines-the-jobs-the-software-is-supposed-to}
 
-Domain entities should not have any direct dependency (like deriving from a base class) on any data access infrastructure framework like Entity Framework or NHibernate. Ideally, your domain entities should not derive from or implement any type defined in any infrastructure framework.
+The goal is that the domain logic in the domain model layer, its invariants, the data model, and related business rules must be completely independent from the presentation and application layers. Most of all, the domain model layer must not directly depend on any infrastructure framework. {#the-goal-is-that-the-domain-logic-in-the-domain}
 
-<a id='40a074d0ce0846caa4b055edfa2c1030'></a>
+#### Infrastructure Layer {#infrastructure-layer}
 
-#### Application Layer {#local-heading-2}
+The infrastructure layer is how the data that is initially held in domain entities (in memory) is persisted in databases or another persistent store. An example is using Entity Framework Core code to implement the Repository pattern classes that use a DBContext to persist data in a relational database. {#the-infrastructure-layer-is-how-the-data-that-is-initially}
 
-<a id='da5ac1501314430e9bb97a87864da4f5'></a>
+In accordance with the previously mentioned Persistence Ignorance and Infrastructure Ignorance principles, the infrastructure layer must not "contaminate" the domain model layer. You must keep the domain model entity classes agnostic from the infrastructure that you use to persist data (EF or any other framework) by not taking hard dependencies on frameworks. Your domain model layer class library should have only your domain code, just POCO entity classes implementing the heart of your software and completely decoupled from infrastructure technologies. {#in-accordance-with-the-previously-mentioned-persistence-ignorance-and-infrastruc}
 
-Application Layer: Defines the jobs the software is supposed to do and directs the expressive domain objects to work out problems. The tasks this layer is responsible for are meaningful to the business or necessary for interaction with the application layers of other systems. This layer is kept thin. It does not contain business rules or knowledge, but only coordinates tasks and delegates work to collaborations of domain objects in the next layer down. It does not have state reflecting the business situation, but it can have state that reflects the progress of a task for the user or the program.
-
-<a id='294dec836f1a4680bb3112bb477ab503'></a>
-
-The goal is that the domain logic in the domain model layer, its invariants, the data model, and related business rules must be completely independent from the presentation and application layers. Most of all, the domain model layer must not directly depend on any infrastructure framework.
-
-<a id='f79423e1b0f648d986f0859bc600eb28'></a>
-
-#### Infrastructure Layer {#local-heading-3}
-
-<a id='6163596faec341cdbd6368d4f3280a49'></a>
-
-The infrastructure layer is how the data that is initially held in domain entities (in memory) is persisted in databases or another persistent store. An example is using Entity Framework Core code to implement the Repository pattern classes that use a DBContext to persist data in a relational database.
-
-<a id='c578f87273d34aba8d7c14e25d54e0e4'></a>
-
-In accordance with the previously mentioned Persistence Ignorance and Infrastructure Ignorance principles, the infrastructure layer must not "contaminate" the domain model layer. You must keep the domain model entity classes agnostic from the infrastructure that you use to persist data (EF or any other framework) by not taking hard dependencies on frameworks. Your domain model layer class library should have only your domain code, just POCO entity classes implementing the heart of your software and completely decoupled from infrastructure technologies.
-
-<a id='d4e42c79f51a47d588977f9ae8904ec0'></a>
-
-Dependencies in a DDD Service, the Application layer depends on Domain and Infrastructure, and Infrastructure depends on Domain, but Domain doesn't depend on any layer. This layer design should be independent for each microservice. As noted earlier, you can implement the most complex microservices following DDD patterns, while implementing simpler data-driven microservices (simple CRUD in a single layer) in a simpler way.
+Dependencies in a DDD Service, the Application layer depends on Domain and Infrastructure, and Infrastructure depends on Domain, but Domain doesn't depend on any layer. This layer design should be independent for each microservice. As noted earlier, you can implement the most complex microservices following DDD patterns, while implementing simpler data-driven microservices (simple CRUD in a single layer) in a simpler way. {#dependencies-in-a-ddd-service-the-application-layer-depends-on}

@@ -1,0 +1,34 @@
+---
+title: React components in Markdown
+slug: react-live-components
+description: Use registered React components directly between Markdown paragraphs, without import statements.
+type: note
+tags: [react, examples]
+order: 1002
+---
+
+Registered components fit directly into a Markdown article. No import statement or custom fence is needed: write the component tag on its own line between paragraphs.
+
+## A counter with an initial value {#counter-with-an-initial-value}
+
+This component starts at three. The surrounding explanation remains static HTML.
+
+<Counter id="registered-counter" initialCount={3} />
+
+You can continue writing Markdown immediately after the component. Open **View source** to see the exact tag used in this document.
+
+## An interactive diagram {#an-interactive-diagram}
+
+The second pipeline stage is selected initially. Use the buttons to explore the diagram with the mouse or keyboard.
+
+<Diagram id="registered-diagram" active={1} />
+
+## A second independent counter {#a-second-independent-counter}
+
+Changing one counter does not change the other.
+
+<Counter id="independent-counter" initialCount={10} />
+
+Readable IDs such as [registered-counter](#registered-counter) address the static containers even before JavaScript loads. Without JavaScript, the article and each component's source are still available.
+
+See the [counter example](/react-live-counter) and [pipeline example](/react-live-pipeline-diagram) for individual demonstrations. To add a new interactive example, implement and register a component under `components/live/`, then use its tag in Markdown.

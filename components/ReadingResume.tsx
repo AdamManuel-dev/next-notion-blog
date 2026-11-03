@@ -1,11 +1,24 @@
 import * as React from 'react'
 import {
+  findArticleFragment,
+  revealFragmentAncestors,
+  type FragmentAliases
+} from 'lib/legacy-fragments'
+import {
   captureReadingPosition,
   parseReadingPosition,
   ReadingPosition
 } from 'lib/reading-storage'
 
-export function ReadingResume({ pageId }: { pageId: string }) {
+export function ReadingResume({
+  pageId,
+  articleRef,
+  fragmentAliases
+}: {
+  pageId: string
+  articleRef: React.RefObject<HTMLElement>
+  fragmentAliases?: FragmentAliases
+}) {
   const [saved, setSaved] = React.useState<ReadingPosition | null>(null)
   const pending = React.useRef(false)
   const key = `blog-reading-position:${pageId.replace(/-/g, '')}`
@@ -23,7 +36,7 @@ export function ReadingResume({ pageId }: { pageId: string }) {
     // This effect owns one article element; a route change mounts a new one,
     // so every measurement happens while this article is still connected and
     // writes only ever replay that captured snapshot.
-    const article = document.querySelector('article')
+    const article = articleRef.current
     const blocks = article
       ? [
           ...article.querySelectorAll<HTMLElement>(
@@ -82,7 +95,7 @@ export function ReadingResume({ pageId }: { pageId: string }) {
       window.removeEventListener('pagehide', save)
       document.removeEventListener('visibilitychange', hide)
     }
-  }, [key])
+  }, [key, articleRef])
   if (!saved) return null
   return (
     <aside className='reading-resume' aria-label='Saved reading position'>
@@ -91,18 +104,15 @@ export function ReadingResume({ pageId }: { pageId: string }) {
         type='button'
         onClick={() => {
           const position = saved
+          const article = articleRef.current
           pending.current = false
           setSaved(null)
           requestAnimationFrame(() => {
-            const candidate = position.anchor
-              ? document.getElementById(position.anchor) ||
-                (/^notion-block-[a-f0-9]{32}$/.test(position.anchor)
-                  ? document.querySelector<HTMLElement>(
-                      `article .${position.anchor}`
-                    )
-                  : null)
+            if (!article?.isConnected || articleRef.current !== article) return
+            const anchor = position.anchor
+              ? findArticleFragment(article, position.anchor, fragmentAliases)
               : null
-            const anchor = candidate?.closest('article') ? candidate : null
+            if (anchor) revealFragmentAncestors(anchor, article)
             const top = anchor
               ? window.scrollY +
                 anchor.getBoundingClientRect().top -

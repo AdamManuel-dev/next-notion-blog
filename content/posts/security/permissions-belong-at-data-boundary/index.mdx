@@ -118,14 +118,14 @@ It does not prove that another customer is blocked.
 Create two separate organizations with separate records. Then test the combinations
 that should fail, including direct requests for a known foreign identifier.
 
-| Case | Question the test should answer |
-| --- | --- |
-| Read another customer's record | Is access denied or safely absent? |
-| Update a foreign record | Does the data remain unchanged? |
-| List records | Are foreign rows excluded? |
-| Link records across customers | Is the invalid relationship rejected? |
-| Reuse a database connection | Does old customer context leak into new work? |
-| Run a background operation | Is its intended ownership boundary preserved? |
+| Case                           | Question the test should answer               |
+| ------------------------------ | --------------------------------------------- |
+| Read another customer's record | Is access denied or safely absent?            |
+| Update a foreign record        | Does the data remain unchanged?               |
+| List records                   | Are foreign rows excluded?                    |
+| Link records across customers  | Is the invalid relationship rejected?         |
+| Reuse a database connection    | Does old customer context leak into new work? |
+| Run a background operation     | Is its intended ownership boundary preserved? |
 
 The exact response can vary by product. The invariant is that an unauthorized request
 does not reveal or change the protected data. Test the data afterward, not just the
@@ -205,7 +205,6 @@ Hiding a button is outside this enforcement chain.
 
 This is a simplified access path. Database policies reinforce trusted application
 checks; privileged bypasses and background-worker access need separate verification.
-
 
 ### Carry a trusted context to the operation {#carry-a-trusted-context-to-the-operation}
 

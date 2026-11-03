@@ -12,63 +12,32 @@ icon: "🏎️"
 coverPosition: null
 ---
 
-<a id="85db2defaa77493c81547214d106ea65"></a>
+Optimizing write performance helps you get the most out of Azure Cosmos DB API for MongoDB's unlimited scale. Unlike other managed MongoDB services, the API for MongoDB automatically and transparently shards your collections for you (when using sharded collections) to scale infinitely. {#optimizing-write-performance-helps-you-get-the-most-out-of}
 
-Optimizing write performance helps you get the most out of Azure Cosmos DB API for MongoDB's unlimited scale. Unlike other managed MongoDB services, the API for MongoDB automatically and transparently shards your collections for you (when using sharded collections) to scale infinitely.
+The way you write data needs to be mindful of this by parallelizing and spreading data across shards to get the most writes out of your databases and collections. This article explains best practices to optimize write performance. {#the-way-you-write-data-needs-to-be-mindful-of}
 
-<a id="3544a8013f264296a51fb59d30f92055"></a>
+### Spread the load across your shards {#spread-the-load-across-your-shards}
 
-The way you write data needs to be mindful of this by parallelizing and spreading data across shards to get the most writes out of your databases and collections. This article explains best practices to optimize write performance.
+When writing data to a sharded API for MongoDB collection, your data is split up (sharded) into tiny slices and it is written to each shard based on the value of your shard key field. You can think of each slice as a small portion of a virtual machine that only stores the documents containing one unique shard key value. {#when-writing-data-to-a-sharded-api-for-mongodb-collection}
 
-<a id="23600618f9a642a19ebffae282743d30"></a>
+If your application writes a massive amount of data to a single shard, this won't be efficient because the app would be maxing out the throughput of only one shard instead of spreading the load across all of your shards. Your write load will be evenly spread across your collection by writing in parallel to many documents with unique shard key values. {#if-your-application-writes-a-massive-amount-of-data-to}
 
-### Spread the load across your shards {#local-heading-1}
+One example of doing this would be a product catalog application that is sharded on the category field. Instead of writing to one category (shard) at a time, it's better write to all categories simultaneously to achieve the maximum write throughput. {#one-example-of-doing-this-would-be-a-product-catalog}
 
-<a id="c7edda19f8534852ab1b2169a56c3dee"></a>
+### Reduce the number of indexes {#reduce-the-number-of-indexes}
 
-When writing data to a sharded API for MongoDB collection, your data is split up (sharded) into tiny slices and it is written to each shard based on the value of your shard key field. You can think of each slice as a small portion of a virtual machine that only stores the documents containing one unique shard key value.
+[Indexing](https://docs.microsoft.com/en-us/azure/cosmos-db/mongodb-indexing) is a great feature to drastically reduce the time it takes to query your data. For the most flexible query experience, the API for MongoDB enables a wildcard index on your data by default to make queries against all fields blazing-fast. However, all indexes, which include wildcard indexes introduce additional load when writing data because writes change the collection and indexes. {#indexing-is-a-great-feature-to-drastically-reduce-the-time}
 
-<a id="8afa3c5ef2394a1db56573459be4b1d0"></a>
+Reducing the number of indexes to only the indexes you need to support your queries will make your writes faster and cheaper. As a general rule, we recommend the following: {#reducing-the-number-of-indexes-to-only-the-indexes-you}
 
-If your application writes a massive amount of data to a single shard, this won't be efficient because the app would be maxing out the throughput of only one shard instead of spreading the load across all of your shards. Your write load will be evenly spread across your collection by writing in parallel to many documents with unique shard key values.
+- {#any-field-that-you-filter-on-should-have-a-corresponding} Any field that you filter on should have a corresponding single-field index for it. This option also enables multi-field filtering.
+- {#any-group-of-fields-that-you-sort-on-should-have} Any group of fields that you sort on should have a composite index for that group.
 
-<a id="e3902ebde65840518696b4db57d28826"></a>
+### Set ordered to false in the MongoDB drivers {#set-ordered-to-false-in-the-mongodb-drivers}
 
-One example of doing this would be a product catalog application that is sharded on the category field. Instead of writing to one category (shard) at a time, it's better write to all categories simultaneously to achieve the maximum write throughput.
+By default, the MongoDB drivers set the ordered option to "true" when writing data, which writes each document in order one by one. This option reduces write performance since each write request has to wait for the previous one to complete. When writing data, set this option to false to improve performance. {#by-default-the-mongodb-drivers-set-the-ordered-option-to}
 
-<a id="38058217ebc44b0396c577ba2be0b538"></a>
-
-### Reduce the number of indexes {#local-heading-2}
-
-<a id="f36d7087d38a4c79aaae9f8edb4dead0"></a>
-
-[Indexing](https://docs.microsoft.com/en-us/azure/cosmos-db/mongodb-indexing) is a great feature to drastically reduce the time it takes to query your data. For the most flexible query experience, the API for MongoDB enables a wildcard index on your data by default to make queries against all fields blazing-fast. However, all indexes, which include wildcard indexes introduce additional load when writing data because writes change the collection and indexes.
-
-<a id="6bcf97800ad44a82b2aca004f41d5d52"></a>
-
-Reducing the number of indexes to only the indexes you need to support your queries will make your writes faster and cheaper. As a general rule, we recommend the following:
-
-<a id="81078d6325a549eaa0ea3bf8889ff571"></a>
-
-- Any field that you filter on should have a corresponding single-field index for it. This option also enables multi-field filtering.
-
-<a id="3b742b65245f4436a9374187091c9ff5"></a>
-
-- Any group of fields that you sort on should have a composite index for that group.
-
-<a id="dcbd9fda2a19406b8d72a30615aa0cd2"></a>
-
-### Set ordered to false in the MongoDB drivers {#local-heading-3}
-
-<a id="eb8fa56b96fe41d9a20983d6205dff86"></a>
-
-By default, the MongoDB drivers set the ordered option to "true" when writing data, which writes each document in order one by one. This option reduces write performance since each write request has to wait for the previous one to complete. When writing data, set this option to false to improve performance.
-
-<a id="fe5f359501d743919102e2eea9b45a5b"></a>
-
-JavaScriptCopy
-
-<a id="0d72b93cbf98410ca3f9bd85e38dc3e9"></a>
+JavaScriptCopy {#javascriptcopy}
 
 ```
 db.collection.insertMany(
@@ -80,14 +49,8 @@ db.collection.insertMany(
 ​
 ```
 
-<a id="2712217bf3e645faaf8201bc3fcea77e"></a>
+### Tune for the optimal batch size and thread count {#tune-for-the-optimal-batch-size-and-thread-count}
 
-### Tune for the optimal batch size and thread count {#local-heading-4}
+Parallelization of write operations across many threads/processes is key to scaling writes. The API for MongoDB accepts writes in batches of up to 1,000 documents for each process/thread. {#parallelization-of-write-operations-across-many-threads-processes-is-key}
 
-<a id="c17a11946e3349deb517739274d326cf"></a>
-
-Parallelization of write operations across many threads/processes is key to scaling writes. The API for MongoDB accepts writes in batches of up to 1,000 documents for each process/thread.
-
-<a id="a6774f96538c46fb96328e66c1462840"></a>
-
-If you are writing more than 1,000 documents at a time per process/thread, client functions such as `insertMany()` should be limited to roughly 1,000 documents. Otherwise, the client will wait for each batch to commit before moving on to the next batch. In some cases, splitting up the batches with fewer or slightly more than 1,000 documents will be faster.
+If you are writing more than 1,000 documents at a time per process/thread, client functions such as `insertMany()` should be limited to roughly 1,000 documents. Otherwise, the client will wait for each batch to commit before moving on to the next batch. In some cases, splitting up the batches with fewer or slightly more than 1,000 documents will be faster. {#if-you-are-writing-more-than-1-000-documents-at}

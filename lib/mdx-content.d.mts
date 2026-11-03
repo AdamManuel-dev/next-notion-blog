@@ -1,5 +1,7 @@
 /** Types for the build-time MDX content pipeline (`lib/mdx-content.mjs`). */
 
+import type { LiveBlockInstance } from './live-block-types'
+
 export type LocalPageType = 'home' | 'post' | 'note'
 
 export interface ContentOptions {
@@ -38,6 +40,9 @@ export interface ContentIndex {
 
 export interface LocalPageContent extends LocalPageSummary {
   html: string
+  fragmentAliases: Record<string, string>
+  /** Instances reference shared component definitions and carry literal props. */
+  liveBlocks: LiveBlockInstance[]
   sourceUrl: string | null
   cover: string | null
   icon: string | null

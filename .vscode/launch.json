@@ -22,6 +22,15 @@
       "name": "Next.js App",
       "skipFiles": ["<node_internals>/**"],
       "port": 9229
+    },
+    {
+      "name": "MDX authoring extension (development)",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/tools/mdx-editor",
+        "${workspaceFolder}"
+      ]
     }
   ]
 }

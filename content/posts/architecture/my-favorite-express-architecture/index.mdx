@@ -12,101 +12,48 @@ icon: '💽'
 coverPosition: 0.5
 ---
 
-<a id='23910a0af92080108d9cf416c7e259d7'></a>
-
-> <section id="23910a0af9208075ae2dd3b52644d40a">
+> :::callout{#if-you-just-want-to-create-a-new-project-with-2}
 >
 > If you just want to create a new project with this architecture, look at the following link
 >
-> </section>
+> :::
 >
-> <section id="23910a0af92081dcb9a2f6480f55a33d">
+> :::callout{#my-favorite-express-architecture-setup-guide-callout}
 >
-> [🛠️My Favorite Express Architecture Setup Guide](/my-favorite-express-architecture-setup-guide)
+> [🛠️ My Favorite Express Architecture Setup Guide](/my-favorite-express-architecture-setup-guide)
 >
-> </section>
+> :::
 
-<a id='23910a0af92081e99648f5282ba2e8d3'></a>
+## Express.js Enterprise Architecture Tutorial {#express-js-enterprise-architecture-tutorial}
 
-## Express.js Enterprise Architecture Tutorial {#local-heading-1}
+This comprehensive tutorial demonstrates how to implement proven enterprise architectural patterns in Express.js applications. Follow this step-by-step guide to build scalable, maintainable applications with enterprise-level patterns. {#this-comprehensive-tutorial-demonstrates-how-to-implement-proven-enterprise-arch}
 
-<a id='23910a0af9208110ac49d5cd609e5bd3'></a>
+### 🏗️ Table of Contents {#table-of-contents}
 
-This comprehensive tutorial demonstrates how to implement proven enterprise architectural patterns in Express.js applications. Follow this step-by-step guide to build scalable, maintainable applications with enterprise-level patterns.
-
-<a id='23910a0af92081d88257c6b4b938e762'></a>
-
-### 🏗️ Table of Contents {#local-heading-2}
-
-<a id='23910a0af92081a48a6ad2a3bdc2bea1'></a>
-
-1. [Project Foundation](https://adams-blog.notion.site/null)
-
-<a id='23910a0af9208190ad2bf0f009a85cc8'></a>
-
-1. [Domain-Driven Directory Structure](https://adams-blog.notion.site/null)
-
-<a id='23910a0af92081f29d95e1a18265d3e4'></a>
-
-1. [Dependency Injection Setup](https://adams-blog.notion.site/null)
-
-<a id='23910a0af92081d6af7bc4a312822c3d'></a>
-
-1. [Database Architecture with MikroORM](https://adams-blog.notion.site/null)
-
-<a id='23910a0af92081d7a55ed4aedd9be8e1'></a>
-
-1. [Middleware Architecture](https://adams-blog.notion.site/null)
-
-<a id='23910a0af92081ee9b3cc3f13b547138'></a>
-
-1. [Route Organization](https://adams-blog.notion.site/null)
-
-<a id='23910a0af92081ca8d6dcc3b19369167'></a>
-
-1. [Service Layer Patterns](https://adams-blog.notion.site/null)
-
-<a id='23910a0af9208102bb53d044261bdd14'></a>
-
-1. [Error Handling Strategy](https://adams-blog.notion.site/null)
-
-<a id='23910a0af92081469537fa831d738035'></a>
-
-1. [Authentication & Authorization](https://adams-blog.notion.site/null)
-
-<a id='23910a0af92081b1bb04c406f6c83e74'></a>
-
-1. [Utility Functions](https://adams-blog.notion.site/null)
-
-<a id='23910a0af920818bbaf1f71615335e5a'></a>
-
-1. [Real-time Features](https://adams-blog.notion.site/null)
-
-<a id='23910a0af920818992eed894b2d6c0ab'></a>
-
-1. [Testing Setup](https://adams-blog.notion.site/null)
-
-<a id='23910a0af92081a7bba6f37d18f1ff27'></a>
+1. {#project-foundation-2} [Project Foundation](https://adams-blog.notion.site/null)
+1. {#domain-driven-directory-structure-2} [Domain-Driven Directory Structure](https://adams-blog.notion.site/null)
+1. {#dependency-injection-setup-2} [Dependency Injection Setup](https://adams-blog.notion.site/null)
+1. {#database-architecture-with-mikroorm-2} [Database Architecture with MikroORM](https://adams-blog.notion.site/null)
+1. {#middleware-architecture-2} [Middleware Architecture](https://adams-blog.notion.site/null)
+1. {#route-organization-2} [Route Organization](https://adams-blog.notion.site/null)
+1. {#service-layer-patterns-2} [Service Layer Patterns](https://adams-blog.notion.site/null)
+1. {#error-handling-strategy-2} [Error Handling Strategy](https://adams-blog.notion.site/null)
+1. {#authentication-authorization-2} [Authentication & Authorization](https://adams-blog.notion.site/null)
+1. {#utility-functions-2} [Utility Functions](https://adams-blog.notion.site/null)
+1. {#real-time-features-2} [Real-time Features](https://adams-blog.notion.site/null)
+1. {#testing-setup-2} [Testing Setup](https://adams-blog.notion.site/null)
 
 ---
 
-<a id='23910a0af920810a8f37d65de7ed9a90'></a>
+### 1\. Project Foundation {#project-foundation}
 
-### 1\. Project Foundation {#local-heading-3}
-
-<a id='23910a0af92080b3a685d3d83c4caea1'></a>
-
-> <section id="23910a0af92080738180cd4f61ed0dba">
+> :::callout{#project-foundation-callout}
 >
 > A clear foundation is crucial for any enterprise application. This section helps you set up the necessary dependencies, TypeScript configuration, and project structure to ensure scalability and maintainability from the start.
 >
-> </section>
+> :::
 
-<a id='23910a0af9208163a207fdb8445197f5'></a>
-
-#### Initial Setup {#local-heading-4}
-
-<a id='23910a0af92081efa4c6c3a6b91f2939'></a>
+#### Initial Setup {#initial-setup}
 
 ```
 # Initialize project
@@ -125,15 +72,9 @@ npm install jest @types/jest ts-jest supertest @types/supertest
 npm install eslint @typescript-eslint/eslint-plugin @typescript-eslint/parser
 ```
 
-<a id='23910a0af92081e29ac6f6553a27b106'></a>
+#### TypeScript Configuration {#typescript-configuration}
 
-#### TypeScript Configuration {#local-heading-5}
-
-<a id='23910a0af920811386eff7aa22e59c03'></a>
-
-Create `tsconfig.json`:
-
-<a id='23910a0af92081c09853eb8e02c121c5'></a>
+Create `tsconfig.json`: {#create-tsconfig-json}
 
 ```
 {
@@ -158,11 +99,7 @@ Create `tsconfig.json`:
 }
 ```
 
-<a id='23910a0af92081bc9ff6d80cfa82acdd'></a>
-
-#### Package.json Scripts {#local-heading-6}
-
-<a id='23910a0af9208189bc26c1b4165acca7'></a>
+#### Package.json Scripts {#package-json-scripts}
 
 ```
 {
@@ -176,27 +113,17 @@ Create `tsconfig.json`:
 }
 ```
 
-<a id='23910a0af92081a8a64aee7505a01957'></a>
-
 ---
 
-<a id='23910a0af920813cb2a1ea9772fb51bc'></a>
+### 2\. Domain-Driven Directory Structure {#domain-driven-directory-structure}
 
-### 2\. Domain-Driven Directory Structure {#local-heading-7}
-
-<a id='23910a0af9208065b906f612c35499f6'></a>
-
-> <section id="23910a0af92080d1be8dfbe3ce0d480d">
+> :::callout{#domain-driven-directory-structure-callout}
 >
 > Organizing your code by business domains rather than technical function creates better separation of concerns. This structure makes your codebase more intuitive to navigate and allows teams to work independently on different domains.
 >
-> </section>
+> :::
 
-<a id='23910a0af92081f99f1eee6ad1bba9a4'></a>
-
-Create the following directory structure:
-
-<a id='23910a0af9208157ba40c781b1525145'></a>
+Create the following directory structure: {#create-the-following-directory-structure}
 
 ```
 src/
@@ -218,15 +145,9 @@ src/
 └── config.ts
 ```
 
-<a id='23910a0af920812b9daaf16ba48c74f6'></a>
+#### Core Configuration {#core-configuration}
 
-#### Core Configuration {#local-heading-8}
-
-<a id='23910a0af920819e906fe2a3c1dee74e'></a>
-
-Create `src/config.ts`:
-
-<a id='23910a0af920813abfd9e8997007efe5'></a>
+Create `src/config.ts`: {#create-src-config-ts}
 
 ```
 import { config as dotenvConfig } from 'dotenv';
@@ -246,27 +167,17 @@ export const config = {
 };
 ```
 
-<a id='23910a0af920819383e1cd7eccc8852b'></a>
-
 ---
 
-<a id='23910a0af9208115924fc8915328f9e5'></a>
+### 3\. Dependency Injection Setup {#dependency-injection-setup}
 
-### 3\. Dependency Injection Setup {#local-heading-9}
-
-<a id='23910a0af92080b2a758ecf2238e008e'></a>
-
-> <section id="23910a0af92080328f25ef2806b7cbe2">
+> :::callout{#dependency-injection-setup-callout}
 >
 > Dependency injection improves testability and decouples components. This pattern allows for easier mocking during tests and provides a clean way to manage service instances throughout your application.
 >
-> </section>
+> :::
 
-<a id='23910a0af920819480aac3ce2463ddfd'></a>
-
-Create `src/DI.ts`:
-
-<a id='23910a0af920817ebb38e84f798d57d3'></a>
+Create `src/DI.ts`: {#create-src-di-ts}
 
 ````
 import { MikroORM, EntityManager } from '@mikro-orm/core';
@@ -299,11 +210,7 @@ export const initializeServices = () => {
 };
 ````
 
-<a id='23910a0af92081afb33ed64b407a9d39'></a>
-
-Create `src/services.ts` for service instantiation:
-
-<a id='23910a0af920819288afe0f5781188a3'></a>
+Create `src/services.ts` for service instantiation: {#create-src-services-ts-for-service-instantiation}
 
 ```
 
@@ -320,31 +227,19 @@ export const initializeServices = () => {
 };
 ```
 
-<a id='23910a0af920817abe41c9c9ec086e2c'></a>
-
 ---
 
-<a id='23910a0af92081afbf67e953521d31f5'></a>
+### 4\. Database Architecture with MikroORM {#database-architecture-with-mikroorm}
 
-### 4\. Database Architecture with MikroORM {#local-heading-10}
-
-<a id='23910a0af92080fa9113f97431724437'></a>
-
-> <section id="23910a0af9208013b11df3d09d2d7ffc">
+> :::callout{#database-architecture-with-mikroorm-callout}
 >
 > A robust database layer is essential for enterprise applications. MikroORM provides type-safe entity management with support for MongoDB, making it ideal for scalable applications while maintaining data integrity.
 >
-> </section>
+> :::
 
-<a id='23910a0af92081c483a3ceeb9efa3fc9'></a>
+#### Base Entity Setup {#base-entity-setup}
 
-#### Base Entity Setup {#local-heading-11}
-
-<a id='23910a0af92081fab41de008782ee582'></a>
-
-Create `src/shared/entities/base.entity.ts`:
-
-<a id='23910a0af92081e2a59df0bb27e73d03'></a>
+Create `src/shared/entities/base.entity.ts`: {#create-src-shared-entities-base-entity-ts}
 
 ```
 import { Entity, PrimaryKey, SerializedPrimaryKey, Property } from '@mikro-orm/core';
@@ -370,15 +265,9 @@ export abstract class BaseEntity {
 }
 ```
 
-<a id='23910a0af920813992f5d36b42c030c5'></a>
+#### MikroORM Configuration {#mikroorm-configuration}
 
-#### MikroORM Configuration {#local-heading-12}
-
-<a id='23910a0af92081f99a56e7937561e024'></a>
-
-Create `src/mikro-orm.config.ts`:
-
-<a id='23910a0af9208134a6b8c0516e094ed3'></a>
+Create `src/mikro-orm.config.ts`: {#create-src-mikro-orm-config-ts}
 
 ```
 import { defineConfig } from '@mikro-orm/core';
@@ -401,15 +290,9 @@ export default defineConfig({
 });
 ```
 
-<a id='23910a0af92081618a0ddcf03b0e038c'></a>
+#### Example Entity {#example-entity}
 
-#### Example Entity {#local-heading-13}
-
-<a id='23910a0af9208159b3cbc6440e49b1fb'></a>
-
-Create `src/user/user.entity.ts`:
-
-<a id='23910a0af92081a19a41dbcfe98ac9b9'></a>
+Create `src/user/user.entity.ts`: {#create-src-user-user-entity-ts}
 
 ```
 import { Entity, Property, Collection, OneToMany } from '@mikro-orm/core';
@@ -449,31 +332,19 @@ export class User extends BaseEntity {
 }
 ```
 
-<a id='23910a0af9208147a43cd0a35b3532bb'></a>
-
 ---
 
-<a id='23910a0af920810e86b8ec509a289d4c'></a>
+### 5\. Middleware Architecture {#middleware-architecture}
 
-### 5\. Middleware Architecture {#local-heading-14}
-
-<a id='23910a0af920807d90c5c71ac739b6f3'></a>
-
-> <section id="23910a0af920805ab032e51c5389d927">
+> :::callout{#middleware-architecture-callout}
 >
 > Middleware provides cross-cutting functionality across your application. This organized approach to middleware creation and registration ensures consistent request processing, error handling, and authentication throughout your application.
 >
-> </section>
+> :::
 
-<a id='23910a0af92081c59903c9114ad7598f'></a>
+#### Global Middleware Setup {#global-middleware-setup}
 
-#### Global Middleware Setup {#local-heading-15}
-
-<a id='23910a0af92081ffa7fac164350e7aa9'></a>
-
-Create `src/shared/middleware/index.ts`:
-
-<a id='23910a0af9208149a2e3da9eefb62419'></a>
+Create `src/shared/middleware/index.ts`: {#create-src-shared-middleware-index-ts}
 
 ```
 
@@ -484,15 +355,9 @@ export { authMiddleware } from './auth.middleware';
 export { routeNotFoundHandler } from './routeNotFound.middleware';
 ```
 
-<a id='23910a0af920810f9b64d2c9362203f6'></a>
+#### Try-Catch Wrapper {#try-catch-wrapper}
 
-#### Try-Catch Wrapper {#local-heading-16}
-
-<a id='23910a0af92081b887b7dc08ff0e5150'></a>
-
-Create `src/shared/middleware/tryCatch.middleware.ts`:
-
-<a id='23910a0af920813d91afd8e632884923'></a>
+Create `src/shared/middleware/tryCatch.middleware.ts`: {#create-src-shared-middleware-trycatch-middleware-ts}
 
 ```
 
@@ -505,15 +370,9 @@ export const tryCatch = (fn: RequestHandler): RequestHandler => {
 };
 ```
 
-<a id='23910a0af92081d59e72d39ecd0f138e'></a>
+#### Request Validation Middleware {#request-validation-middleware}
 
-#### Request Validation Middleware {#local-heading-17}
-
-<a id='23910a0af92081318615f5dee458cb1a'></a>
-
-Create `src/shared/middleware/validateRequest.middleware.ts`:
-
-<a id='23910a0af9208166b123e7bae0173f65'></a>
+Create `src/shared/middleware/validateRequest.middleware.ts`: {#create-src-shared-middleware-validaterequest-middleware-ts}
 
 ```
 
@@ -535,15 +394,9 @@ export const validateRequest = (validatorArray: ValidationChain[]) => [
 ];
 ```
 
-<a id='23910a0af92081f39ac3d6eb51326a24'></a>
+#### Authentication Middleware {#authentication-middleware}
 
-#### Authentication Middleware {#local-heading-18}
-
-<a id='23910a0af920812095f4edb9df79bdd5'></a>
-
-Create `src/shared/middleware/auth.middleware.ts`:
-
-<a id='23910a0af92081469bfdf7189cdd7935'></a>
+Create `src/shared/middleware/auth.middleware.ts`: {#create-src-shared-middleware-auth-middleware-ts}
 
 ```
 import { Request, Response, NextFunction } from 'express';
@@ -583,15 +436,9 @@ export async function authMiddleware(
 }
 ```
 
-<a id='23910a0af9208124a1ececfb79615ad0'></a>
+#### Error Handling Middleware {#error-handling-middleware}
 
-#### Error Handling Middleware {#local-heading-19}
-
-<a id='23910a0af92081ddbe0fd9b949c38742'></a>
-
-Create `src/shared/middleware/error.middleware.ts`:
-
-<a id='23910a0af9208161a0f2cef158c67ca0'></a>
+Create `src/shared/middleware/error.middleware.ts`: {#create-src-shared-middleware-error-middleware-ts}
 
 ```
 import { Request, Response, NextFunction, ErrorRequestHandler } from 'express';
@@ -632,31 +479,19 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
 };
 ```
 
-<a id='23910a0af92081a7a72fdd42ffa6b333'></a>
-
 ---
 
-<a id='23910a0af92081118c01fab981012ae0'></a>
+### 6\. Route Organization {#route-organization}
 
-### 6\. Route Organization {#local-heading-20}
-
-<a id='23910a0af9208016afb1f53adc072ff6'></a>
-
-> <section id="23910a0af92080c98e99ea8fab143d2e">
+> :::callout{#route-organization-callout}
 >
 > Clean route organization improves API discoverability and maintenance. This section demonstrates how to structure routes by domain and separate public from authenticated endpoints for better security and clarity.
 >
-> </section>
+> :::
 
-<a id='23910a0af9208197a4e2e52c3da0f2a0'></a>
+#### Route Structure Pattern {#route-structure-pattern}
 
-#### Route Structure Pattern {#local-heading-21}
-
-<a id='23910a0af9208100afc4ea727c7accc2'></a>
-
-Create `src/user/user.routes.ts`:
-
-<a id='23910a0af9208184a9fded7d17af64df'></a>
+Create `src/user/user.routes.ts`: {#create-src-user-user-routes-ts}
 
 ```
 import express from 'express';
@@ -701,15 +536,9 @@ router.put(
 export { router as UserRouter };
 ```
 
-<a id='23910a0af92081d888b0ecc6b0f9a141'></a>
+#### Public Routes Pattern {#public-routes-pattern}
 
-#### Public Routes Pattern {#local-heading-22}
-
-<a id='23910a0af92081af873cfe45adba8a9e'></a>
-
-Create `src/user/user.public-routes.ts`:
-
-<a id='23910a0af920812f8b2bd444914c2f59'></a>
+Create `src/user/user.public-routes.ts`: {#create-src-user-user-public-routes-ts}
 
 ```
 import express from 'express';
@@ -732,15 +561,9 @@ router.get(
 export { router as PublicUserRouter };
 ```
 
-<a id='23910a0af920810b8a0cf91ba751a68c'></a>
+#### Controller Pattern {#controller-pattern}
 
-#### Controller Pattern {#local-heading-23}
-
-<a id='23910a0af92081feb0dde83731909db0'></a>
-
-Create `src/user/user.controller.ts`:
-
-<a id='23910a0af9208192ab8be5a871ee2c71'></a>
+Create `src/user/user.controller.ts`: {#create-src-user-user-controller-ts}
 
 ```
 import { Request, Response } from 'express';
@@ -799,15 +622,9 @@ export class UserController {
 }
 ```
 
-<a id='23910a0af92081caa395d2fd6d096bec'></a>
+#### Central Route Registration {#central-route-registration}
 
-#### Central Route Registration {#local-heading-24}
-
-<a id='23910a0af920819aad7bf7d5425572cc'></a>
-
-Create `src/routes.ts`:
-
-<a id='23910a0af92081bda1ccc589abc7aadb'></a>
+Create `src/routes.ts`: {#create-src-routes-ts}
 
 ```
 
@@ -817,31 +634,19 @@ export { PublicUserRouter } from './user/user.public-routes';
 export { ProductRouter } from './product/product.routes';
 ```
 
-<a id='23910a0af920810db8efca0f58a75f1e'></a>
-
 ---
 
-<a id='23910a0af92081a6a777e2c7e258cfe0'></a>
+### 7\. Service Layer Patterns {#service-layer-patterns}
 
-### 7\. Service Layer Patterns {#local-heading-25}
-
-<a id='23910a0af9208029b9f6ca4f55439196'></a>
-
-> <section id="23910a0af92080339703c9c1a0be84e7">
+> :::callout{#service-layer-patterns-callout}
 >
 > The service layer encapsulates business logic away from controllers. This separation allows for reusable business logic that can be called from multiple entry points while maintaining a single source of truth.
 >
-> </section>
+> :::
 
-<a id='23910a0af9208195aec9cc94991f421f'></a>
+#### Service Base Pattern {#service-base-pattern}
 
-#### Service Base Pattern {#local-heading-26}
-
-<a id='23910a0af92081778064efcd795386a3'></a>
-
-Create `src/user/user.service.ts`:
-
-<a id='23910a0af92081ebae60f6008dc651ed'></a>
+Create `src/user/user.service.ts`: {#create-src-user-user-service-ts}
 
 ```
 import { DI } from '../DI';
@@ -897,31 +702,19 @@ export class UserService {
 }
 ```
 
-<a id='23910a0af920814b9fdcf41f086304b6'></a>
-
 ---
 
-<a id='23910a0af92081a98ef5c2384333d0fa'></a>
+### 8\. Error Handling Strategy {#error-handling-strategy}
 
-### 8\. Error Handling Strategy {#local-heading-27}
-
-<a id='23910a0af9208097819bc39cc53a7e91'></a>
-
-> <section id="23910a0af92080eba60dd7c2e963964f">
+> :::callout{#error-handling-strategy-callout}
 >
 > Comprehensive error handling creates more robust applications. Using custom error classes helps standardize error responses and makes debugging easier while providing clear feedback to API consumers.
 >
-> </section>
+> :::
 
-<a id='23910a0af9208174a5aefa9515c28bb2'></a>
+#### Custom Error Classes {#custom-error-classes}
 
-#### Custom Error Classes {#local-heading-28}
-
-<a id='23910a0af9208194a8a2dec0037a052e'></a>
-
-Create `src/shared/errors/index.ts`:
-
-<a id='23910a0af92081c68e86df6dcb305f3f'></a>
+Create `src/shared/errors/index.ts`: {#create-src-shared-errors-index-ts}
 
 ```
 export class AppError extends Error {
@@ -961,31 +754,19 @@ export class ForbiddenError extends AppError {
 }
 ```
 
-<a id='23910a0af92081cbb3e6c1e928a237b7'></a>
-
 ---
 
-<a id='23910a0af92081a7be5ec89ab26d5fc9'></a>
+### 9\. Authentication &amp; Authorization {#authentication-authorization}
 
-### 9\. Authentication &amp; Authorization {#local-heading-29}
-
-<a id='23910a0af920809b861ec2f2489acf5e'></a>
-
-> <section id="23910a0af92080d7a8d8d0f32f0e3507">
+> :::callout{#authentication-authorization-callout}
 >
 > Security is paramount in enterprise applications. This implementation of role-based access control ensures proper permission management and protects sensitive operations based on user roles.
 >
-> </section>
+> :::
 
-<a id='23910a0af92081c49d06d0168e57fcac'></a>
+#### Role-Based Access Control {#role-based-access-control}
 
-#### Role-Based Access Control {#local-heading-30}
-
-<a id='23910a0af92081de94fae08e378907ee'></a>
-
-Create `src/shared/middleware/accessControl.middleware.ts`:
-
-<a id='23910a0af92081e6bb23cc47452f9da3'></a>
+Create `src/shared/middleware/accessControl.middleware.ts`: {#create-src-shared-middleware-accesscontrol-middleware-ts}
 
 ```
 import { Request, Response, NextFunction } from 'express';
@@ -1032,31 +813,19 @@ export const checkAccess = (resource: string, action: string) => {
 };
 ```
 
-<a id='23910a0af920814a917bf9e722491b63'></a>
-
 ---
 
-<a id='23910a0af92081c1abc4d9b569da6e3d'></a>
+### 10\. Utility Functions {#utility-functions}
 
-### 10\. Utility Functions {#local-heading-31}
-
-<a id='23910a0af920806ea449c2f573216025'></a>
-
-> <section id="23910a0af92080c0a53bdeb2137a4e93">
+> :::callout{#utility-functions-callout}
 >
 > Reusable utilities prevent code duplication and standardize common operations. These pagination and search utilities ensure consistent API behavior and help maintain clean controller code.
 >
-> </section>
+> :::
 
-<a id='23910a0af92081d0a455ceaa1196d917'></a>
+#### Pagination Utilities {#pagination-utilities}
 
-#### Pagination Utilities {#local-heading-32}
-
-<a id='23910a0af92081869812c1460c5ec041'></a>
-
-Create `src/shared/utils/pagination.ts`:
-
-<a id='23910a0af9208184894ae4651e2c75e9'></a>
+Create `src/shared/utils/pagination.ts`: {#create-src-shared-utils-pagination-ts}
 
 ```
 import { Request } from 'express';
@@ -1078,15 +847,9 @@ export const getPaginationParams = (req: Request): PaginationParams => {
 };
 ```
 
-<a id='23910a0af920817781d1cf0829515a70'></a>
+#### Search Utilities {#search-utilities}
 
-#### Search Utilities {#local-heading-33}
-
-<a id='23910a0af92081c59e01c2b6f750c03c'></a>
-
-Create `src/shared/utils/search.ts`:
-
-<a id='23910a0af9208129b7cffd23d73adfe3'></a>
+Create `src/shared/utils/search.ts`: {#create-src-shared-utils-search-ts}
 
 ```
 export const sanitizeSearchQuery = (query: string): string => {
@@ -1106,31 +869,19 @@ export const buildSearchConditions = (searchTerm: string, fields: string[]) => {
 };
 ```
 
-<a id='23910a0af92081bba92ec81741820709'></a>
-
 ---
 
-<a id='23910a0af9208114a73ff68f34c25584'></a>
+### 11\. Real-time Features {#real-time-features}
 
-### 11\. Real-time Features {#local-heading-34}
-
-<a id='23910a0af920804e85eed556bc4b0aff'></a>
-
-> <section id="23910a0af920801db5d1e335b9dc5970">
+> :::callout{#real-time-features-callout}
 >
 > Modern applications often require real-time capabilities. The Server-Sent Events implementation provides an efficient way to push updates to clients without the complexity of WebSockets.
 >
-> </section>
+> :::
 
-<a id='23910a0af9208172adf4fde0a6d0e41c'></a>
+#### Server-Sent Events {#server-sent-events}
 
-#### Server-Sent Events {#local-heading-35}
-
-<a id='23910a0af92081cbb97fd9630143ccfa'></a>
-
-Create `src/shared/services/sse.service.ts`:
-
-<a id='23910a0af92081e49669fb1c402f77ee'></a>
+Create `src/shared/services/sse.service.ts`: {#create-src-shared-services-sse-service-ts}
 
 ```
 import { Response } from 'express';
@@ -1170,31 +921,19 @@ export class SSEService {
 }
 ```
 
-<a id='23910a0af9208186b398c69eed3c1273'></a>
-
 ---
 
-<a id='23910a0af920818d9413cc5df26a1a6c'></a>
+### 12\. Testing Setup {#testing-setup}
 
-### 12\. Testing Setup {#local-heading-36}
-
-<a id='23910a0af920801b82c3db066d47f3b3'></a>
-
-> <section id="23910a0af92080458d16ebbde554f93c">
+> :::callout{#testing-setup-callout}
 >
 > A comprehensive testing strategy is essential for maintaining quality. This setup enables unit, integration, and e2e tests with proper database isolation for reliable test results.
 >
-> </section>
+> :::
 
-<a id='23910a0af920812db5fcedc141c94cec'></a>
+#### Jest Configuration {#jest-configuration}
 
-#### Jest Configuration {#local-heading-37}
-
-<a id='23910a0af92081df80b1e2026f8fe02e'></a>
-
-Create `jest.config.ts`:
-
-<a id='23910a0af92081f1b854f67b72e5608c'></a>
+Create `jest.config.ts`: {#create-jest-config-ts}
 
 ```
 export default {
@@ -1211,15 +950,9 @@ export default {
 };
 ```
 
-<a id='23910a0af920815699fdc558c67ea284'></a>
+#### Test Setup {#test-setup}
 
-#### Test Setup {#local-heading-38}
-
-<a id='23910a0af92081cf8a0cf46c9e4c99fa'></a>
-
-Create `src/__tests__/setup.ts`:
-
-<a id='23910a0af920813c9188eeb680821206'></a>
+Create `src/__tests__/setup.ts`: {#create-src-tests-setup-ts}
 
 ```
 import { DI } from '../DI';
@@ -1244,15 +977,9 @@ beforeEach(async () => {
 });
 ```
 
-<a id='23910a0af92081cfb379d0180992327d'></a>
+#### Example Test {#example-test}
 
-#### Example Test {#local-heading-39}
-
-<a id='23910a0af920812dbe5affcf1aedc509'></a>
-
-Create `src/user/__tests__/user.service.test.ts`:
-
-<a id='23910a0af920810f928eddfcaea95b7d'></a>
+Create `src/user/__tests__/user.service.test.ts`: {#create-src-user-tests-user-service-test-ts}
 
 ```
 import { UserService } from '../user.service';
@@ -1294,31 +1021,19 @@ describe('UserService', () => {
 });
 ```
 
-<a id='23910a0af920815ab66aca079196a588'></a>
-
 ---
 
-<a id='23910a0af9208139bf3ce74ea934e9db'></a>
+### 13\. Main Application Setup {#main-application-setup}
 
-### 13\. Main Application Setup {#local-heading-40}
-
-<a id='23910a0af92080e6b70ef4c4bb3ee9c0'></a>
-
-> <section id="23910a0af920805cbf12c17287607a1a">
+> :::callout{#main-application-setup-callout}
 >
 > The application bootstrap process ties everything together. This section shows how to properly initialize your Express app with all the middleware, routes, and services while ensuring proper shutdown procedures.
 >
-> </section>
+> :::
 
-<a id='23910a0af920818fba3ed0f94c48f34b'></a>
+#### App Configuration {#app-configuration}
 
-#### App Configuration {#local-heading-41}
-
-<a id='23910a0af92081d78d33fe44d9dd343b'></a>
-
-Create `src/app.ts`:
-
-<a id='23910a0af920815e86c9cceba142de51'></a>
+Create `src/app.ts`: {#create-src-app-ts}
 
 ```
 import express from 'express';
@@ -1379,15 +1094,9 @@ export const createApp = () => {
 };
 ```
 
-<a id='23910a0af92081ef908df6392a05cfba'></a>
+#### Application Entry Point {#application-entry-point}
 
-#### Application Entry Point {#local-heading-42}
-
-<a id='23910a0af920811f8ab4ed1a4ad38f77'></a>
-
-Create `src/index.ts`:
-
-<a id='23910a0af9208183b55ec5f7b37c8c75'></a>
+Create `src/index.ts`: {#create-src-index-ts}
 
 ```
 import { MikroORM } from '@mikro-orm/core';
@@ -1439,31 +1148,19 @@ const bootstrap = async () => {
 bootstrap();
 ```
 
-<a id='23910a0af920815ba8edeec56afbda15'></a>
-
 ---
 
-<a id='23910a0af92081789393c82cc71f6a91'></a>
+### 14\. Environment Configuration {#environment-configuration}
 
-### 14\. Environment Configuration {#local-heading-43}
-
-<a id='23910a0af920802e9506d8d4dc740a70'></a>
-
-> <section id="23910a0af92080798505ea0f5422c4ec">
+> :::callout{#environment-configuration-callout}
 >
 > Environment-specific configuration allows your application to behave differently in development, testing, and production. This approach keeps sensitive information secure while maintaining flexibility across environments.
 >
-> </section>
+> :::
 
-<a id='23910a0af920810fad8ed6566d76e1bc'></a>
+Create environment files: {#create-environment-files}
 
-Create environment files:
-
-<a id='23910a0af92081ecb5efd97b7f52008d'></a>
-
-`.env.development`:
-
-<a id='23910a0af920817cb737d056922628a2'></a>
+`.env.development`: {#env-development}
 
 ```
 NODE_ENV=development
@@ -1472,11 +1169,7 @@ MONGODB_URL=mongodb://localhost:27017/myapp-dev
 JWT_SECRET=your-jwt-secret-key
 ```
 
-<a id='23910a0af92081488d81f7db3be92a5c'></a>
-
-`.env.test`:
-
-<a id='23910a0af920814e820afc6045fd289b'></a>
+`.env.test`: {#env-test}
 
 ```
 NODE_ENV=test
@@ -1484,11 +1177,7 @@ MONGODB_URL=mongodb://localhost:27017/myapp-test
 JWT_SECRET=test-jwt-secret
 ```
 
-<a id='23910a0af920811a8db5d6b6fe471d2c'></a>
-
-`.env.production`:
-
-<a id='23910a0af920815bb298c339b25c8dd9'></a>
+`.env.production`: {#env-production}
 
 ```
 NODE_ENV=production
@@ -1497,70 +1186,26 @@ MONGODB_URL=your-production-mongodb-url
 JWT_SECRET=your-production-jwt-secret
 ```
 
-<a id='23910a0af92081b79ee8e30c58fff19e'></a>
-
 ---
 
-<a id='23910a0af92081429b74ca96da0cf4b8'></a>
+### 🎯 Key Benefits of This Architecture {#key-benefits-of-this-architecture}
 
-### 🎯 Key Benefits of This Architecture {#local-heading-44}
+1. {#scalability-domain-driven-structure-grows-with-your-application} **Scalability**: Domain-driven structure grows with your application
+1. {#maintainability-clear-separation-of-concerns-and-consistent-patterns} **Maintainability**: Clear separation of concerns and consistent patterns
+1. {#type-safety-full-typescript-integration-with-proper-typing} **Type Safety**: Full TypeScript integration with proper typing
+1. {#testability-easy-to-mock-dependencies-and-test-individual-components} **Testability**: Easy to mock dependencies and test individual components
+1. {#performance-efficient-database-queries-and-proper-error-handling} **Performance**: Efficient database queries and proper error handling
+1. {#security-built-in-authentication-authorization-and-input-validation} **Security**: Built-in authentication, authorization, and input validation
+1. {#developer-experience-hot-reloading-comprehensive-logging-and-clear-error-message} **Developer Experience**: Hot reloading, comprehensive logging, and clear error messages
 
-<a id='23910a0af92081c09a04f17a2a0feeb0'></a>
+### 🚀 Getting Started {#getting-started}
 
-1. **Scalability**: Domain-driven structure grows with your application
+1. {#follow-the-setup-steps-in-order-my-favorite-express-architecture} Follow the setup steps in order
 
-<a id='23910a0af9208101b414ecd5347f2ace'></a>
+   [🛠️ My Favorite Express Architecture Setup Guide](/my-favorite-express-architecture-setup-guide)
+1. {#start-with-the-basic-structure-and-add-domains-as-needed} Start with the basic structure and add domains as needed
+1. {#customize-the-middleware-and-services-for-your-specific-requirements} Customize the middleware and services for your specific requirements
+1. {#add-comprehensive-tests-as-you-build-features} Add comprehensive tests as you build features
+1. {#deploy-using-your-preferred-hosting-platform} Deploy using your preferred hosting platform
 
-1. **Maintainability**: Clear separation of concerns and consistent patterns
-
-<a id='23910a0af92081feaeb1fb96fe0e6fa3'></a>
-
-1. **Type Safety**: Full TypeScript integration with proper typing
-
-<a id='23910a0af92081459d81c36a1cdf9ae4'></a>
-
-1. **Testability**: Easy to mock dependencies and test individual components
-
-<a id='23910a0af92081e1aaf1ca4a04009363'></a>
-
-1. **Performance**: Efficient database queries and proper error handling
-
-<a id='23910a0af920819faedbfeb65071ad2c'></a>
-
-1. **Security**: Built-in authentication, authorization, and input validation
-
-<a id='23910a0af92081798b9bc35d03f5aa9f'></a>
-
-1. **Developer Experience**: Hot reloading, comprehensive logging, and clear error messages
-
-<a id='23910a0af92081718cd9c2ed7c5cc512'></a>
-
-### 🚀 Getting Started {#local-heading-45}
-
-<a id='23910a0af92081bb8dccc2e8707ad347'></a>
-
-1. Follow the setup steps in order
-
-   <a id='23910a0af9208065a8bec94704da1759'></a>
-
-   [🛠️My Favorite Express Architecture Setup Guide](/my-favorite-express-architecture-setup-guide)
-
-<a id='23910a0af9208197b60cd31041ce37bd'></a>
-
-1. Start with the basic structure and add domains as needed
-
-<a id='23910a0af920814d9d0cc7edddec0558'></a>
-
-1. Customize the middleware and services for your specific requirements
-
-<a id='23910a0af920812ba0ceeda84236aab1'></a>
-
-1. Add comprehensive tests as you build features
-
-<a id='23910a0af92081ec81ccf87698c0db0f'></a>
-
-1. Deploy using your preferred hosting platform
-
-<a id='23910a0af92081d49b5ce54fae70801a'></a>
-
-This architecture provides a solid foundation for building enterprise-level Express.js applications that can scale from MVP to production-ready systems.
+This architecture provides a solid foundation for building enterprise-level Express.js applications that can scale from MVP to production-ready systems. {#this-architecture-provides-a-solid-foundation-for-building-enterprise-level}

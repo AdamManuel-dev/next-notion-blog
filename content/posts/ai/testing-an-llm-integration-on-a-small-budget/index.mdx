@@ -31,12 +31,12 @@ The user writes:
 
 The expected result is:
 
-| Field | Expected value |
-| --- | --- |
-| Bedrooms | 2 |
-| Maximum monthly rent | 1800 |
-| Pet | Cat |
-| Move date | Unknown or flexible |
+| Field                | Expected value      |
+| -------------------- | ------------------- |
+| Bedrooms             | 2                   |
+| Maximum monthly rent | 1800                |
+| Pet                  | Cat                 |
+| Move date            | Unknown or flexible |
 
 The model should preserve the information it has and leave missing details unknown.
 Inventing a move date would make the output look complete while making it less useful.
@@ -61,12 +61,12 @@ instead of a guessed answer.
 
 One possible allocation is:
 
-| Purpose | Maximum spend |
-| --- | --- |
-| Check that the connection and response format work | $1 |
-| Run the initial examples | $3 |
-| Try one targeted improvement | $3 |
-| Retest failures and run fresh examples | $3 |
+| Purpose                                            | Maximum spend |
+| -------------------------------------------------- | ------------- |
+| Check that the connection and response format work | $1            |
+| Run the initial examples                           | $3            |
+| Try one targeted improvement                       | $3            |
+| Retest failures and run fresh examples             | $3            |
 
 These are spending limits, not price estimates. The number of requests depends on the
 chosen model, current pricing, and the size of the inputs and outputs.
@@ -265,7 +265,6 @@ a defined question and the system can stop spending before it crosses the limit.
 
 This admission check is only a hard spending guarantee when the reservation is a
 reliable upper bound. Otherwise it is a budget estimate with explicit limits.
-
 
 ### Build an evaluation record {#build-an-evaluation-record}
 

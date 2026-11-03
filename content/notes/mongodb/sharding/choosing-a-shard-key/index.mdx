@@ -12,106 +12,56 @@ icon: "📚"
 coverPosition: null
 ---
 
-<a id="27e8e689fbe8401cbd9569bca772fbdc"></a>
+[📖 Sharding Details](/sharding-details) {#sharding-details}
 
-[📖Sharding Details](/sharding-details)
+[Support hashed fields in compound indexes and compound shard keysRequired for compound shard keys where one of the fields needs to be hashed for even distribution across the cluster.https://jira.mongodb.org/browse/SERVER-10220](https://jira.mongodb.org/browse/SERVER-10220) {#support-hashed-fields-in-compound-indexes-and-compound-shard-keysrequired}
 
-<a id="175076ea15d2402d8ca9f7124e791451"></a>
-
-[Support hashed fields in compound indexes and compound shard keysRequired for compound shard keys where one of the fields needs to be hashed for even distribution across the cluster.https://jira.mongodb.org/browse/SERVER-10220](https://jira.mongodb.org/browse/SERVER-10220)
-
-<a id="59d21e05eb7d439bbcf9d63884af0831"></a>
-
-To do this you tell MongoDB to use one of your indexes as a shard key. It then divides your documents into chunks with similar shard keys. These chunks are then spread out to your replica sets, in approximate shard key order.
-
-<a id="75645c7b76904ecc9785250741e4e4c5"></a>
+To do this you tell MongoDB to use one of your indexes as a shard key. It then divides your documents into chunks with similar shard keys. These chunks are then spread out to your replica sets, in approximate shard key order. {#to-do-this-you-tell-mongodb-to-use-one-of}
 
 ![](/content-assets/7f9eb2ab8c7396b036d5.png)
 
-<a id="d86602c04552445aa30aec8f2af32383"></a>
+### 1\. The distribution of reads and writes {#the-distribution-of-reads-and-writes}
 
-### 1\. The distribution of reads and writes {#local-heading-1}
+The most important of these is distribution of reads and writes. If you’re always writing to one machine, then that machine will have a high write-lock-%,and so writes to your cluster will be slow. It doesn’t matter how many machines you have in total, as all the writes will go to the same place. This is why you should never use the monotonically increasing `_id` or a timestamp as the shard key, you’ll always be adding things to the last replica set. {#the-most-important-of-these-is-distribution-of-reads-and}
 
-<a id="944e397c70f643789cb6f69ead8daaeb"></a>
+Similarly, if all of your reads are going to the same replica set, then you’d better hope that your working set fits into RAM on one machine. By splitting reads evenly across all replica sets, you can scale your working set size linearly with number of shards. You will be utilising RAM and disks equally across all machines. {#similarly-if-all-of-your-reads-are-going-to-the}
 
-The most important of these is distribution of reads and writes. If you’re always writing to one machine, then that machine will have a high write-lock-%,and so writes to your cluster will be slow. It doesn’t matter how many machines you have in total, as all the writes will go to the same place. This is why you should never use the monotonically increasing `_id` or a timestamp as the shard key, you’ll always be adding things to the last replica set.
+### 2\. The size of your chunks {#the-size-of-your-chunks}
 
-<a id="17466d9370c44bb49fff87b016823471"></a>
+Secondarily important is the chunk size. MongoDB will split large chunks into smaller ones if, and only if, the shard keys are different. If you have too many documents with the same shard key you end up with [jumbo chunks](http://books.google.com/books?id=pAbSHFi4WSAC&pg=PT142&lpg=PT142&dq=jumbo+chunks&source=bl&ots=Dt8gNyn5w5&sig=Tg9Ak5puKDIZyBVPoIzvJwWRFy4&hl=en&sa=X&ei=elUjU-6bJo_0oATFvYK4CQ&ved=0CHMQ6AEwBQ#v=onepage&q&f=false). Jumbo chunks are bad not only because they cause the data to be unevenly distributed but also because once they grow too large you cannot move them between shards at all. {#secondarily-important-is-the-chunk-size-mongodb-will-split-large}
 
-Similarly, if all of your reads are going to the same replica set, then you’d better hope that your working set fits into RAM on one machine. By splitting reads evenly across all replica sets, you can scale your working set size linearly with number of shards. You will be utilising RAM and disks equally across all machines.
+### 3\. The number of shards each query hits {#the-number-of-shards-each-query-hits}
 
-<a id="91321a812dd149c79505ecdae6352aa4"></a>
+Finally it’s nice to ensure that most queries hit as few shards as possible.The latency of a query is directly dependent on the latency of the slowest server it hits; so the fewer you hit, the faster queries are likely to run. This isn’t a hard requirement, but it’s nice to strive for. Because the distribution of chunks onto shards is only approximately in order it can never be enforced strictly. {#finally-it-s-nice-to-ensure-that-most-queries-hit}
 
-### 2\. The size of your chunks {#local-heading-2}
+## Good shard key schemes {#good-shard-key-schemes}
 
-<a id="9b1334d8d4734b7f8bba7439d023d3d7"></a>
+### Hashed id {#hashed-id}
 
-Secondarily important is the chunk size. MongoDB will split large chunks into smaller ones if, and only if, the shard keys are different. If you have too many documents with the same shard key you end up with [jumbo chunks](http://books.google.com/books?id=pAbSHFi4WSAC&pg=PT142&lpg=PT142&dq=jumbo+chunks&source=bl&ots=Dt8gNyn5w5&sig=Tg9Ak5puKDIZyBVPoIzvJwWRFy4&hl=en&sa=X&ei=elUjU-6bJo_0oATFvYK4CQ&ved=0CHMQ6AEwBQ#v=onepage&q&f=false). Jumbo chunks are bad not only because they cause the data to be unevenly distributed but also because once they grow too large you cannot move them between shards at all.
-
-<a id="873e401fb0eb493391dbb0244e7c6a94"></a>
-
-### 3\. The number of shards each query hits {#local-heading-3}
-
-<a id="831f18f097194e799af1d64c975d0cee"></a>
-
-Finally it’s nice to ensure that most queries hit as few shards as possible.The latency of a query is directly dependent on the latency of the slowest server it hits; so the fewer you hit, the faster queries are likely to run. This isn’t a hard requirement, but it’s nice to strive for. Because the distribution of chunks onto shards is only approximately in order it can never be enforced strictly.
-
-<a id="7596c4926e0542a681546e4cf510ebf5"></a>
-
-## Good shard key schemes {#local-heading-4}
-
-<a id="2a233161b9314fd69015c63f6f425ce2"></a>
-
-### Hashed id {#local-heading-5}
-
-<a id="43ad6a100c8e488cbc4bb76e0b14669e"></a>
-
-As a first approximation you can use a hash of the `_id` of your documents.
-
-<a id="6e495cf56b28438fa079005caf7433bc"></a>
+As a first approximation you can use a hash of the `_id` of your documents. {#as-a-first-approximation-you-can-use-a-hash-of}
 
 ```
 db.events.createIndex({_id: 'hashed'})
 ```
 
-<a id="8b4e55949e1d4c6385e26213e90b0159"></a>
+This will distribute reads and writes evenly, and it will ensure that each document has a different shard key so chunks can be fine-grained and small. {#this-will-distribute-reads-and-writes-evenly-and-it-will}
 
-This will distribute reads and writes evenly, and it will ensure that each document has a different shard key so chunks can be fine-grained and small.
+It’s not perfect, because queries for multiple documents will have to hit all shards, but it might be good enough. {#it-s-not-perfect-because-queries-for-multiple-documents-will}
 
-<a id="0252777f2349429195af9a4b171a5c96"></a>
+### Multi-tenant compound index {#multi-tenant-compound-index}
 
-It’s not perfect, because queries for multiple documents will have to hit all shards, but it might be good enough.
+If you want to beat the hashed `_id` scheme, you need to come up with way of grouping related documents close together in the index. At Bugsnag we group the documents by project, because of the way our app works most queries are run in the scope of a project. You will have to figure out a grouping that works for your app. {#if-you-want-to-beat-the-hashed-id-scheme-you}
 
-<a id="1fd361fb81504745aeb8c2a3079c629b"></a>
-
-### Multi-tenant compound index {#local-heading-6}
-
-<a id="a13f995e0aaf4f83b8ea049a9c8378f1"></a>
-
-If you want to beat the hashed `_id` scheme, you need to come up with way of grouping related documents close together in the index. At Bugsnag we group the documents by project, because of the way our app works most queries are run in the scope of a project. You will have to figure out a grouping that works for your app.
-
-<a id="74c00c45544c4a3ebd27bab7d386f903"></a>
-
-We can’t just use projectId as a shard key because that leads to jumbo chunks, so we also include the `_id` to break large projects into multiple chunks. These chunks are still adjacent in the index, and so still most likely to end up on the same shard.
-
-<a id="c53fca9e01ea4975950979f1c60e7f16"></a>
+We can’t just use projectId as a shard key because that leads to jumbo chunks, so we also include the `_id` to break large projects into multiple chunks. These chunks are still adjacent in the index, and so still most likely to end up on the same shard. {#we-can-t-just-use-projectid-as-a-shard-key}
 
 ```
 db.events.createIndex({projectId: 1, _id: 1})
 ```
 
-<a id="d0f3c3990dc24f10aa06a9e180623d26"></a>
+This works particularly well for us because the number of reads and writes fora project is mostly independent of the age of that project, and old projects usually get deleted. If that wasn’t the case we might see a slight imbalance towards higher load on more modern projects. {#this-works-particularly-well-for-us-because-the-number-of}
 
-This works particularly well for us because the number of reads and writes fora project is mostly independent of the age of that project, and old projects usually get deleted. If that wasn’t the case we might see a slight imbalance towards higher load on more modern projects.
+To avoid this problem in the future, we will likely migrate to an index on `{projectId: 'hashed', _id: 1}` {#to-avoid-this-problem-in-the-future-we-will-likely}
 
-<a id="b181168c0c954bda8e51eb0df7aa6649"></a>
+## In summary {#in-summary}
 
-To avoid this problem in the future, we will likely migrate to an index on `{projectId: 'hashed', _id: 1}`
-
-<a id="b1e16d37dd1c45e1880119144fad2c3b"></a>
-
-## In summary {#local-heading-7}
-
-<a id="26a67b19456f46999c532db9b7bb5c6a"></a>
-
-Choosing a shard key is hard, but there are really only two options. If you can’t find a good grouping key for your application, hash the `_id`. If you can, then go with that grouping key and add the `_id` to avoid jumbo chunks. Remember that whichever grouping key you use, it needs to also distribute reads and writes evenly to get the most out of each node in your cluster.
+Choosing a shard key is hard, but there are really only two options. If you can’t find a good grouping key for your application, hash the `_id`. If you can, then go with that grouping key and add the `_id` to avoid jumbo chunks. Remember that whichever grouping key you use, it needs to also distribute reads and writes evenly to get the most out of each node in your cluster. {#choosing-a-shard-key-is-hard-but-there-are-really}

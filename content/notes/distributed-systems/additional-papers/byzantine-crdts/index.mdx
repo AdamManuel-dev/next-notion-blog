@@ -12,54 +12,46 @@ icon: "🌏"
 coverPosition: null
 ---
 
-<a id="4f11ce3572f44bde9563d2f977848a2c"></a>
-
 <details open={true}>
 
 <summary>Source</summary>
 
-<section id="f2088d37cee349648f72552e5bcaa21f">
+:::callout{#martin-kleppmann-com-martin-kleppmann-com-papers-bft-crdt-papoc22}
 
 [martin.kleppmann.com{"https://martin.kleppmann.com/papers/bft-crdt-papoc22.pdf"}](<https://martin.kleppmann.com/papers/bft-crdt-papoc22.pdf>)
 
-</section>
+:::
 
 </details>
-
-<a id="45b68da90dcf41ddaa6efa2239e772e2"></a>
 
 <details open={true}>
 
 <summary>Author</summary>
 
-<section id="c606e4b7d9ed4b29a2182b86bed11336">
+:::callout{#martin-kleppmann-callout}
 
 **Martin Kleppmann**
 
-</section>
+:::
 
-<section id="235f7cb11a7745eb9c7100694b2dae01">
+:::callout{#also-the-author-of-designing-data-intensive-applications-the-big}
 
 Also the author of [Designing Data-Intensive Applications: The Big Ideas Behind Reliable, Scalable, and Maintainable Systems](<https://www.google.com/search?rlz=1C5CHFA_enUS954US954&amp;q=Designing+Data-Intensive+Applications:+The+Big+Ideas+Behind+Reliable,+Scalable,+and+Maintainable+Systems&amp;stick=H4sIAAAAAAAAAONgVuLVT9c3NEwyL7Q0yiqMf8RowS3w8sc9YSn9SWtOXmPU5OIKzsgvd80rySypFJLmYoOyBKX4uVB18ixizXBJLc5Mz8vMS1dwSSxJ1PXMK0nNK84sS1VwLCjIyUxOLMnMzyu2UgjJSFVwykxX8ExJTSxWcErNyMxLUQhKzclMTMpJ1VEITk7MgbASgeK-iZl5JUAMElEIriwuSc0tBgAMjpkftwAAAA&amp;sa=X&amp;ved=2ahUKEwjriv2v8632AhUNmmoFHQbFBDwQzIcDKAB6BAgZEAE>)
 
-</section>
+:::
 
 </details>
-
-<a id="e075af97c45f4c32a1deb1a43e06beaf"></a>
 
 <details open={true}>
 
 <summary>PDF</summary>
 
-<section id="ffc2c5a6ad2b44ad809833e85ca0267b">
+:::callout{#bft-crdt-papoc22-pdf504-4kb-callout}
 
 <p className="content-fallback">bft-crdt-papoc22.pdf504.4KB</p>
 
-</section>
+:::
 
 </details>
-
-<a id="41d01b3715e04adb8e54b230eba2238a"></a>
 
 Making CRDTs Byzantine Fault TolerantMartin {"Kleppmannmartin@kleppmann.comUniversity"} of CambridgeCambridge, UKAbstractIt is often claimed that Conflict-free Replicated Data Types(CRDTs) ensure consistency of replicated data in peer-to-peer systems. However, peer-to-peer systems usually con-sist of untrusted nodes that may deviate from the specifiedprotocol (i.e. exhibit Byzantine faults), and most existingCRDT algorithms cannot guarantee consistency in the pres-ence of such faults. This paper shows how to adapt existingnon-Byzantine CRDT algorithms and make them Byzantinefault-tolerant. The proposed scheme can tolerate any num-ber of Byzantine nodes (making it immune to Sybil attacks),guarantees Strong Eventual Consistency, and requires onlymodest changes to existing CRDT algorithms.CCS Concepts: • Computer systems organization → Peer-to-peer architectures; • Security and privacy → Distributedsystems security.Keywords: Byzantine fault tolerance, CRDTs, optimistic repli-cation, eventual consistencyACM Reference Format:Martin Kleppmann. 2022. Making CRDTs Byzantine Fault Tolerant.In 9th Workshop on Principles and Practice of Consistency for Dis-tributed Data (PaPoC’22), April 5–8, 2022, RENNES, France. ACM,New York, NY, USA, 8 pages. {"https://doi.org/10.1145/3517209.35240421"} IntroductionA key characteristic of many peer-to-peer (P2P) systems isthat peers are not under the control of a single authority \[10\];indeed, many P2P applications are open, trustless systemsin which anybody on the Internet can run a node and jointhe system. As the operators of nodes cannot be trusted, itmust be assumed that some nodes may not correctly followthe specified protocol of the network: be it due to bugs inimplementations, hardware glitches \[ 19\], deliberate attemptsto gain an advantage over other nodes, or sheer vandalism,a P2P system cannot rely on nodes always behaving the waythat the designers of the system intended. Nodes may sendPermission to make digital or hard copies of part or all of this work forpersonal or classroom use is granted without fee provided that copies arenot made or distributed for profit or commercial advantage and that copiesbear this notice and the full citation on the first page. Copyrights for third-party components of this work must be honored. For all other uses, contactthe owner/author(s).PaPoC’22, April 5–8, 2022, RENNES, France© 2022 Copyright held by the owner/author(s).ACM ISBN 978-1-4503-9256-3/22/04.{"https://doi.org/10.1145/3517209.3524042false"}, malformed, or contradictory messages to other nodes,and they may try to actively undermine any guarantees thesystem aims to provide. As P2P systems grow to larger scale,the probability of such problematic behaviour increases.When a node deviates from the specified protocol, wecall it Byzantine-faulty (or simply Byzantine), regardless ofwhether the deviation is by accident or by malice \[ 25 \]. Byzan-tine behaviour is not always detectable by other nodes, sincea Byzantine node may attempt to hide its protocol violations.One approach would be to try to identify Byzantine nodesand exclude them from the system, but this is unlikely to beeffective if the banned node can simply rejoin the systemunder a different identity, and the system would still have tosomehow repair the damage already done by the Byzantinenode. A more robust approach is to tolerate Byzantine faults:that is, to ensure that the system can meet its advertised guar-antees even when some of its nodes are Byzantine-faulty.Conflict-free Replicated Data Types (CRDTs) \[40 \] are of-ten presented as an approach for providing consistency ofreplicated data in peer-to-peer systems \[32, 42, 44 \], becausethey do not require a central server for concurrency con-trol. However, despite ostensibly targeting P2P systems, thevast majority of CRDT algorithms actually do not tolerateByzantine faults, since they assume that all participatingnodes correctly follow the protocol. If such algorithms aredeployed in a system with Byzantine nodes, the algorithmcannot guarantee the consistency properties that CRDTs aresupposed to provide, and nodes may end up with perma-nently inconsistent replicas of the shared data.In some circumstances, the lack of Byzantine fault toler-ance can be justified by restricting CRDT-based collaborationto small, trusted groups of nodes: for example, in a collabora-tive editor, the set of users who are authorised to edit a docu-ment may be limited to immediate colleagues, who may trusteach other to run the CRDT algorithm correctly. However,as the range of collaborators is widened to public settingssuch as wikis \[ 31, 43, 44\], and as CRDT designers seek toenable collaboration at “massive scale” \[3, 28, 44 \], blindlytrusting collaborators to do everything correctly seems likean increasingly dangerous assumption.How difficult is it then to provide Byzantine fault tol-erance (BFT) for CRDTs? We might take inspiration fromByzantine consensus systems, which have received muchattention due to their use in blockchains. Experience hasshown that providing BFT requires consensus algorithms

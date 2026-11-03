@@ -27,10 +27,10 @@ Imagine a tutor who works from 9:00 to 10:00. Each appointment lasts 30 minutes.
 
 The system offers:
 
-| Start | End |
-| --- | --- |
-| 9:00 | 9:30 |
-| 9:30 | 10:00 |
+| Start | End   |
+| ----- | ----- |
+| 9:00  | 9:30  |
+| 9:30  | 10:00 |
 
 Now the tutor adds availability from 8:45 to 9:15.
 
@@ -39,10 +39,10 @@ window: **8:45 to 10:00**.
 
 Then it starts building 30-minute appointments from the beginning of that window:
 
-| Start | End |
-| --- | --- |
-| 8:45 | 9:15 |
-| 9:15 | 9:45 |
+| Start | End  |
+| ----- | ---- |
+| 8:45  | 9:15 |
+| 9:15  | 9:45 |
 
 The final 15 minutes are too short for another appointment.
 
@@ -104,10 +104,10 @@ someone begins work at 9:10.
 
 For a 30-minute appointment in a 9:10-10:40 window:
 
-| Rule | Offered starts |
-| --- | --- |
+| Rule                               | Offered starts    |
+| ---------------------------------- | ----------------- |
 | Every 30 minutes from window start | 9:10, 9:40, 10:10 |
-| Fixed half-hour clock grid | 9:30, 10:00 |
+| Fixed half-hour clock grid         | 9:30, 10:00       |
 
 Neither rule is inherently more correct. A tutor may want to use every available minute.
 A clinic may want starts aligned with its staffing schedule. The anchor should express
@@ -195,14 +195,14 @@ meant? Storing a wall-clock number alone does not answer those questions.
 
 A small table of examples can protect the product's intended behavior:
 
-| Scenario | Question to settle |
-| --- | --- |
-| Add 15 minutes before opening | Should existing starts move? |
-| Add hours across lunch | Is the break removed? |
-| Booking touches another booking | Is that allowed, or is a buffer required? |
-| Free fragment shorter than duration | What explanation should appear? |
-| Two simultaneous booking requests | Which one can claim the slot? |
-| Local clock changes | How are ambiguous or missing times handled? |
+| Scenario                            | Question to settle                          |
+| ----------------------------------- | ------------------------------------------- |
+| Add 15 minutes before opening       | Should existing starts move?                |
+| Add hours across lunch              | Is the break removed?                       |
+| Booking touches another booking     | Is that allowed, or is a buffer required?   |
+| Free fragment shorter than duration | What explanation should appear?             |
+| Two simultaneous booking requests   | Which one can claim the slot?               |
+| Local clock changes                 | How are ambiguous or missing times handled? |
 
 Write the expected result in plain language first. Then make the automated checks
 verify that agreement. Tests generated only from the current implementation can preserve
@@ -255,7 +255,6 @@ At 10:00: A has ended; B may begin.
 The brackets illustrate half-open intervals: the start is included and the end is
 excluded. A required cleanup buffer would change the occupied interval.
 
-
 ### Specify the interval model {#specify-the-interval-model}
 
 Represent an appointment as a half-open interval [start, end): it includes its start
@@ -271,7 +270,7 @@ before checking conflicts. Keep the original appointment separate from its occup
 interval so the interface does not claim the appointment itself lasts longer.
 
 For a fixed grid, let g be the anchor, s the start spacing, and d the duration.
-Candidate starts are g + k*s for integer k. Keep a candidate t only if [t, t+d)
+Candidate starts are g + k\*s for integer k. Keep a candidate t only if [t, t+d)
 fits entirely inside available time and does not overlap an occupied interval.
 
 ### Compare the two algorithms {#compare-the-two-algorithms}

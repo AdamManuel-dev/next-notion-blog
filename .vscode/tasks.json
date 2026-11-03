@@ -1,0 +1,68 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "MDX: Start live preview",
+      "type": "shell",
+      "command": "npm",
+      "args": [
+        "run",
+        "dev",
+        "--",
+        "--hostname",
+        "127.0.0.1",
+        "--port",
+        "${config:blogMdx.previewPort}"
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "mdx-preview",
+        "pattern": {
+          "regexp": "^([^:]+):(\\d+):\\s+(.*)$",
+          "file": 1,
+          "line": 2,
+          "message": 3
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "Starting",
+          "endsPattern": "Ready in"
+        }
+      },
+      "presentation": { "panel": "dedicated" },
+      "runOptions": { "instanceLimit": 1 }
+    },
+    {
+      "label": "MDX: Format current file",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "content:format", "--", "${file}"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "MDX: Check all formatting",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "content:format:check"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "MDX: Preview current file in browser",
+      "type": "shell",
+      "command": "npm",
+      "args": [
+        "run",
+        "content:preview",
+        "--",
+        "${file}",
+        "--port",
+        "${config:blogMdx.previewPort}"
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+---
+title: "React live block: counter"
+slug: react-live-counter
+description: A small interactive React counter embedded in a statically exported Markdown page.
+type: note
+tags: [react, examples]
+order: 1000
+---
+
+A live block is a small React component inside an otherwise static article. Click the button to update its local state, or open **View source** to inspect the registered component tag.
+
+## Try the counter {#try-the-counter}
+
+<Counter id='counter' />
+
+The [counter permalink](#counter) addresses its static container, so the link works before the component loads. With JavaScript disabled, the source remains available instead of a broken button.
+
+## Ordinary fences stay examples {#ordinary-fences}
+
+Code fences are displayed examples and never execute:
+
+```tsx
+throw new Error('This is a displayed code example, not a live block.')
+```
+
+For a shared component example, see the [interactive pipeline diagram](/react-live-pipeline-diagram).

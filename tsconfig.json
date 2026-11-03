@@ -15,9 +15,20 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "baseUrl": ".",
+    "paths": {
+      "@live/*": ["components/live/*"]
+    },
     "typeRoots": ["./node_modules/@types"],
     "incremental": true
   },
+  "mdx": {
+    "plugins": [
+      "remark-frontmatter",
+      "remark-gfm",
+      "./lib/remark-block-ids.mjs",
+      "./lib/remark-heading-ids.mjs"
+    ]
+  },
   "exclude": ["node_modules"],
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "content/**/*.mdx"]
 }

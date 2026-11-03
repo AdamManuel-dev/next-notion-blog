@@ -417,7 +417,7 @@ test('MDX renders real markdown semantics: GFM, disclosures and anchors', async 
   })
 
   const { html } = await getLocalPage('rendered', { root })
-  assert.match(html, /<table>/, 'GFM tables')
+  assert.match(html, /<table\b/, 'GFM tables')
   assert.match(html, /<del>strikethrough<\/del>/, 'GFM strikethrough')
   assert.match(html, /type="checkbox"/, 'GFM task lists')
   assert.match(html, /<details>[\s\S]*<summary>More<\/summary>/, 'disclosures')
@@ -426,11 +426,10 @@ test('MDX renders real markdown semantics: GFM, disclosures and anchors', async 
   assert.match(html, /<a href="\/other">link<\/a>/)
   assert.doesNotMatch(html, /^---/m, 'frontmatter never reaches the output')
 
-  // The article layout adds anchors to headings that do not declare an id,
-  // and leaves migrated ids alone.
+  // The compiler supplies readable IDs; the article layout leaves them alone.
   const article = prepareLocalArticle(html)
   assert.ok(article.html.includes('id="legacy-anchor"'))
-  assert.match(article.html, /<h2 id="local-heading-1">Intro<\/h2>/)
+  assert.match(article.html, /<h2 id="intro">Intro<\/h2>/)
 })
 
 test('MDX compile errors name the file', async () => {
@@ -455,9 +454,11 @@ test('page content serializes as static props', async () => {
     'cover',
     'coverPosition',
     'description',
+    'fragmentAliases',
     'html',
     'icon',
     'id',
+    'liveBlocks',
     'order',
     'slug',
     'sourceUrl',
@@ -469,24 +470,16 @@ test('page content serializes as static props', async () => {
   assert.equal(page.icon, '⚡')
 })
 
-test('a markdown heading adopts the id of the empty anchor directly above it', async () => {
+test('sidecar aliases resolve to automatic heading IDs without empty anchors', async () => {
   const { root } = makeContent({
     '': home(),
     post: page(
-      { slug: 'folded' },
+      { slug: 'folded', id: '1234567890abcdef1234567890abcdef' },
       [
-        '',
-        '<a id="block-anchor"></a>',
-        '',
-        '<a id="stale-heading-id"></a>',
-        '',
-        '<a id="intro-7f3c"></a>',
         '',
         '## Intro with *emphasis*, a [link](/other) and `code`',
         '',
         'Body text.',
-        '',
-        '<a id="details-9a1b" />',
         '',
         '### Details',
         '',
@@ -495,36 +488,61 @@ test('a markdown heading adopts the id of the empty anchor directly above it', a
       ].join('\n')
     )
   })
-  const { html } = await getLocalPage('folded', { root })
+  fs.writeFileSync(
+    path.join(root, 'content/fragment-aliases.json'),
+    JSON.stringify({
+      version: 1,
+      pages: {
+        '1234567890abcdef1234567890abcdef': {
+          'intro-with-emphasis-a-link-and-code': [
+            'block-anchor',
+            'stale-heading-id',
+            'intro-7f3c'
+          ],
+          details: ['details-9a1b']
+        }
+      }
+    })
+  )
+  const { html, fragmentAliases } = await getLocalPage('folded', { root })
   const $ = load(html)
 
-  assert.equal($('h2').attr('id'), 'intro-7f3c')
-  assert.equal($('h3').attr('id'), 'details-9a1b', 'self-closing anchors fold')
-  assert.equal($('h4').attr('id'), undefined, 'plain headings stay unchanged')
+  assert.equal($('h2').attr('id'), 'intro-with-emphasis-a-link-and-code')
+  assert.equal($('h3').attr('id'), 'details')
+  assert.equal($('h4').attr('id'), 'plain-fallback')
+  assert.deepEqual(fragmentAliases, {
+    'block-anchor': 'intro-with-emphasis-a-link-and-code',
+    'stale-heading-id': 'intro-with-emphasis-a-link-and-code',
+    'intro-7f3c': 'intro-with-emphasis-a-link-and-code',
+    'details-9a1b': 'details'
+  })
   assert.equal($('h2 em').text(), 'emphasis')
   assert.equal($('h2 a[href="/other"]').text(), 'link')
   assert.equal($('h2 code').text(), 'code')
 
-  // Only the closest anchor folds; earlier block anchors keep their place.
+  // Historical aliases live only in the sidecar, never as empty DOM anchors.
   assert.equal($('a#intro-7f3c').length, 0, 'the folded anchor is removed')
   assert.equal($('a#details-9a1b').length, 0)
-  assert.equal($('a#block-anchor').length, 1, 'older block anchors remain')
-  assert.equal($('a#stale-heading-id').length, 1, 'adjacent duplicates remain')
+  assert.equal($('a#block-anchor').length, 0)
+  assert.equal($('a#stale-heading-id').length, 0)
 
   const article = prepareLocalArticle(html)
   assert.deepEqual(
     article.entries.map((entry) => [entry.href, entry.text]),
     [
-      ['#intro-7f3c', 'Intro with emphasis, a link and code'],
-      ['#details-9a1b', 'Details'],
-      ['#local-heading-1', 'Plain fallback']
+      [
+        '#intro-with-emphasis-a-link-and-code',
+        'Intro with emphasis, a link and code'
+      ],
+      ['#details', 'Details'],
+      ['#plain-fallback', 'Plain fallback']
     ]
   )
-  assert.match(article.html, /<h2 id="intro-7f3c"/)
-  assert.match(article.html, /<h4 id="local-heading-1">Plain fallback<\/h4>/)
+  assert.match(article.html, /<h2 id="intro-with-emphasis-a-link-and-code"/)
+  assert.match(article.html, /<h4 id="plain-fallback">Plain fallback<\/h4>/)
 })
 
-test('only empty id-only anchors fold into the heading below them', async () => {
+test('authored links and native id-only anchors retain their HTML semantics', async () => {
   const { root } = makeContent({
     '': home(),
     post: page(
@@ -562,10 +580,12 @@ test('only empty id-only anchors fold into the heading below them', async () => 
       ].join('\n')
     )
   })
-  const { html } = await getLocalPage('untouched-anchors', { root })
+  const { html, fragmentAliases } = await getLocalPage('untouched-anchors', {
+    root
+  })
   const $ = load(html)
 
-  for (const id of ['linked', 'labelled', 'tracked', 'before-native']) {
+  for (const id of ['linked', 'labelled', 'tracked']) {
     assert.equal($(`a#${id}`).length, 1, `${id} anchor survives`)
   }
   assert.equal($('a[href="/elsewhere"]').attr('id'), 'linked')
@@ -576,9 +596,16 @@ test('only empty id-only anchors fold into the heading below them', async () => 
   const ids = $('h2')
     .map((_, element) => $(element).attr('id'))
     .get()
-  assert.deepEqual(ids, ['native-heading'], 'no markdown heading absorbed one')
-
-  assert.equal($('a#fenced').length, 1, 'anchors above a fence stay put')
+  assert.deepEqual(ids, [
+    'href-anchor',
+    'nonempty-anchor',
+    'extra-attribute-anchor',
+    'empty-id-anchor',
+    'native-heading'
+  ])
+  assert.deepEqual(fragmentAliases, {})
+  assert.equal($('a#before-native').length, 1)
+  assert.equal($('a#fenced').length, 1)
   assert.equal($('pre code').text().includes('<a id="in-fence"></a>'), true)
   assert.equal($('pre code').text().includes('## Not a heading'), true)
 })
@@ -699,7 +726,11 @@ test('a trailing {#id} marker becomes the heading id for every level', async () 
   assert.equal($('h5').attr('id'), 'fifth')
   assert.equal($('h6').attr('id'), 'sixth')
   assert.equal($('h1').last().attr('id'), 'setext-id', 'setext headings too')
-  assert.equal($('h2').last().attr('id'), undefined, 'unmarked headings')
+  assert.equal(
+    $('h2').last().attr('id'),
+    'plain-fallback',
+    'automatic heading ID'
+  )
 
   // Inline formatting survives, and the marker leaves no trace in the text.
   assert.equal($('h2').first().find('em').text(), 'emphasis')
@@ -724,25 +755,23 @@ test('a trailing {#id} marker becomes the heading id for every level', async () 
       ['#fifth', 'Fifth'],
       ['#sixth', 'Sixth'],
       ['#setext-id', 'Setext heading'],
-      ['#local-heading-1', 'Plain fallback']
+      ['#plain-fallback', 'Plain fallback']
     ]
   )
   assert.match(article.html, /<h2 id="intro-7f3c"/)
-  assert.match(article.html, /<h2 id="local-heading-1">Plain fallback<\/h2>/)
+  assert.match(article.html, /<h2 id="plain-fallback">Plain fallback<\/h2>/)
 })
 
-test('{#id} markers work inside blockquotes and alongside legacy anchors', async () => {
+test('{#id} markers work inside blockquotes and alongside sidecar aliases', async () => {
   const { root } = makeContent({
     '': home(),
     post: page(
-      { slug: 'heading-id-contexts' },
+      { slug: 'heading-id-contexts', id: '1234567890abcdef1234567890abcdef' },
       [
         '',
         '> ## Quoted heading {#quoted-1a2b}',
         '>',
         '> Quoted body.',
-        '',
-        '<a id="legacy-anchor"></a>',
         '',
         '## Folded anchor',
         '',
@@ -757,12 +786,26 @@ test('{#id} markers work inside blockquotes and alongside legacy anchors', async
       ].join('\n')
     )
   })
-  const { html } = await getLocalPage('heading-id-contexts', { root })
+  fs.writeFileSync(
+    path.join(root, 'content/fragment-aliases.json'),
+    JSON.stringify({
+      version: 1,
+      pages: {
+        '1234567890abcdef1234567890abcdef': {
+          'folded-anchor': ['legacy-anchor']
+        }
+      }
+    })
+  )
+  const { html, fragmentAliases } = await getLocalPage('heading-id-contexts', {
+    root
+  })
   const $ = load(html)
 
   assert.equal($('blockquote h2').attr('id'), 'quoted-1a2b')
   assert.equal($('blockquote h2').text(), 'Quoted heading')
-  assert.equal($('h2#legacy-anchor').text(), 'Folded anchor', 'old form works')
+  assert.equal($('h2#folded-anchor').text(), 'Folded anchor')
+  assert.equal(fragmentAliases['legacy-anchor'], 'folded-anchor')
   assert.equal($('h2#marked-3c4d').text(), 'Marked heading')
   assert.equal($('details h2').attr('id'), 'nested-5e6f')
   assert.equal($('details h2').text(), 'Nested in JSX')
@@ -818,10 +861,10 @@ test('{#id} is only heading syntax: code, escapes and prose keep it literal', as
     .map((_, element) => [[$(element).text(), $(element).attr('id')]])
     .get()
   assert.deepEqual(marked, [
-    ['Heading with {#code-id} inside', undefined],
-    ['Escaped {#escaped-id} marker', undefined],
-    ['Marker {#mid-id} in the middle', undefined],
-    ['Expression 2 heading', undefined]
+    ['Heading with {#code-id} inside', 'heading-with-code-id-inside'],
+    ['Escaped {#escaped-id} marker', 'escaped-escaped-id-marker'],
+    ['Marker {#mid-id} in the middle', 'marker-mid-id-in-the-middle'],
+    ['Expression 2 heading', 'expression-heading']
   ])
   assert.equal($('h2 code').text(), '{#code-id}')
   assert.ok(

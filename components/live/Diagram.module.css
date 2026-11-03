@@ -1,0 +1,34 @@
+.diagram {
+  margin: 0;
+  color: var(--blog-text);
+}
+
+.diagram svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  font: 16px system-ui, sans-serif;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.controls button {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid currentColor;
+  border-radius: 0.4rem;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+}
+
+.controls button[aria-pressed='true'] {
+  color: var(--blog-focus);
+  font-weight: 700;
+}

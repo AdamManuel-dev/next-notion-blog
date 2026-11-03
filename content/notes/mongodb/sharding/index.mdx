@@ -12,79 +12,40 @@ icon: "📖"
 coverPosition: null
 ---
 
-<a id="0af1b6180d9641d4858f028d1e911179"></a>
+Queries that contain the shard key and can be sent to a single shard or subset of shards are called *targeted* queries. Queries that must be sent to all shards are called *scatter- gather* queries: *mongos* scatters the query to all the shards and then gathers up the results. ​ {#queries-that-contain-the-shard-key-and-can-be-sent}
 
-Queries that contain the shard key and can be sent to a single shard or subset of shards are called *targeted* queries. Queries that must be sent to all shards are called *scatter- gather* queries: *mongos* scatters the query to all the shards and then gathers up the results. ​
+For loading data as fast as possible, hashed shard keys are the best option. A hashed shard key can make any field randomly distributed, so it is a good choice if you’re going to be using an ascending key a in a lot of queries but want writes to be random dis‐ tributed. The trade-off is that you can never do a targeted range query with a hashed shard key. If you will not be doing range queries, though, hashed shard keys are a good option. {#for-loading-data-as-fast-as-possible-hashed-shard-keys}
 
-<a id="95f5337e9a734518ab69fa85d6f75894"></a>
+- {#non-targeted-sharding-if-you-do-not-want-the-ability} Non-targeted Sharding
 
-For loading data as fast as possible, hashed shard keys are the best option. A hashed shard key can make any field randomly distributed, so it is a good choice if you’re going to be using an ascending key a in a lot of queries but want writes to be random dis‐ tributed. The trade-off is that you can never do a targeted range query with a hashed shard key. If you will not be doing range queries, though, hashed shard keys are a good option.
-
-<a id="217701127a0447b9ad0d972befbd000d"></a>
-
-- Non-targeted Sharding
-  
-  <a id="3123189a5f7b4b7ca0466fb325bb27ea"></a>
-  
   If you do not want the ability to target chunks to prevent executing the query on every shard, the best option is to shard by hashed \_id so that the cardinality is high while hot shards are minimized
+- {#targeted-sharding-to-accomplish-this-we-use-a-compound-shard} Targeted Sharding
 
-<a id="31925ca7634b4e0aa48750e3a312ea4a"></a>
-
-- Targeted Sharding
-  
-  <a id="03910a6ca0b34f6aaaad61732de81899"></a>
-  
   To accomplish this, we use a compound shard key. The first value in the compound key is a rough, random value with low-ish cardinality. The second part of the shard key is an ascending key. This means that, within a chunk, values are always increasing. Thus, if you had one chunk per shard, you’d have the perfect setup: ascending writes on every shard.
-  
-  <a id="54bc88db273a4639be833a0e908bd3d0"></a>
-  
-  Of course having *n* chunks with *n* hotspots spread across *n* shards isn’t very extensible: add a new shard and it won’t get any writes because there’s no hot chunk to put on it. Thus, you want a few hotspot chunks per shard (to give you room to grow). However, you don’t want too many. A few hotspot chunks will keep the effectiveness of ascending writes. But having, say, a thousand “hotspots” on a shard will end up being equivalent to random writes. ​
 
-<a id="255285c4dd1b424694426be5bfbf3dd3"></a>
+  Of course having _n_ chunks with _n_ hotspots spread across _n_ shards isn’t very extensible: add a new shard and it won’t get any writes because there’s no hot chunk to put on it. Thus, you want a few hotspot chunks per shard (to give you room to grow). However, you don’t want too many. A few hotspot chunks will keep the effectiveness of ascending writes. But having, say, a thousand “hotspots” on a shard will end up being equivalent to random writes. ​
 
-### High Randomness Shard Key (Write Scaling) ​ {#local-heading-1}
+### High Randomness Shard Key (Write Scaling) ​ {#high-randomness-shard-key-write-scaling}
 
-<a id="e26643a1ed93433197f2b53fd3d6cfd4"></a>
+A key with high randomness will evenly distribute the writes and reads across all the shards. This works well if documents are self contained entities such as Users. However queries for ranges of documents, such as all users with ages less than 35 years will require a scatter gather query where all shards are queried and a merge sort is done on Mongos. {#a-key-with-high-randomness-will-evenly-distribute-the-writes}
 
-A key with high randomness will evenly distribute the writes and reads across all the shards. This works well if documents are self contained entities such as Users. However queries for ranges of documents, such as all users with ages less than 35 years will require a scatter gather query where all shards are queried and a merge sort is done on Mongos.
+### Single Shard Targeted Key (Query Isolation) ​ {#single-shard-targeted-key-query-isolation}
 
-<a id="b14a693589f54ba98ddd25ddf892d925"></a>
+Picking a shard key, that groups the documents together will make most of the queries go to a specific Shard. This can avoid scatter gather queries. One possible example might be a Geo application for the UK, where the first part of the key includes the postcode and the second is the address. Due to the first part of the shard key being the postcode, all documents for that particular sort key will end up on the same Shard, meaning all queries for a specific postcode will be routed to a single Shard. {#picking-a-shard-key-that-groups-the-documents-together-will}
 
-### Single Shard Targeted Key (Query Isolation) ​ {#local-heading-2}
+The UK postcode works as it has a lot of possible values due to the resolution of postcodes in the UK. This means there will only be a limited amount of documents in each chunk for a specific postcode. However, if we were to do this for a US postcode we might find that each postcode includes a lot of addresses causing the chunks to be hard to split into new ranges. The effect is that MongoDB is less able to spread out the documents and in the end this impacts performance. {#the-uk-postcode-works-as-it-has-a-lot-of}
 
-<a id="5ef708b02b1946bc81ed68ad5e8f8069"></a>
+## Sharding Anti-Patterns ​ {#sharding-anti-patterns}
 
-Picking a shard key, that groups the documents together will make most of the queries go to a specific Shard. This can avoid scatter gather queries. One possible example might be a Geo application for the UK, where the first part of the key includes the postcode and the second is the address. Due to the first part of the shard key being the postcode, all documents for that particular sort key will end up on the same Shard, meaning all queries for a specific postcode will be routed to a single Shard.
+There are a couple of sharding anti-patterns that you should keep in mind to avoid some of the more common pitfalls. {#there-are-a-couple-of-sharding-anti-patterns-that-you}
 
-<a id="15510adcfac24630a6519f06dc233a29"></a>
+### Monotonically increasing shard key ​ {#monotonically-increasing-shard-key}
 
-The UK postcode works as it has a lot of possible values due to the resolution of postcodes in the UK. This means there will only be a limited amount of documents in each chunk for a specific postcode. However, if we were to do this for a US postcode we might find that each postcode includes a lot of addresses causing the chunks to be hard to split into new ranges. The effect is that MongoDB is less able to spread out the documents and in the end this impacts performance.
+A monotonically increasing shard key, is an increasing function such as a counter or an ObjectId. When writing documents to a sharded system using an incrementing counter as it’s shard key, all documents will be written to the same shard and chunk until MongoDB splits the chunk and attempts to migrate it to a different shard. There are two possible simple solutions to avoid this issue. {#a-monotonically-increasing-shard-key-is-an-increasing-function-such}
 
-<a id="7f496e6e99794219a6e65505e5eb67fe"></a>
+#### Hashing the shard key ​ {#hashing-the-shard-key}
 
-## Sharding Anti-Patterns ​ {#local-heading-3}
-
-<a id="167932112a724ef79c8511963e394a09"></a>
-
-There are a couple of sharding anti-patterns that you should keep in mind to avoid some of the more common pitfalls.
-
-<a id="f74601e3427f434cb8b0408db555dabe"></a>
-
-### Monotonically increasing shard key ​ {#local-heading-4}
-
-<a id="03b1524bd64d44a89c4d0cc31d12ec6c"></a>
-
-A monotonically increasing shard key, is an increasing function such as a counter or an ObjectId. When writing documents to a sharded system using an incrementing counter as it’s shard key, all documents will be written to the same shard and chunk until MongoDB splits the chunk and attempts to migrate it to a different shard. There are two possible simple solutions to avoid this issue.
-
-<a id="14f71639e05d43eea37e38426c0920d8"></a>
-
-#### Hashing the shard key ​ {#local-heading-5}
-
-<a id="7ca1efd6707543a2948498e993564a43"></a>
-
-From MongodDB 2.4, we can tell MongoDB to automatically hash all of the shard key values. If we wanted to create documents where the shard key is \_id with an ObjectId, we could shard the collection using the following options.
-
-<a id="01f3d95de7e34bc3b26bbab7f6e43d73"></a>
+From MongodDB 2.4, we can tell MongoDB to automatically hash all of the shard key values. If we wanted to create documents where the shard key is \_id with an ObjectId, we could shard the collection using the following options. {#from-mongoddb-2-4-we-can-tell-mongodb-to-automatically}
 
 ```
 sh.shardCollection( "users.users", { _id: "hashed" } )
@@ -92,15 +53,9 @@ sh.shardCollection( "users.users", { _id: "hashed" } )
 Shard using hashed _id
 ```
 
-<a id="ab2d6b13535c4474b9c5f64dc03a8210"></a>
+#### Pre-split the chunks ​ {#pre-split-the-chunks}
 
-#### Pre-split the chunks ​ {#local-heading-6}
-
-<a id="a1dc161f80e84483909cf54fea11639f"></a>
-
-The second alternative is to pre-split the shard key ranges and migrate the chunks manually, ensuring that writes will be distributed. Say you wanted to use a date timestamp as a shard key. Everyday you set up a new sharded system to collect data and then crunch the data into aggregated numbers before throwing away the original data. We could pre-split the key range so each chunk represented a single minute of data.
-
-<a id="52c262cf634141a0b9474c7192a80eb3"></a>
+The second alternative is to pre-split the shard key ranges and migrate the chunks manually, ensuring that writes will be distributed. Say you wanted to use a date timestamp as a shard key. Everyday you set up a new sharded system to collect data and then crunch the data into aggregated numbers before throwing away the original data. We could pre-split the key range so each chunk represented a single minute of data. {#the-second-alternative-is-to-pre-split-the-shard-key}
 
 ```
 // 1. first switch to the data DB 2 use data;
@@ -113,11 +68,7 @@ sh.stopBalancer();
 Shard using _id field
 ```
 
-<a id="2b21e1df45994055b6ab6cf6ed733ea4"></a>
-
-Let’s split the data by minutes.
-
-<a id="bfed3fd824414e9a889e8c7cf01d256d"></a>
+Let’s split the data by minutes. {#let-s-split-the-data-by-minutes}
 
 ```
 // first switch to the admin db
@@ -132,11 +83,7 @@ date.setMinutes(date.getMinutes() + 1); }
 Pre-split
 ```
 
-<a id="49f3b1272de0467f86ddfd01994049f7"></a>
-
-Finally re-enable the balancer and allow MongoDB to start balancing the chunks to the shards.
-
-<a id="8804e30bc4b54f519ee0ef24c840414c"></a>
+Finally re-enable the balancer and allow MongoDB to start balancing the chunks to the shards. {#finally-re-enable-the-balancer-and-allow-mongodb-to-start}
 
 ```
 // Enable the balancer
@@ -145,6 +92,4 @@ sh.startBalancer();
 Enable balancer
 ```
 
-<a id="01addb6cd122458989e79e975254ea21"></a>
-
-You can monitor the migrations by connecting to mongos, using the mongo shell and executing the sh.status() command helper to view the current status of the sharded system. The goal of pre-splitting the ranges is to ensure the writes are distributed across all the shards even though we are using a monotonically increasing number.
+You can monitor the migrations by connecting to mongos, using the mongo shell and executing the sh.status() command helper to view the current status of the sharded system. The goal of pre-splitting the ranges is to ensure the writes are distributed across all the shards even though we are using a monotonically increasing number. {#you-can-monitor-the-migrations-by-connecting-to-mongos-using}

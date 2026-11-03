@@ -201,7 +201,6 @@ Dispatch ---------------------> atomic claim ----> send
 The redesign separates slow discovery from the short ownership decision. The atomic
 claim must still prevent two dispatchers from taking the same item.
 
-
 ### Model the critical section {#model-the-critical-section}
 
 A critical section is the work protected by a lock. In the problematic shape, discovery

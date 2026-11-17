@@ -87,7 +87,7 @@ Keep native HTML/JSX only where Markdown cannot faithfully express the structure
 
 Retained native HTML headings, inline elements, and list items are normalized to avoid extra Markdown paragraph wrappers. An addressed implicit paragraph inside these native hosts keeps its target on a `<span>` instead of losing the ID during unwrapping. Use explicit `<p>` tags for intentionally multi-paragraph HTML list items; ordinary Markdown paragraphs and lists are unchanged.
 
-MDX is excluded from stock Prettier; use the schema-aware formatter below instead. It formats safe ordinary Markdown while preserving frontmatter, code examples, JSX/JSON props, stable-ID markers, hard breaks and custom directives. Complex blocks are deliberately left unchanged rather than risk changing content. Historical archives are never formatted. EditorConfig also preserves meaningful MDX trailing spaces.
+MDX is excluded from stock Prettier; use the schema-aware formatter below instead. It formats safe ordinary Markdown while preserving frontmatter, code examples, JSX/JSON props, stable-ID markers, hard breaks and custom directives. Complex blocks are deliberately left unchanged rather than risk changing content. EditorConfig also preserves meaningful MDX trailing spaces.
 
 The slugs `index`, `404`, and `500` are reserved for the static export and cannot be used for content.
 
@@ -194,16 +194,14 @@ Prefer a verified publisher URL for the same resource. If only a specific archiv
 
 Offline content integrity checks reject placeholder and retired destinations and require archive labels, in addition to validating internal routes, fragments and assets.
 
-## Historical evidence
+## Source history and recovery limitations
 
-`../legacy/content/` retains original HTML, generated Markdown, metadata, appearance data, manifest, and compressed Notion snapshots. `../legacy/blog-drafts/` retains original engineering drafts and editorial/support material. They are archival evidence **outside the active content tree**, not build inputs. Do not edit them to change the website. The former import/conversion/publication commands have been retired; there is no second editable publication copy.
+Historical source archives and one-time import/conversion tools have been retired from the working tree. Earlier revisions remain available in Git history; current `index.mdx` files are the only editable publication source.
 
-The migration preserves pre-existing source gaps: five conversion warnings across MongoDB Optimization, MongoDB Official Documentation, and Making CRDTs Byzantine Fault Tolerant; some file/PDF/embed blocks expose only recovered text or source links. The unavailable standalone Notion database was captured as an inline table, not an extra page. Archive metadata retains crawl failures and warnings; MDX retains visible warning markers. This migration does not claim to recover missing original Notion material.
+The migration preserves pre-existing source gaps: five conversion warnings across MongoDB Optimization, MongoDB Official Documentation, and Making CRDTs Byzantine Fault Tolerant; some file/PDF/embed blocks expose only recovered text or source links. The unavailable standalone Notion database was captured as an inline table, not an extra page. MDX retains visible warning markers. This migration does not claim to recover missing original Notion material.
 
 ## Validation
 
 `npm run test:unit` checks recursive discovery, frontmatter, aliases, addition/moves without manifest edits, current internal links/fragments, assets, Markdown-native headings/images, block-ID/callout syntax, deterministic fragment naming, and compatibility aliases. These checks allow normal editorial edits and new pages; HTML-only attributes and complex image structures remain supported.
 
-Completed source migrations are isolated under `scripts/migrations/`, with their tests under `tests/migration/tooling/`; they are not part of normal rendering or the unit suite. See `scripts/migrations/README.md` for historical commands and verification. Production content must address real blocks directly and keep former fragments in `fragment-aliases.json`, not standalone compatibility anchors.
-
-`npm run content:verify-migration` runs the separate, frozen historical comparison in `tests/migration/`: original 82-page coverage, legacy fragments resolving through the alias map to actual blocks, prose, links, exact code, tables/disclosures, visual wrappers, artwork, and provenance. Run it when auditing this migration, not after intentional editorial changes (which naturally differ from the archive). Historical files are never read by the active pipeline or normal unit suite. Browser/export checks compare representative engineering articles, nested notes, and the homepage with the pre-migration export.
+Frozen archive comparisons and migration-tool tests have been retired with their historical inputs. Active tests continue to validate public route and fragment compatibility. Production content must address real blocks directly and keep former fragments in `fragment-aliases.json`, not standalone compatibility anchors.

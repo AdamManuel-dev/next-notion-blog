@@ -35,14 +35,6 @@ npm test
 
 This runs lint, formatting, type checks, unit/content-integrity tests, and a production static export.
 
-The optional frozen migration comparison checks the initial MDX content against historical sources:
-
-```sh
-npm run content:verify-migration
-```
-
-That comparison is intentionally separate from ordinary authoring tests: editorial changes should not require changing the historical archive.
-
 ## Build and deploy
 
 ```sh
@@ -68,8 +60,9 @@ These files are generated from the same content as the HTML pages; do not edit t
 - `styles/`: shared theme and reader presentation.
 - `public/content-assets/`: preserved local images and attachments.
 - `scripts/`: static sitemap/robots generation and local export preview.
-- `tests/`: active behavior and integrity tests; `tests/migration/` contains frozen migration checks.
-- `legacy/content/` and `legacy/blog-drafts/`: historical evidence, never active build inputs.
+- `tests/`: active behavior and content-integrity tests.
+
+Historical source archives and one-time migration tooling have been retired; earlier revisions remain available in Git history. Public URL and fragment compatibility remains part of the active pipeline.
 
 ## License and attribution
 

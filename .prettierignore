@@ -11,7 +11,4 @@ node_modules/
 .renderer/
 
 # MDX uses content:format to preserve custom syntax and code samples.
-# Historical evidence is never formatted.
 content/**/*.mdx
-legacy/content/
-legacy/blog-drafts/

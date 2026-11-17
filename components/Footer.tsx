@@ -17,7 +17,7 @@ export const Footer: React.FC<{
 }> = ({ isDarkMode, toggleDarkMode }) => {
   const [hasMounted, setHasMounted] = React.useState(false)
   const toggleDarkModeCb = React.useCallback(
-    (e) => {
+    (e: React.MouseEvent<HTMLButtonElement>) => {
       e.preventDefault()
       toggleDarkMode()
     },

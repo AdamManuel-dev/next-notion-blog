@@ -2,6 +2,14 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "Build typed runtime assets",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "runtime:build"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
       "label": "MDX: Start live preview",
       "type": "shell",
       "command": "npm",

@@ -15,7 +15,7 @@ export function ReadingControls({
 } = {}) {
   const dialog = React.useRef<HTMLDialogElement>(null)
   const trigger = React.useRef<HTMLButtonElement>(null)
-  const previousFocus = React.useRef<HTMLElement>(null)
+  const previousFocus = React.useRef<HTMLElement | null>(null)
   const [view, setView] = React.useState<'preferences' | 'shortcuts' | null>(
     null
   )

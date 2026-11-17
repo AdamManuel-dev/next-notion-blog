@@ -5,6 +5,7 @@
       "type": "node",
       "request": "launch",
       "name": "next dev",
+      "preLaunchTask": "Build typed runtime assets",
       "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/next",
       "runtimeArgs": ["dev"],
       "cwd": "${workspaceFolder}",
@@ -25,6 +26,7 @@
     },
     {
       "name": "MDX authoring extension (development)",
+      "preLaunchTask": "Build typed runtime assets",
       "type": "extensionHost",
       "request": "launch",
       "args": [

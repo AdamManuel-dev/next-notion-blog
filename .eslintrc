@@ -11,7 +11,7 @@
       "version": "detect"
     }
   },
-  "ignorePatterns": ["**/*.js", "**/*.jsx", "next-env.d.ts", ".next/"],
+  "ignorePatterns": ["next-env.d.ts", ".next/", ".generated/", "tools/mdx-editor/dist/"],
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint"],
   "extends": [
@@ -22,7 +22,10 @@
   ],
   "env": { "browser": true, "node": true },
   "rules": {
-    "@typescript-eslint/no-explicit-any": 0,
+    "no-undef": "off",
+    "no-redeclare": "off",
+    "@typescript-eslint/no-redeclare": "error",
+    "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/explicit-module-boundary-types": 0,
     "no-use-before-define": 0,
     "@typescript-eslint/no-use-before-define": 0,

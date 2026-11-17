@@ -1,5 +1,24 @@
 export type FragmentAliases = Readonly<Record<string, string>>
 
+/** Structural browser ports keep fragment resolution usable without a full DOM. */
+export interface FragmentAncestor {
+  readonly tagName: string
+  readonly parentElement: FragmentAncestor | null
+  setAttribute(name: string, value: string): void
+}
+export interface FragmentTarget {
+  readonly id: string
+  readonly parentElement?: FragmentAncestor | null
+  scrollIntoView(): void
+}
+export interface FragmentArticle<
+  Target extends FragmentTarget = FragmentTarget
+> {
+  readonly parentElement?: FragmentAncestor | null
+  readonly isConnected: boolean
+  querySelectorAll(selector: string): Iterable<Target>
+}
+
 /** Shared by URL fragments and saved reading positions; never follows prototypes. */
 export function resolveFragmentId(
   id: string,
@@ -14,15 +33,15 @@ export function resolveFragmentId(
     : id
 }
 
-export function findArticleFragment(
-  article: Pick<HTMLElement, 'querySelectorAll'>,
+export function findArticleFragment<Target extends { readonly id: string }>(
+  article: { querySelectorAll(selector: string): Iterable<Target> },
   id: string,
   aliases?: FragmentAliases
-): HTMLElement | null {
+): Target | null {
   const canonical = resolveFragmentId(id, aliases)
   if (!canonical) return null
   // Compare IDs directly: arbitrary fragments must never become CSS selectors.
-  for (const block of article.querySelectorAll<HTMLElement>('[id]')) {
+  for (const block of article.querySelectorAll('[id]')) {
     if (block.id === canonical) return block
   }
   return null
@@ -30,8 +49,8 @@ export function findArticleFragment(
 
 /** Hidden blocks must be revealed before either hash scrolling or resume measurement. */
 export function revealFragmentAncestors(
-  target: HTMLElement,
-  article: HTMLElement
+  target: Pick<FragmentTarget, 'parentElement'>,
+  article: Pick<FragmentArticle, 'parentElement'>
 ): void {
   for (
     let parent = target.parentElement;
@@ -42,7 +61,7 @@ export function revealFragmentAncestors(
   }
 }
 
-type FragmentBrowser = {
+export type FragmentBrowser = {
   location: Pick<Location, 'hash' | 'pathname' | 'search'>
   history: Pick<History, 'state' | 'replaceState'>
   requestAnimationFrame(callback: (time: number) => void): number
@@ -59,7 +78,7 @@ export function attachLegacyFragmentResolver({
   subscribeNavigation
 }: {
   browser: FragmentBrowser
-  getArticle(): HTMLElement | null
+  getArticle(): FragmentArticle | null
   aliases?: FragmentAliases
   subscribeNavigation?: (schedule: () => void) => () => void
 }): () => void {

@@ -13,7 +13,7 @@
     "Formatters",
     "Other"
   ],
-  "main": "./extension.cjs",
+  "main": "./dist/extension.cjs",
   "activationEvents": [
     "onLanguage:mdx",
     "onLanguage:markdown"

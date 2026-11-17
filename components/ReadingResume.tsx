@@ -119,7 +119,7 @@ export function ReadingResume({
                 position.offset
               : position.y
             window.scrollTo({ top, behavior: 'auto' })
-            if (anchor) {
+            if (anchor instanceof HTMLElement) {
               anchor.setAttribute('tabindex', '-1')
               anchor.focus({ preventScroll: true })
             }

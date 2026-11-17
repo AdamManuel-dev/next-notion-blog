@@ -11,6 +11,14 @@ npm ci
 npm run dev
 ```
 
+### TypeScript environment
+
+All maintained application, configuration, CLI, test, browser-script, and editor-extension sources are TypeScript. The package uses ESM (`"type": "module"`); `.mjs` files are not needed to opt into ESM. `tsx` runs Node tooling/tests on Node 22+, while `tsc --noEmit` independently checks every source under `strict: true` with JavaScript disabled. Next.js compiles the application and `next.config.ts`.
+
+`npm ci` builds the JavaScript artifacts that browsers and editor hosts still require: theme/analytics scripts in `public/`, the CommonJS VS Code extension in `tools/mdx-editor/dist/`, and bundled MDX language-server plugins and preview helpers in `.generated/`. These outputs are ignored, not additional editable sources. `npm run runtime:build` regenerates them after editing their TypeScript sources; development, tests, packaging, and production builds also prepare them automatically. The editor's MDX plugin paths deliberately point at compiled JavaScript because its embedded runtime does not inherit the CLI's TypeScript loader.
+
+CI validates Node 22 and 24. No global loader, `NODE_OPTIONS`, or extra environment variables are needed for TypeScript execution. Use the npm commands rather than launching `.ts` files with bare `node`.
+
 ## Content
 
 ```text
@@ -50,12 +58,12 @@ Each build also generates plain-text Markdown at `/<slug>.md`, the homepage at `
 
 These files are generated from the same content as the HTML pages; do not edit them in `public/` or `out/`. Run `npm run build` to refresh them. Vercel and the local static preview serve them as `text/plain; charset=utf-8`. Other static hosts should configure the same content type for `.md` and `.txt` files.
 
-`site.config.js` contains site information and social accounts. Optional Fathom analytics uses `NEXT_PUBLIC_FATHOM_ID` in production; see `.env.example`. Page content and appearance belong in MDX frontmatter, not the site configuration.
+`site.config.ts` contains site information and social accounts. Optional Fathom analytics uses `NEXT_PUBLIC_FATHOM_ID` in production; see `.env.example`. Page content and appearance belong in MDX frontmatter, not the site configuration.
 
 ## Project layout
 
 - `pages/`: Pages Router entrypoints and static path/props generation.
-- `lib/mdx-content.mjs`: shared discovery, validation, indexing, and MDX compilation.
+- `lib/mdx-content.ts`: shared discovery, validation, indexing, and MDX compilation.
 - `components/`: article layout, reader controls, search, outline, and error pages.
 - `styles/`: shared theme and reader presentation.
 - `public/content-assets/`: preserved local images and attachments.

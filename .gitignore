@@ -13,6 +13,11 @@
 /out/
 /.generated/
 
+# generated runtime artifacts (TypeScript sources live in scripts/ and tools/)
+/public/noflash.js
+/public/scripts/hotjar.js
+/tools/mdx-editor/dist/
+
 # generated LLM-readable content
 /public/*.md
 /public/llms.txt

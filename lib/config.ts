@@ -1,12 +1,11 @@
 /**
  * Site-wide app configuration.
  *
- * Values come from the root "site.config.js" and can be selectively overridden
+ * Values come from the root "site.config.ts" and can be selectively overridden
  * through the `NEXT_PUBLIC_SITE_CONFIG` environment variable.
  */
 
-// The explicit extension keeps this module importable both by the bundler and
-// by `node --experimental-strip-types`, which the config tests run under.
+// Explicit TypeScript extensions work in both Next's bundler and the CLI runner.
 import { getSiteConfig } from './get-config-value.ts'
 
 // general site info

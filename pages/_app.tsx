@@ -34,6 +34,7 @@ import 'prismjs/components/prism-json'
 
 import React from 'react'
 import { useRouter } from 'next/router'
+import type { AppProps } from 'next/app'
 import { bootstrap } from 'lib/bootstrap-client'
 import { fathomId, fathomConfig } from 'lib/config'
 import * as Fathom from 'fathom-client'
@@ -43,7 +44,7 @@ if (typeof window !== 'undefined') {
   bootstrap()
 }
 
-export default function App({ Component, pageProps }) {
+export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter()
 
   React.useEffect(() => {

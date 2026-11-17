@@ -6,6 +6,9 @@ node_modules/
 .next/
 .generated/
 .vercel/
+public/noflash.js
+public/scripts/hotjar.js
+tools/mdx-editor/dist/
 
 .demo/
 .renderer/

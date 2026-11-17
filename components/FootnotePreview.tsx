@@ -20,10 +20,11 @@ export function FootnotePreview() {
     setPreview(null)
   }, [])
   React.useEffect(() => {
-    const reference = (node: EventTarget) => {
-      const link = (node as HTMLElement)?.closest?.(
-        'a[href]'
-      ) as HTMLAnchorElement
+    const reference = (node: EventTarget | null) => {
+      const link =
+        node instanceof Element
+          ? node.closest<HTMLAnchorElement>('a[href]')
+          : null
       if (
         !link ||
         !link.closest('article') ||

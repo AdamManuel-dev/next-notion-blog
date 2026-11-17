@@ -245,6 +245,50 @@ img.pageIcon {
   margin: 0;
 }
 
+/* Anchor to the citation block so tooltips stay inside the reading column. */
+.content :is(p, li):has(> :global(.link-warning)) {
+  position: relative;
+}
+
+.content :global(.link-warning) {
+  display: inline-block;
+  vertical-align: bottom;
+  color: var(--lp-fg);
+  cursor: help;
+}
+
+.content :global(.link-warning):focus-visible {
+  outline: 3px solid var(--lp-accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.content :global(.link-warning)::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  z-index: 10;
+  top: 100%;
+  left: 0;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: calc(100vw - 2rem);
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--lp-border);
+  border-radius: 4px;
+  background: var(--lp-bg);
+  color: var(--lp-fg);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  visibility: hidden;
+}
+
+/* No offset gap: the tooltip remains hoverable when leaving the icon. */
+.content :global(.link-warning):is(:hover, :focus-visible)::after {
+  visibility: visible;
+}
+
 .content p,
 .content ul,
 .content ol {

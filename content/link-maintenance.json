@@ -1,0 +1,35 @@
+{
+  "retired": [
+    {
+      "url": "http://www.springerlink.com/content/f0m4j542v48avwtt",
+      "citation": "Software Transactional Memory",
+      "source": "content/notes/distributed-systems/additional-papers/index.mdx",
+      "reason": "The hostname fails DNS resolution and no archive capture was found. The citation is retained without a clickable link; exact publication identity must be established before substituting a DOI."
+    },
+    {
+      "url": "https://darpa.bubo2.com/MEMEX.html",
+      "citation": "Memex (Domain-Specific Search)",
+      "source": "content/notes/machine-learning/knowledge-graphs/index.mdx",
+      "reason": "The hostname fails DNS resolution and no archive capture was found. The citation is retained without substituting an unrelated MEMEX project page."
+    }
+  ],
+  "archiveReplayUnverified": [
+    {
+      "originalUrl": "https://techblog.king.com/rbea-scalable-real-time-analytics-king/",
+      "archiveUrl": "https://web.archive.org/web/20241009204933/https://techblog.king.com/rbea-scalable-real-time-analytics-king/"
+    },
+    {
+      "originalUrl": "https://youtube-eng.googleblog.com/2015/10/improving-youtube-video-thumbnails-with_8.html",
+      "archiveUrl": "https://web.archive.org/web/20220712212252/https://youtube-eng.googleblog.com/2015/10/improving-youtube-video-thumbnails-with_8.html"
+    },
+    {
+      "originalUrl": "https://youtube-eng.googleblog.com/2018/04/making-high-quality-video-efficient.html",
+      "archiveUrl": "https://web.archive.org/web/20220616001809/https://youtube-eng.googleblog.com/2018/04/making-high-quality-video-efficient.html"
+    },
+    {
+      "originalUrl": "https://www.javaworld.com/article/2824163/application-performance/stability-patterns-applied-in-a-restful-architecture.html",
+      "archiveUrl": "https://web.archive.org/web/20170829123157/http://www.javaworld.com:80/article/2824163/application-performance/stability-patterns-applied-in-a-restful-architecture.html"
+    }
+  ],
+  "archiveVerificationNote": "These four exact captures were reported as available with archived HTTP status 200 by archive.org/wayback/available, but their replay could not be independently loaded during the audit. Other selected snapshots were replay-verified at least once. Archive availability can be intermittent, and archived interactive demos may not function. All archive links are labelled in the content."
+}

@@ -6,6 +6,25 @@ import { load } from 'cheerio'
 import { getLocalPage, getLocalPages } from '../lib/local-content.ts'
 import { prepareLocalArticle } from '../lib/local-article-outline.ts'
 
+const maintenance = JSON.parse(
+  fs.readFileSync(
+    new URL('../content/link-maintenance.json', import.meta.url),
+    'utf8'
+  )
+)
+const retiredUrls = new Set(maintenance.retired.map(({ url }) => url))
+const warningCitations = new Map([
+  [
+    'additional-distributed-systems-papers',
+    ['software-transactional-memory', 'Software Transactional Memory']
+  ],
+  [
+    'knowledge-graph-tools',
+    ['memex-domain-specific-search', 'Memex (Domain-Specific Search']
+  ]
+])
+const brokenLinkTooltip = 'This link might be broken.'
+
 test('current MDX content has working internal routes, fragments and local assets', async () => {
   const summaries = getLocalPages()
   const compiled = await Promise.all(
@@ -56,6 +75,7 @@ test('current MDX content has working internal routes, fragments and local asset
     if (page.type === 'home')
       targets.get(page.slug).add('engineering-articles').add('all-pages')
   }
+  let warningCount = 0
   for (const page of compiled) {
     // Inspect raw markup before the HTML parser repairs invalid nesting.
     assert.doesNotMatch(
@@ -64,6 +84,37 @@ test('current MDX content has working internal routes, fragments and local asset
       `${page.slug}: nested paragraphs`
     )
     const $ = load(page.html)
+    const warnings = $('.link-warning')
+    const expectedCitation = warningCitations.get(page.slug)
+    assert.equal(warnings.length, expectedCitation ? 1 : 0, page.slug)
+    warningCount += warnings.length
+    if (expectedCitation) {
+      const [id, label] = expectedCitation
+      const citation = $(`[id="${id}"]`)
+      assert.equal(citation.length, 1, `${page.slug}: preserved citation ID`)
+      assert.ok(citation.text().includes(label))
+      assert.ok(citation.text().includes('original link unavailable'))
+      assert.equal(
+        citation.find('a').length,
+        0,
+        'citation must remain unlinked'
+      )
+      assert.equal(citation.closest('a').length, 0)
+      assert.equal(citation.find('.link-warning').length, 1)
+      assert.equal(warnings.prop('tagName'), 'SPAN')
+      assert.equal(warnings.attr('tabindex'), '0')
+      assert.equal(warnings.attr('role'), 'img')
+      assert.equal(warnings.attr('aria-label'), brokenLinkTooltip)
+      assert.equal(warnings.attr('data-tooltip'), brokenLinkTooltip)
+      assert.equal(warnings.attr('title'), undefined)
+      assert.equal(warnings.text(), '⚠')
+      assert.equal(warnings.closest('a').length, 0)
+    }
+    assert.equal(
+      $('a .link-warning, a.link-warning').length,
+      0,
+      `${page.slug}: working, repaired and archived links must stay unmarked`
+    )
     assert.equal($('script, iframe, object, embed, style').length, 0, page.slug)
     for (const element of $('a[href]').toArray()) {
       const href = $(element).attr('href')
@@ -71,6 +122,23 @@ test('current MDX content has working internal routes, fragments and local asset
         href,
         `https://blog.manuel.dev/${page.type === 'home' ? '' : page.slug}`
       )
+      assert.doesNotMatch(
+        decodeURIComponent(url.pathname),
+        /(?:^|\/)(?:null|undefined)(?:\/|$)/i,
+        `${page.slug}: placeholder link ${href}`
+      )
+      const destination = new URL(url)
+      destination.hash = ''
+      assert.ok(
+        !retiredUrls.has(destination.href),
+        `${page.slug}: retired link ${href}`
+      )
+      if (url.hostname === 'web.archive.org')
+        assert.match(
+          $(element).text(),
+          /archived/i,
+          `${page.slug}: archive link must be labelled ${href}`
+        )
       if (url.origin !== 'https://blog.manuel.dev') continue
       const pathname = decodeURIComponent(url.pathname).replace(
         /^\/+|\/+$/g,
@@ -106,5 +174,24 @@ test('current MDX content has working internal routes, fragments and local asset
         `${page.slug}: ${source}`
       )
     }
+  }
+  assert.equal(warningCount, 2, 'exactly two retired-citation warning icons')
+})
+
+test('Express tutorial table of contents navigates to its twelve section headings', async () => {
+  const page = await getLocalPage('my-favorite-express-architecture')
+  const $ = load(prepareLocalArticle(page.html).html)
+  const links = $('#table-of-contents').next('ol').find('a[href]')
+  assert.equal(links.length, 12)
+  for (const element of links.toArray()) {
+    const href = $(element).attr('href')
+    assert.match(href, /^#[\w-]+$/)
+    const target = $(`[id="${href.slice(1)}"]`)
+    assert.equal(target.length, 1, `missing TOC destination ${href}`)
+    assert.equal(
+      target.prop('tagName'),
+      'H3',
+      `TOC must target a section: ${href}`
+    )
   }
 })

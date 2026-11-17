@@ -51,6 +51,26 @@ async function preview(t, notFound) {
   return { out, request }
 }
 
+test('static preview serves Markdown and llms.txt as UTF-8 plain text', async (t) => {
+  const { out, request } = await preview(t)
+  for (const filename of ['article.md', 'index.md', 'llms.txt']) {
+    const body = '# Markdown for agents\n\nReadable content.\n'
+    await fs.writeFile(path.join(out, filename), body)
+    const response = await request(`/${filename}`)
+    assert.equal(response.status, 200)
+    assert.equal(
+      response.headers.get('content-type'),
+      'text/plain; charset=utf-8'
+    )
+    assert.equal(await response.text(), body)
+    const head = await request(`/${filename}`, { method: 'HEAD' })
+    assert.equal(head.status, 200)
+    assert.equal(head.headers.get('content-type'), 'text/plain; charset=utf-8')
+    assert.equal(await head.text(), '')
+  }
+  assert.equal((await request('/missing.md')).status, 404)
+})
+
 test('static preview serves the exported 404 page for GET and HEAD', async (t) => {
   const { request } = await preview(t, custom404)
   const missing = await request('/missing')

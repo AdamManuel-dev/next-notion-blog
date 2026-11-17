@@ -41,7 +41,7 @@ This README containts OpenIE and ORE papers and resources. Summaries are by [@jb
   {#creating-a-large-benchmark-for-open-information-extraction-summarizes-the} [Creating a Large Benchmark for Open Information Extraction](http://www.aclweb.org/anthology/D16-1252): summarizes the field and creates a benchmark for OpenIE systems and creates the first large benchmark dataset (note: not large enough to train NN's).
 - {/* */}
   
-  {#effectiveness-and-efficiency-of-open-relation-extraction-review-of-the} [Effectiveness and Efficiency of Open Relation Extraction](http://www.anthology.aclweb.org/D/D13/D13-1043.pdf): Review of the limited work done in the field of ORE (open relation extraction).
+  {#effectiveness-and-efficiency-of-open-relation-extraction-review-of-the} [Effectiveness and Efficiency of Open Relation Extraction](https://aclanthology.org/D13-1043.pdf): Review of the limited work done in the field of ORE (open relation extraction).
 
 ### Papers - Neural Networks {#papers-neural-networks}
 
@@ -63,7 +63,7 @@ This README containts OpenIE and ORE papers and resources. Summaries are by [@jb
 
 - {#graphene-generates-n-ary-extractions-with-semantically-linking-labels-like} [Graphene](https://www.researchgate.net/publication/325734922_Graphene_Semantically-Linked_Propositions_in_Open_Information_Extraction?enrichId=rgreq-810ff916f1de8d82406f9bc1738f5f61-XXX&enrichSource=Y292ZXJQYWdlOzMyNTczNDkyMjtBUzo2MzY5NTQ2MzkwODU1NzFAMTUyODg3MzIyODAxNg%3D%3D&el=1_x_3&_esc=publicationCoverPdf) generates n-ary extractions with semantically linking-labels like "TEMPORAL", "CAUSE", etc. as well as open relations
 - {#stanford-open-ie-produces-maximally-shortened-tuples-it-seems-to} [Stanford Open IE](https://nlp.stanford.edu/software/openie.html): produces maximally-shortened tuples. It seems to often produce tuples for which the reported confidience is often 1.0. GPL or proprietary available as part of [Stanford Core NLP](https://stanfordnlp.github.io/CoreNLP/).
-- {#openie-x-v4-v5-allen-institute-version-works-well-with} [OpenIE-X](https://knowitall.github.io/openie/) ([v4](https://github.com/knowitall/openie), [v5](https://github.com/dair-iitd/OpenIE-standalone), [allen institute version](https://github.com/allenai/openie-standalone)). Works well with simple statements (see examples [in this dataset](http://data.allenai.org/tuple-ie/)). Outputs context for extractions and gives good confidence predictions that can be used to balance precision-recall. Note the restrictive license (research purposes only).
+- {#openie-x-v4-v5-allen-institute-version-works-well-with} [OpenIE-X](https://knowitall.github.io/openie/) ([v4](https://github.com/knowitall/openie), [v5](https://github.com/dair-iitd/OpenIE-standalone), [allen institute version](https://github.com/allenai/openie-standalone)). Works well with simple statements (see examples [in this dataset (archived)](https://web.archive.org/web/20190917210630/http://data.allenai.org:80/tuple-ie/)). Outputs context for extractions and gives good confidence predictions that can be used to balance precision-recall. Note the restrictive license (research purposes only).
 - {#open-relation-extraction-and-grounding-extracts-argument-pairs-of-relation} [Open Relation Extraction and Grounding](http://aclweb.org/anthology/I17-1086): Extracts argument pairs of relation tuples and forms weighted dependency trees between two arguments. It shows promising results in determining relative importance of each argument in the tree.
 - {#unsupervised-open-relation-extraction-used-for-unsupervised-relation-extraction} [Unsupervised Open Relation Extraction](https://arxiv.org/pdf/1801.07174.pdf): Used for unsupervised relation extraction from free text by using pretrained word embeddings while using a sentence's dependency parse tree as a foundation.
 
@@ -100,7 +100,7 @@ melora walters as candy ' - a hooker who works for the motel where john person i
 ​
 ```
 
-- [TupleInf Open IE Dataset](http://data.allenai.org/tuple-ie/): OpenIE-4 extractions of 8th grade and 4th grade questions. By inspection, these tend to be cleaner than the above dataset because of the simplicity of the language. Confidence-values are retained so you can make your own tradeoff between precision and recall. Note suitable for a gold dataset.
+- {#tupleinf-open-ie-dataset-openie-4-extractions-of-8th-grade} [TupleInf Open IE Dataset (archived)](https://web.archive.org/web/20190917210630/http://data.allenai.org:80/tuple-ie/): OpenIE-4 extractions of 8th grade and 4th grade questions. By inspection, these tend to be cleaner than the above dataset because of the simplicity of the language. Confidence-values are retained so you can make your own tradeoff between precision and recall. Note suitable for a gold dataset.
 
 ```
 01 April 1969 The ATM would be a manned solar observatory making measurements of the Sun by telescopes and instruments above

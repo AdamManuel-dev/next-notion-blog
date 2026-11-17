@@ -1,0 +1,57 @@
+{
+  "rules": {
+    "slop": {
+      "disable": [
+        "find-import-file-without-extension",
+        "no-case-declarations",
+        "no-any-type",
+        "no-relative-cross-package-import",
+        "nested-ternary",
+        "large-class",
+        "hardcoded-url",
+        "no-non-null-assertion",
+        "no-flag-argument",
+        "no-console-except-error",
+        "unchecked-throwing-call",
+        "prefer-optional-chain",
+        "no-extra-boolean-cast",
+        "ts-array-concat-spread",
+        "ts-array-every-some",
+        "ts-boolean-return-if-else",
+        "ts-defensive-null-guard",
+        "ts-delete-property",
+        "ts-double-negation",
+        "ts-function-constructor",
+        "ts-in-operator-loop",
+        "ts-isnan-check",
+        "ts-json-stringify-parse",
+        "ts-manual-array-contains",
+        "ts-nullish-coalescing-opportunity",
+        "ts-object-hasown-check",
+        "ts-optional-chaining-default",
+        "ts-parseint-no-radix",
+        "ts-pointless-bool-cast",
+        "ts-redundant-filter-map",
+        "ts-slice-copy",
+        "ts-string-split-index",
+        "ts-unnecessary-array-concat",
+        "ts-unnecessary-array-from",
+        "ts-unnecessary-bind",
+        "ts-unnecessary-else-return",
+        "ts-void-zero",
+        "ts-while-index-length"
+      ]
+    }
+  },
+  "lsp": {
+    "disabledServers": ["marksman"],
+    "servers": {
+      "marksman-markdown": {
+        "name": "Marksman Markdown",
+        "extensions": [".md"],
+        "command": ["/Users/adammanuel/.pi-lens/bin/marksman", "server"],
+        "rootMarkers": [".marksman.toml", ".git"]
+      }
+    }
+  }
+}

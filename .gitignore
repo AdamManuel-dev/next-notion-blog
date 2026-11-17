@@ -13,6 +13,10 @@
 /out/
 /.generated/
 
+# generated LLM-readable content
+/public/*.md
+/public/llms.txt
+
 # production
 /build
 *.tsbuildinfo
@@ -36,3 +40,4 @@ yarn-error.log*
 
 # vercel
 .vercel
+.env*

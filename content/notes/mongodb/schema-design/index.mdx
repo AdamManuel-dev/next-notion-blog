@@ -1,7 +1,7 @@
 ---
 title: "Schema Design"
 slug: "schema-design"
-description: "Below is a brief description of each of the schema design anti-patterns we've covered in this series."
+description: "Common MongoDB schema design anti-patterns and links to current official guidance."
 type: "note"
 tags: ["mongodb"]
 order: 30
@@ -30,14 +30,14 @@ coverPosition: null
 
 ## Anti-Patterns {#anti-patterns}
 
-Below is a brief description of each of the schema design anti-patterns we've covered in this series. {#below-is-a-brief-description-of-each-of-the-schema}
+Current MongoDB documentation covers these schema design anti-patterns. {#below-is-a-brief-description-of-each-of-the-schema}
 
-- {#massive-arrays-storing-massive-unbounded-arrays-in-your-documents} [Massive arrays](https://www.mongodb.com/developer/article/schema-design-anti-pattern-massive-arrays/): storing massive, unbounded arrays in your documents.
-- {#massive-number-of-collections-storing-a-massive-number-of-collections} [Massive number of collections](https://www.mongodb.com/developer/article/schema-design-anti-pattern-massive-number-collections/): storing a massive number of collections (especially if they are unused or unnecessary) in your database.
-- {#unnecessary-indexes-storing-an-index-that-is-unnecessary-because-it} [Unnecessary indexes](https://www.mongodb.com/developer/article/schema-design-anti-pattern-unnecessary-indexes/): storing an index that is unnecessary because it is (1) rarely used if at all or (2) redundant because another compound index covers it.
-- {#bloated-documents-storing-large-amounts-of-data-together-in-a} [Bloated documents](https://www.mongodb.com/developer/article/schema-design-anti-pattern-bloated-documents/): storing large amounts of data together in a document when that data is not frequently accessed together.
-- {#separating-data-that-is-accessed-together-separating-data-between-different} [Separating data that is accessed together](https://www.mongodb.com/developer/article/schema-design-anti-pattern-separating-data/): separating data between different documents and collections that is frequently accessed together.
-- {#case-insensitive-queries-without-case-insensitive-indexes-frequently-executing-a} [Case-insensitive queries without case-insensitive indexes](https://www.mongodb.com/developer/article/schema-design-anti-pattern-case-insensitive-query-index/): frequently executing a case-insensitive query without having a case-insensitive index to cover it.
+- {#massive-arrays-storing-massive-unbounded-arrays-in-your-documents} [Massive arrays](https://www.mongodb.com/docs/manual/data-modeling/design-antipatterns/unbounded-arrays/): storing massive, unbounded arrays in your documents.
+- {#massive-number-of-collections-storing-a-massive-number-of-collections} [Massive number of collections](https://www.mongodb.com/docs/manual/data-modeling/design-antipatterns/reduce-collections/): storing a massive number of collections (especially if they are unused or unnecessary) in your database.
+- {#unnecessary-indexes-storing-an-index-that-is-unnecessary-because-it} [Unnecessary indexes](https://www.mongodb.com/docs/manual/data-modeling/design-antipatterns/unnecessary-indexes/): storing an index that is unnecessary because it is (1) rarely used if at all or (2) redundant because another compound index covers it.
+- {#bloated-documents-storing-large-amounts-of-data-together-in-a} [Bloated documents](https://www.mongodb.com/docs/manual/data-modeling/design-antipatterns/bloated-documents/): storing large amounts of data together in a document when that data is not frequently accessed together.
+- {#separating-data-that-is-accessed-together-separating-data-between-different} [Separating data that is accessed together](https://www.mongodb.com/docs/manual/data-modeling/design-antipatterns/reduce-lookup-operations/): separating data between different documents and collections that is frequently accessed together.
+- {#case-insensitive-queries-without-case-insensitive-indexes-frequently-executing-a} [Case-insensitive queries without case-insensitive indexes](https://www.mongodb.com/docs/manual/core/index-case-insensitive/): frequently executing a case-insensitive query without having a case-insensitive index to cover it.
 
 ## Recomended Patterns {#recomended-patterns}
 

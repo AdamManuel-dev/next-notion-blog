@@ -52,6 +52,12 @@ npm start
 
 Deploy `out/` to a static host. `npm start` previews the export on port 3000; `PORT` overrides it. There are no server API routes, ISR, or Notion/Firebase credentials to configure.
 
+### LLM-readable content
+
+Each build also generates plain-text Markdown at `/<slug>.md`, the homepage at `/index.md`, and a categorized index at `/llms.txt`. For example, `/cli-for-humans-and-agents.md` contains the article without the site UI. MDX-only interactive examples link back to the HTML page for their interactive behavior.
+
+These files are generated from the same content as the HTML pages; do not edit them in `public/` or `out/`. Run `npm run build` to refresh them. Vercel and the local static preview serve them as `text/plain; charset=utf-8`. Other static hosts should configure the same content type for `.md` and `.txt` files.
+
 `site.config.js` contains site information and social accounts. Optional Fathom analytics uses `NEXT_PUBLIC_FATHOM_ID` in production; see `.env.example`. Page content and appearance belong in MDX frontmatter, not the site configuration.
 
 ## Project layout

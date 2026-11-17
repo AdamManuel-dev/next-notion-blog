@@ -1,5 +1,5 @@
 /**
- * Generates `public/sitemap.xml` and `public/robots.txt` from the content tree.
+ * Generates sitemap, robots, Markdown pages and llms.txt from the content tree.
  * Metadata comes from the MDX frontmatter itself, so there is no manifest to
  * keep in sync.
  */
@@ -7,6 +7,7 @@
 import fs from 'node:fs'
 
 import { readContentIndex } from '../lib/mdx-content.mjs'
+import { generateMarkdownExports } from '../lib/markdown-export.mjs'
 import config from '../site.config.js'
 
 const { pages, home } = readContentIndex()
@@ -31,4 +32,10 @@ fs.writeFileSync(
   'public/robots.txt',
   `User-agent: *\nAllow: /\nSitemap: ${origin}/sitemap.xml\n`
 )
-console.log(`Generated static sitemap for ${urls.length} pages`)
+generateMarkdownExports({
+  pages,
+  origin,
+  name: config.name,
+  description: config.description
+})
+console.log(`Generated static metadata and Markdown for ${urls.length} pages`)

@@ -175,6 +175,25 @@ The Pages Router recursively discovers `index.mdx` files and compiles them **at 
 
 MDX is **trusted executable repository code**, not sanitized user input. Review content contributions like code. Do not compile untrusted MDX. Original ID, hyphenated UUID, and slug-plus-ID compatibility routes are retained alongside clean canonical URLs; the homepage remains `/`.
 
+## External link audit (online, opt-in)
+
+```sh
+npm run content:check-links -- --json external-links-report.json
+# Include shared layout/profile/footer links from a freshly built export:
+npm run build
+npm run content:check-links -- --html-dir out --json external-links-report.json
+```
+
+The default compiles current MDX without a full build and never silently reads a potentially stale `out/`. `--html-dir` explicitly adds rendered export HTML, including shared layout links. The weekly/manual GitHub workflow builds first and audits both. Each deduplicated URL retains its MDX/export source filenames in the JSON report. Offline unit tests exercise the checker with injected networking; normal tests/lint never run the online audit.
+
+Only rendered anchor/area HTTP(S) destinations are requested; internal links, fragments, assets, metadata/provenance URLs, code examples and non-HTTP actions (including `mailto:`) are excluded. Twitter/X `/intent/tweet`, LinkedIn `/sharing/share-offsite/`, and Facebook `/sharer/sharer.php` are share actions, not reference links, and are reported as skipped; profile links on those domains are still checked. There is no domain-wide allowlist. External fragments are stripped because HTTP cannot verify them.
+
+GET requests use six workers, ten-second request timeouts, at most five redirects and two retries with bounded backoff. HTTP 404/410 and malformed or `/null` placeholder URLs fail (exit 1). HTTP 403/406/418/429, other unconfirmed HTTP errors, network/timeouts/redirect failures and article-to-generic-homepage redirects are warnings, not proof of dead links. The summary is concise; consult JSON for warning details, final URLs and source attribution. Operational/compilation errors exit 2. Existing external destinations remain unverified until an online audit runs; warnings require human review rather than automatic content replacement.
+
+Prefer a verified publisher URL for the same resource. If only a specific archive capture survives, label the link **archived**; an archived project page or demo is not a promise that its interactive service still works. Do not substitute an unrelated homepage. If neither the original nor an archive can be recovered, retain the citation as plain text with an unavailable-link note and record the original URL in [`link-maintenance.json`](link-maintenance.json). That record also discloses four snapshots confirmed by the archive availability API whose replay could not be loaded during the repair. Archive connectivity can be intermittent; warnings are not grounds for deleting citations.
+
+Offline content integrity checks reject placeholder and retired destinations and require archive labels, in addition to validating internal routes, fragments and assets.
+
 ## Historical evidence
 
 `../legacy/content/` retains original HTML, generated Markdown, metadata, appearance data, manifest, and compressed Notion snapshots. `../legacy/blog-drafts/` retains original engineering drafts and editorial/support material. They are archival evidence **outside the active content tree**, not build inputs. Do not edit them to change the website. The former import/conversion/publication commands have been retired; there is no second editable publication copy.
